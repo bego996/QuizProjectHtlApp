@@ -1,6 +1,7 @@
 package com.app.quizapp.di
 
-import com.app.quizapp.data.remote.QuizApiService
+//import com.app.quizapp.data.remote.QuizApiService
+import com.app.quizapp.data.remote.AnswerApiService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -97,7 +98,7 @@ object NetworkModule {
      */
     @Provides
     @Singleton
-    fun provideQuizApiService(retrofit: Retrofit): QuizApiService {
-        return retrofit.create(QuizApiService::class.java)
+    fun provideAnswerApiService(retrofit: Retrofit): AnswerApiService {
+        return retrofit.create(AnswerApiService::class.java)
     }
 }

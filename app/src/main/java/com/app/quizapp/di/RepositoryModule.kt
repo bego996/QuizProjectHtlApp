@@ -1,6 +1,8 @@
 package com.app.quizapp.di
 
-import com.app.quizapp.data.repository.QuizRepositoryImpl
+import com.app.quizapp.data.repository.AnswerRepositoryImpl
+//import com.app.quizapp.data.repository.QuizRepositoryImpl
+import com.app.quizapp.domain.repository.AnswerRepository
 import com.app.quizapp.domain.repository.QuizRepository
 import dagger.Binds
 import dagger.Module
@@ -23,13 +25,19 @@ abstract class RepositoryModule {
     /**
      * Bindet QuizRepositoryImpl an QuizRepository Interface
      *
-     * @Bind sagt Hilt: "Nutze QuizRepositoryImpl wenn QuizRepository benötigt wird"
+     * @Binds sagt Hilt: "Nutze QuizRepositoryImpl wenn QuizRepository benötigt wird"
      * @Singleton sorgt dafür, dass nur eine Instanz existiert
      */
 
+//    @Binds
+//    @Singleton
+//    abstract fun bindQuizRepository(
+//        quizRepositoryImpl: QuizRepositoryImpl
+//    ): QuizRepository
+
     @Binds
     @Singleton
-    abstract fun bindQuizRepository(
-        quizRepositoryImpl: QuizRepositoryImpl
-    ): QuizRepository
+    abstract fun bindAnswerRepository(
+        answerRepositoryIml: AnswerRepositoryImpl
+    ): AnswerRepository
 }

@@ -17,17 +17,17 @@ import com.google.gson.annotations.SerializedName
  * TODO: Passe diese Struktur an dein Spring Boot Backend an!
  */
 data class QuizQuestionDto(
-    @SerializedName("id")
-    val id: Long,
+    @SerializedName("questionId")
+    val id: Int,
 
-    @SerializedName("text")
+    @SerializedName("questionText")
     val text: String,
 
-    @SerializedName("answers")
-    val answers: List<String>,
+    @SerializedName("reviewedBy")
+    val reviewedBy: Int,
 
-    @SerializedName("correctAnswerIndex")
-    val correctAnswerIndex: Int,
+    @SerializedName("userQuestion")
+    val userQuestion: List<String>,
 
     @SerializedName("category")
     val category: String,
@@ -39,7 +39,7 @@ data class QuizQuestionDto(
 /**
  * DTO für ein komplettes Quiz
  */
-data class QuizDto(
+data class UserQuestions(
     @SerializedName("id")
     val id: Long,
 
@@ -56,24 +56,24 @@ data class QuizDto(
  * Diese Funktion konvertiert das DTO (vom Backend) in unser Domain Model (für die App).
  * Dadurch bleibt die App-Logik unabhängig von der Backend-Struktur.
  */
-fun QuizQuestionDto.toDomain(): QuizQuestion {
-    return QuizQuestion(
-        id = id,
-        text = text,
-        answers = answers,
-        correctAnswerIndex = correctAnswerIndex,
-        category = category,
-        difficulty = difficulty
-    )
-}
-
-/**
- * Extension Function zum Umwandeln von Quiz DTO zu Domain Model
- */
-fun QuizDto.toDomain(): Quiz {
-    return Quiz(
-        id = id,
-        title = title,
-        questions = questions.map { it.toDomain() }
-    )
-}
+//fun QuizQuestionDto.toDomain(): QuizQuestion {
+//    return QuizQuestion(
+//        id = id,
+//        text = text,
+//        answers = answers,
+//        correctAnswerIndex = correctAnswerIndex,
+//        category = category,
+//        difficulty = difficulty
+//    )
+//}
+//
+///**
+// * Extension Function zum Umwandeln von Quiz DTO zu Domain Model
+// */
+//fun QuizDto.toDomain(): Quiz {
+//    return Quiz(
+//        id = id,
+//        title = title,
+//        questions = questions.map { it.toDomain() }
+//    )
+//}
