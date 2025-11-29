@@ -7,7 +7,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import com.app.quizapp.presentation.quiz.QuizScreen
+import com.app.quizapp.presentation.answer.AnswerScreen
 import com.app.quizapp.ui.theme.QuizToGoTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -27,8 +27,8 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    // QuizScreen nutzt jetzt das ViewModel und lädt Daten vom Backend
-                    QuizScreen()
+                    // AnswerScreen lädt alle Answers vom Backend
+                    AnswerScreen()
                 }
             }
         }

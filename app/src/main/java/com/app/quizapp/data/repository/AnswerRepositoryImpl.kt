@@ -14,9 +14,9 @@ import javax.inject.Singleton
  * Implementierung des AnswerRepository
  *
  * Diese Klasse implementiert das Repository Interface und kommuniziert
- * mit dem Backend über das QuizApiService.
+ * mit dem Backend über das AnswerApiService.
  *
- * @Inject Constructor Injection: Hilt injiziert automatisch das QuizApiService
+ * @Inject Constructor Injection: Hilt injiziert automatisch das AnswerApiService
  * @Singleton Nur eine Instanz dieser Klasse während der App-Laufzeit
  *
  * Fehlerbehandlung:
