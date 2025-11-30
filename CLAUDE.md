@@ -51,3 +51,4 @@ Compose BOM 2024.10.01, Hilt 2.51.1, Retrofit 2.11.0, OkHttp 4.12.0, Coroutines 
 ## Notes
 - Uses `.claudeignore` to exclude files
 - Network security: `network_security_config.xml` allows HTTP (for local backend)
+- Allways add comments to new funktions and document them. Do it compact.
