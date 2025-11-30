@@ -19,7 +19,6 @@ import com.google.gson.annotations.SerializedName
  * @property category Kategorie der Frage (z.B. "Geschichte", "Wissenschaft")
  * @property difficulty Schwierigkeitsgrad (z.B. "EASY", "MEDIUM", "HARD")
  */
-
 data class Answer(
     val answerId: Int,
 
@@ -28,37 +27,4 @@ data class Answer(
     val correct: Boolean,
 
     val question: Question,
-)
-
-
-data class Question(
-    val questionId: Int,
-
-    val questionText: String,
-
-    val reviewedBy: Int,
-
-    val topic: Topic,
-
-    val status: Status,
-
-    val difficulty: Difficulty
-)
-
-data class Topic(
-    val topicId: Int,
-
-    val topic: String,
-)
-
-data class Status(
-    val statusId: Int,
-
-    val text: String,
-)
-
-data class Difficulty(
-    val difficultyId: Int,
-
-    val mode: String,
 )

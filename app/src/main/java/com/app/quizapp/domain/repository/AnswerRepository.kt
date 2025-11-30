@@ -1,8 +1,6 @@
 package com.app.quizapp.domain.repository
 
 import com.app.quizapp.domain.model.Answer
-import com.app.quizapp.domain.model.Quiz
-import com.app.quizapp.domain.model.QuizQuestion
 import com.app.quizapp.domain.util.Result
 
 /**

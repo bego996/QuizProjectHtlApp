@@ -34,50 +34,6 @@ data class AnswerDto(
 )
 
 
-data class QuestionDto(
-    @SerializedName("questionId")
-    val questionId: Int,
-
-    @SerializedName("questionText")
-    val questionText: String,
-
-    @SerializedName("reviewedBy")
-    val reviewedBy: Int,
-
-    @SerializedName("topic")
-    val topic: TopicDto,
-
-    @SerializedName("status")
-    val status: StatusDto,
-
-    @SerializedName("difficulty")
-    val difficulty: DifficultyDto
-)
-
-data class TopicDto(
-    @SerializedName("topicId")
-    val topicId: Int,
-
-    @SerializedName("topic")
-    val topic: String,
-)
-
-data class StatusDto(
-    @SerializedName("statusId")
-    val statusId: Int,
-
-    @SerializedName("text")
-    val text: String,
-)
-
-data class DifficultyDto(
-    @SerializedName("difficultyId")
-    val difficultyId: Int,
-
-    @SerializedName("mode")
-    val mode: String,
-)
-
 /**
  * Extension Functions zum Umwandeln von DTO zu Domain Model
  *
@@ -90,37 +46,5 @@ fun AnswerDto.toDomain(): Answer {
         text = text,
         correct = correct,
         question = question.toDomain()
-    )
-}
-
-fun QuestionDto.toDomain(): Question {
-    return Question(
-        questionId = questionId,
-        questionText = questionText,
-        reviewedBy = reviewedBy,
-        topic = topic.toDomain(),
-        status = status.toDomain(),
-        difficulty = difficulty.toDomain()
-    )
-}
-
-fun TopicDto.toDomain(): Topic {
-    return Topic(
-        topicId = topicId,
-        topic = topic
-    )
-}
-
-fun StatusDto.toDomain(): Status {
-    return Status(
-        statusId = statusId,
-        text = text
-    )
-}
-
-fun DifficultyDto.toDomain(): Difficulty {
-    return Difficulty(
-        difficultyId = difficultyId,
-        mode = mode
     )
 }
