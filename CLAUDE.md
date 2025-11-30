@@ -7,6 +7,7 @@
 - **SDK**: Min 28, Target/Compile 35, Java 11
 - **Architecture**: MVVM + Clean Architecture (Presentation → Domain → Data)
 - **DI**: Hilt, **State**: StateFlow, **Async**: Coroutines, **Network**: Retrofit + OkHttp + Gson
+- **Navigation**: Navigation Compose with NavGraph
 - **Error Handling**: `Result<T>` sealed class (Success/Error)
 
 ## Critical Configuration
@@ -37,7 +38,7 @@ app/src/main/java/com/app/quizapp/
 - **DI Setup**: `QuizApplication.kt`, `di/NetworkModule.kt` (Retrofit/OkHttp), `di/RepositoryModule.kt`
 - **Data Flow**: UI → ViewModel → Repository (interface) → RepositoryImpl → ApiService → Backend
 - **New API**: Add to `*ApiService.kt` → DTO in `dto/` → Interface in `domain/repository/` → Impl in `data/repository/` → Call from ViewModel
-- **New Screen**: Package in `presentation/` → ViewModel with `@HiltViewModel` → Composable → Use `hiltViewModel()`
+- **New Screen**: Package in `presentation/` → ViewModel with `@HiltViewModel` → Composable → Use `hiltViewModel()` → Add to NavGraph
 
 ## Build Commands
 - Build: `./gradlew build`
@@ -51,4 +52,5 @@ Compose BOM 2024.10.01, Hilt 2.51.1, Retrofit 2.11.0, OkHttp 4.12.0, Coroutines 
 ## Notes
 - Uses `.claudeignore` to exclude files
 - Network security: `network_security_config.xml` allows HTTP (for local backend)
-- Allways add comments to new funktions and document them. Do it compact.
+- Always add comments to new functions and document them. Do it compact.
+- Always use best practice when it comes to choosing async or sync code in my project to keep the ui thread smooth.
