@@ -1,6 +1,14 @@
 package com.app.quizapp.di
 
-import com.app.quizapp.data.remote.QuizApiService
+//import com.app.quizapp.data.remote.QuizApiService
+import com.app.quizapp.data.remote.AnswerApiService
+import com.app.quizapp.data.remote.UserRoleApiService
+import com.app.quizapp.data.remote.DifficultyApiService
+import com.app.quizapp.data.remote.StatusApiService
+import com.app.quizapp.data.remote.TopicApiService
+import com.app.quizapp.data.remote.QuestionApiService
+import com.app.quizapp.data.remote.UserApiService
+import com.app.quizapp.data.remote.UserQuestionApiService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -97,7 +105,49 @@ object NetworkModule {
      */
     @Provides
     @Singleton
-    fun provideQuizApiService(retrofit: Retrofit): QuizApiService {
-        return retrofit.create(QuizApiService::class.java)
+    fun provideAnswerApiService(retrofit: Retrofit): AnswerApiService {
+        return retrofit.create(AnswerApiService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideUserRoleApiService(retrofit: Retrofit): UserRoleApiService {
+        return retrofit.create(UserRoleApiService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideDifficultyApiService(retrofit: Retrofit): DifficultyApiService {
+        return retrofit.create(DifficultyApiService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideStatusApiService(retrofit: Retrofit): StatusApiService {
+        return retrofit.create(StatusApiService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideTopicApiService(retrofit: Retrofit): TopicApiService {
+        return retrofit.create(TopicApiService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideQuestionApiService(retrofit: Retrofit): QuestionApiService {
+        return retrofit.create(QuestionApiService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideUserApiService(retrofit: Retrofit): UserApiService {
+        return retrofit.create(UserApiService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideUserQuestionApiService(retrofit: Retrofit): UserQuestionApiService {
+        return retrofit.create(UserQuestionApiService::class.java)
     }
 }

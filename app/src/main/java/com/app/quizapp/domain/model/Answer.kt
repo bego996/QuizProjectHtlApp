@@ -1,7 +1,10 @@
 package com.app.quizapp.domain.model
 
+import com.app.quizapp.data.remote.dto.QuestionDto
+import com.google.gson.annotations.SerializedName
+
 /**
- * Domain Model für eine Quiz-Frage
+ * Domain Model für eine Answer
  *
  * Dies ist das Model, das in der gesamten App verwendet wird.
  * Es repräsentiert eine einzelne Quiz-Frage mit ihren Antwortmöglichkeiten.
@@ -16,26 +19,12 @@ package com.app.quizapp.domain.model
  * @property category Kategorie der Frage (z.B. "Geschichte", "Wissenschaft")
  * @property difficulty Schwierigkeitsgrad (z.B. "EASY", "MEDIUM", "HARD")
  */
-data class QuizQuestion(
-    val id: Long,
-    val text: String,
-    val answers: List<String>,
-    val correctAnswerIndex: Int,
-    val category: String,
-    val difficulty: String
-)
+data class Answer(
+    val answerId: Int,
 
-/**
- * Domain Model für ein komplettes Quiz
- *
- * Repräsentiert eine Sammlung von Quiz-Fragen, z.B. für eine Quiz-Session
- *
- * @property id Eindeutige ID des Quiz
- * @property title Titel des Quiz
- * @property questions Liste der Fragen in diesem Quiz
- */
-data class Quiz(
-    val id: Long,
-    val title: String,
-    val questions: List<QuizQuestion>
+    val text: String,
+
+    val correct: Boolean,
+
+    val question: Question,
 )
