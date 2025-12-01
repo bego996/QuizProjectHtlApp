@@ -89,10 +89,20 @@ dependencies {
 
     // Testing
     testImplementation(libs.junit)
+    testImplementation("io.mockk:mockk:1.13.8")                                    // Mocking
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")     // Coroutines Test
+    testImplementation("app.cash.turbine:turbine:1.0.0")                           // Flow Testing
+    testImplementation("com.google.truth:truth:1.1.4")                             // Assertions
+    testImplementation("com.squareup.okhttp3:mockwebserver:4.12.0")                // API Mocking
+    testImplementation("com.google.dagger:hilt-android-testing:2.51.1")            // Hilt Testing
+    kspTest("com.google.dagger:hilt-compiler:2.51.1")
+
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform("androidx.compose:compose-bom:2024.10.01"))
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
+    androidTestImplementation("com.google.dagger:hilt-android-testing:2.51.1")
+    kspAndroidTest("com.google.dagger:hilt-compiler:2.51.1")
 
     // Debug
     debugImplementation("androidx.compose.ui:ui-tooling")
