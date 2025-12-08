@@ -27,6 +27,12 @@ import com.app.quizapp.presentation.profile.ProfileStatisticsDestination
 import com.app.quizapp.presentation.profile.ProfileStatisticsScreen
 import com.app.quizapp.presentation.settings.SettingsDestination
 import com.app.quizapp.presentation.settings.SettingsScreen
+import com.app.quizapp.presentation.quiz.QuizDestination
+import com.app.quizapp.presentation.quiz.QuizScreen
+import com.app.quizapp.presentation.quiz.QuizResultDestination
+import com.app.quizapp.presentation.quiz.QuizResultScreen
+import com.app.quizapp.presentation.quiz.QuizReviewDestination
+import com.app.quizapp.presentation.quiz.QuizReviewScreen
 
 
 @Composable
@@ -70,7 +76,7 @@ fun MettingNavHost(                                           // Hauptfunktion f
 
         composable(route = HomeDestination.route) {                        // Home-Screen
             HomeScreen(
-                onDailyQuizClick = { /* TODO: Navigate to daily quiz */ },
+                onDailyQuizClick = { navController.navigate(QuizDestination.route) },
                 onCategoryClick = { navController.navigate(CategoryDestination.route) },
                 onSeeAllCategoriesClick = { navController.navigate(CategoryDestination.route) },
                 onSeeAllStatsClick = { navController.navigate(ProfileStatisticsDestination.route) },
@@ -102,7 +108,7 @@ fun MettingNavHost(                                           // Hauptfunktion f
         composable(route = SubtopicDestination.route) {                 // Subtopics-Screen
             SubtopicScreen(
                 onBackClick = { navController.popBackStack()},
-                onSubtopicClick = { /* TODO */ },
+                onSubtopicClick = { navController.navigate(QuizDestination.route) },
                 onHomeClick = { navController.navigate(HomeDestination.route) },
                 onDiscoverClick = { navController.navigate(CategoryDestination.route) },
                 onProfileClick = { navController.navigate(ProfileOverviewDestination.route) }
@@ -149,6 +155,47 @@ fun MettingNavHost(                                           // Hauptfunktion f
                 onHomeClick = { navController.navigate(HomeDestination.route) },
                 onDiscoverClick = { navController.navigate(CategoryDestination.route) },
                 onProfileClick = { navController.navigate(ProfileOverviewDestination.route) }
+            )
+        }
+
+        composable(route = QuizDestination.route) {                       // Quiz-Screen
+            QuizScreen(
+                onCloseClick = { navController.navigate(HomeDestination.route) },
+                onContinueClick = { currentQuestion, totalQuestions ->
+                    // Continue to next question (handled internally in QuizScreen)
+                },
+                onQuizComplete = { score, totalQuestions ->
+                    navController.navigate("${QuizResultDestination.route}/$score/$totalQuestions")
+                }
+            )
+        }
+
+        composable(route = "${QuizResultDestination.route}/{score}/{totalQuestions}") { backStackEntry ->
+            val score = backStackEntry.arguments?.getString("score")?.toIntOrNull() ?: 0
+            val totalQuestions = backStackEntry.arguments?.getString("totalQuestions")?.toIntOrNull() ?: 5
+
+            QuizResultScreen(
+                score = score,
+                totalQuestions = totalQuestions,
+                onReplayClick = {
+                    navController.navigate(QuizDestination.route) {
+                        popUpTo(QuizDestination.route) { inclusive = true }
+                    }
+                },
+                onReviewClick = {
+                    navController.navigate("${QuizReviewDestination.route}/$score/$totalQuestions")
+                },
+                onContinueClick = {
+                    navController.navigate(HomeDestination.route) {
+                        popUpTo(HomeDestination.route) { inclusive = true }
+                    }
+                }
+            )
+        }
+
+        composable(route = "${QuizReviewDestination.route}/{score}/{totalQuestions}") { backStackEntry ->
+            QuizReviewScreen(
+                onBackClick = { navController.popBackStack() }
             )
         }
     }
