@@ -1,4 +1,4 @@
-package com.app.quizapp.presentation.question
+package com.app.quizapp.presentation.admin.question
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn

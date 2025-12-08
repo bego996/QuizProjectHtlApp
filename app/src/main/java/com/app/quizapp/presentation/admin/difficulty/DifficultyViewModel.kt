@@ -1,9 +1,9 @@
-package com.app.quizapp.presentation.answer
+package com.app.quizapp.presentation.admin.difficulty
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.app.quizapp.domain.model.Answer
-import com.app.quizapp.domain.repository.AnswerRepository
+import com.app.quizapp.domain.model.Difficulty
+import com.app.quizapp.domain.repository.DifficultyRepository
 import com.app.quizapp.domain.util.Result
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -13,44 +13,33 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-/**
- * UI State für den Answer-Screen
- */
-data class AnswerUiState(
-    val answers: List<Answer> = emptyList(),
+data class DifficultyUiState(
+    val difficulties: List<Difficulty> = emptyList(),
     val isLoading: Boolean = false,
     val error: String? = null
 )
 
-/**
- * ViewModel für den Answer-Screen
- *
- * Lädt alle Answers vom Backend und stellt sie für die UI bereit.
- */
 @HiltViewModel
-class AnswerViewModel @Inject constructor(
-    private val repository: AnswerRepository
+class DifficultyViewModel @Inject constructor(
+    private val repository: DifficultyRepository
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(AnswerUiState())
-    val uiState: StateFlow<AnswerUiState> = _uiState.asStateFlow()
+    private val _uiState = MutableStateFlow(DifficultyUiState())
+    val uiState: StateFlow<DifficultyUiState> = _uiState.asStateFlow()
 
     init {
-        loadAllAnswers()
+        loadAllDifficulties()
     }
 
-    /**
-     * Lädt alle Answers vom Backend
-     */
-    fun loadAllAnswers() {
+    fun loadAllDifficulties() {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, error = null) }
 
-            when (val result = repository.getAllAnswers()) {
+            when (val result = repository.getAllDifficulties()) {
                 is Result.Success -> {
                     _uiState.update {
                         it.copy(
-                            answers = result.data,
+                            difficulties = result.data,
                             isLoading = false,
                             error = null
                         )

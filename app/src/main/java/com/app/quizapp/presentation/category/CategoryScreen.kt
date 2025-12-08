@@ -1,4 +1,4 @@
-package com.app.quizapp.presentation.topic
+package com.app.quizapp.presentation.category
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -6,6 +6,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.outlined.Search
@@ -23,53 +24,77 @@ import com.app.quizapp.QuizTopAppBar
 import com.app.quizapp.navigation.NavigationDestination
 import com.app.quizapp.R
 
-object TopicDestination : NavigationDestination {
-    override val route: String = "topics"
-    override val titleRes: Int = R.string.topics
+object CategoryDestination : NavigationDestination {
+    override val route: String = "categories"
+    override val titleRes: Int = R.string.categories
 }
 
+
 /**
- * Data class representing a quiz topic
+ * Data class representing a quiz category
  */
-data class Topic(
+data class Category(
     val id: String,
     val name: String,
-    val color: Color
+    val color: Color,
+    val isBookmarked: Boolean = false
 )
 
 /**
- * Main Topics screen showing all available topics for a category
+ * Main Categories screen showing all available quiz categories
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TopicScreen(
-    categoryName: String = "Maths",
+fun CategoryScreen(
     onBackClick: () -> Unit = {},
-    onTopicClick: (Topic) -> Unit = {},
+    onCategoryClick: (Category) -> Unit = {},
     onHomeClick: () -> Unit = {},
     onDiscoverClick: () -> Unit = {},
     onProfileClick: () -> Unit = {}
 ) {
-    // Sample topics - will be replaced with ViewModel data
-    val topics = listOf(
-        Topic("1", "Arithmetic", Color(0xFF2D1B1B)),
-        Topic("2", "Geometry", Color(0xFFD4A418)),
-        Topic("3", "Algebra", Color(0xFFB71C1C)),
-        Topic("4", "Analysis", Color(0xFF0D2968)),
-        Topic("5", "Probability", Color(0xFF1A1410)),
-        Topic("6", "Logic & Set Theory", Color(0xFFB71C1C)),
-        Topic("7", "Applied\nMathematics", Color(0xFF1976D2)),
-        Topic("8", "Trigonometry", Color(0xFF2E7D32))
+    // Sample categories - will be replaced with ViewModel data
+    val categories = listOf(
+        Category("1", "Maths", Color(0xFF2D1B1B)),
+        Category("2", "History", Color(0xFFD4A418)),
+        Category("3", "Chemistry", Color(0xFFB71C1C), isBookmarked = true),
+        Category("4", "Biology", Color(0xFF0D2968), isBookmarked = true),
+        Category("5", "Networks", Color(0xFF1A1410)),
+        Category("6", "Informatics", Color(0xFF4A5490)),
+        Category("7", "Geography", Color(0xFF1976D2), isBookmarked = true),
+        Category("8", "Medicine", Color(0xFF2E7D32), isBookmarked = true),
+        Category("9", "Electrical\nengineering", Color(0xFF6A1B5A), isBookmarked = true),
+        Category("10", "Customized", Color(0xFF4DB6AC), isBookmarked = true)
     )
 
     Scaffold(
         topBar = {
             QuizTopAppBar(
                 modifier = Modifier,
-                title = "$categoryName -> ${stringResource(TopicDestination.titleRes)}",
-                canNavigateBack = true,
-                navigateUp = onBackClick
+                title = stringResource(CategoryDestination.titleRes),
+                canNavigateBack = true
             )
+//            TopAppBar(
+//                title = {
+//                    Text(
+//                        text = stringResource(CategoryDestination.titleRes),
+//                        fontSize = 24.sp,
+//                        fontWeight = FontWeight.SemiBold,
+//                        color = Color(0xFF1A1A1A)
+//                    )
+//                },
+//                navigationIcon = {
+//                    IconButton(onClick = onBackClick) {
+//                        Icon(
+//                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+//                            contentDescription = "Back",
+//                            tint = Color(0xFF1A1A1A)
+//                        )
+//                    }
+//                },
+//                colors = TopAppBarDefaults.topAppBarColors(
+//                    containerColor = Color(0xFFB0E5E0)
+//                )
+//            )
         },
         bottomBar = {
             BottomNavigationBar(
@@ -88,10 +113,10 @@ fun TopicScreen(
             verticalArrangement = Arrangement.spacedBy(16.dp),
             contentPadding = PaddingValues(vertical = 16.dp)
         ) {
-            items(topics) { topic ->
-                TopicCard(
-                    topic = topic,
-                    onClick = { onTopicClick(topic) }
+            items(categories) { category ->
+                CategoryCard(
+                    category = category,
+                    onClick = { onCategoryClick(category) }
                 )
             }
         }
@@ -99,12 +124,12 @@ fun TopicScreen(
 }
 
 /**
- * Individual topic card with gradient background
+ * Individual category card with gradient background and bookmark icon
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TopicCard(
-    topic: Topic,
+fun CategoryCard(
+    category: Category,
     onClick: () -> Unit
 ) {
     Card(
@@ -123,22 +148,34 @@ fun TopicCard(
                 .background(
                     brush = Brush.horizontalGradient(
                         colors = listOf(
-                            topic.color,
-                            topic.color.copy(alpha = 0.7f),
-                            topic.color.copy(alpha = 0.3f)
+                            category.color,
+                            category.color.copy(alpha = 0.7f),
+                            category.color.copy(alpha = 0.3f)
                         )
                     )
                 )
                 .padding(20.dp)
         ) {
-            // Topic name
+            // Category name
             Text(
-                text = topic.name,
+                text = category.name,
                 fontSize = 24.sp,
                 fontWeight = FontWeight.SemiBold,
                 color = Color.White,
                 modifier = Modifier.align(Alignment.CenterStart)
             )
+
+            // Bookmark icon
+            if (category.isBookmarked) {
+                Icon(
+                    imageVector = Icons.Filled.Favorite,
+                    contentDescription = "Bookmarked",
+                    tint = Color(0xFF4DB6AC),
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .size(28.dp)
+                )
+            }
         }
     }
 }

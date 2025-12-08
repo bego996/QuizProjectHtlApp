@@ -1,4 +1,4 @@
-package com.app.quizapp.presentation.userquestion
+package com.app.quizapp.presentation.admin.status
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -11,23 +11,23 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.app.quizapp.domain.model.UserQuestion
+import com.app.quizapp.domain.model.Status
 
 @Composable
-fun UserQuestionScreen(
-    viewModel: UserQuestionViewModel = hiltViewModel()
+fun StatusScreen(
+    viewModel: StatusViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    UserQuestionContent(
+    StatusContent(
         uiState = uiState,
-        onRetry = viewModel::loadAllUserQuestions
+        onRetry = viewModel::loadAllStatuses
     )
 }
 
 @Composable
-fun UserQuestionContent(
-    uiState: UserQuestionUiState,
+fun StatusContent(
+    uiState: StatusUiState,
     onRetry: () -> Unit
 ) {
     Column(
@@ -36,7 +36,7 @@ fun UserQuestionContent(
             .padding(16.dp)
     ) {
         Text(
-            text = "Benutzer-Fragen",
+            text = "Status",
             style = MaterialTheme.typography.headlineMedium,
             modifier = Modifier.padding(bottom = 16.dp)
         )
@@ -68,12 +68,12 @@ fun UserQuestionContent(
                 }
             }
 
-            uiState.userQuestions.isEmpty() -> {
+            uiState.statuses.isEmpty() -> {
                 Box(
                     modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text("Keine Benutzer-Fragen gefunden")
+                    Text("Keine Status gefunden")
                 }
             }
 
@@ -81,8 +81,8 @@ fun UserQuestionContent(
                 LazyColumn(
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    items(uiState.userQuestions) { userQuestion ->
-                        UserQuestionCard(userQuestion = userQuestion)
+                    items(uiState.statuses) { status ->
+                        StatusCard(status = status)
                     }
                 }
             }
@@ -91,7 +91,7 @@ fun UserQuestionContent(
 }
 
 @Composable
-fun UserQuestionCard(userQuestion: UserQuestion) {
+fun StatusCard(status: Status) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
@@ -100,23 +100,11 @@ fun UserQuestionCard(userQuestion: UserQuestion) {
             modifier = Modifier.padding(12.dp)
         ) {
             Text(
-                text = "Benutzer: ${userQuestion.user.firstname} ${userQuestion.user.surname}",
+                text = status.text,
                 style = MaterialTheme.typography.bodyLarge
             )
-
-            HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
-
             Text(
-                text = "Frage: ${userQuestion.question.questionText}",
-                style = MaterialTheme.typography.bodyMedium
-            )
-            Text(
-                text = "Punktzahl: ${userQuestion.score}",
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.primary
-            )
-            Text(
-                text = "ID: ${userQuestion.userQuestionId}",
+                text = "ID: ${status.statusId}",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )

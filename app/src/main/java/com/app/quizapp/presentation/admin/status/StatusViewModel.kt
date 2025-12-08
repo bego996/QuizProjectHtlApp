@@ -1,9 +1,9 @@
-package com.app.quizapp.presentation.question
+package com.app.quizapp.presentation.admin.status
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.app.quizapp.domain.model.Question
-import com.app.quizapp.domain.repository.QuestionRepository
+import com.app.quizapp.domain.model.Status
+import com.app.quizapp.domain.repository.StatusRepository
 import com.app.quizapp.domain.util.Result
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -13,33 +13,33 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-data class QuestionUiState(
-    val questions: List<Question> = emptyList(),
+data class StatusUiState(
+    val statuses: List<Status> = emptyList(),
     val isLoading: Boolean = false,
     val error: String? = null
 )
 
 @HiltViewModel
-class QuestionViewModel @Inject constructor(
-    private val repository: QuestionRepository
+class StatusViewModel @Inject constructor(
+    private val repository: StatusRepository
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(QuestionUiState())
-    val uiState: StateFlow<QuestionUiState> = _uiState.asStateFlow()
+    private val _uiState = MutableStateFlow(StatusUiState())
+    val uiState: StateFlow<StatusUiState> = _uiState.asStateFlow()
 
     init {
-        loadAllQuestions()
+        loadAllStatuses()
     }
 
-    fun loadAllQuestions() {
+    fun loadAllStatuses() {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, error = null) }
 
-            when (val result = repository.getAllQuestions()) {
+            when (val result = repository.getAllStatuses()) {
                 is Result.Success -> {
                     _uiState.update {
                         it.copy(
-                            questions = result.data,
+                            statuses = result.data,
                             isLoading = false,
                             error = null
                         )

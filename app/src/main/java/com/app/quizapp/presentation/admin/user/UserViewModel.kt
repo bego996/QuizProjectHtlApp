@@ -1,9 +1,9 @@
-package com.app.quizapp.presentation.status
+package com.app.quizapp.presentation.admin.user
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.app.quizapp.domain.model.Status
-import com.app.quizapp.domain.repository.StatusRepository
+import com.app.quizapp.domain.model.User
+import com.app.quizapp.domain.repository.UserRepository
 import com.app.quizapp.domain.util.Result
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -13,33 +13,33 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-data class StatusUiState(
-    val statuses: List<Status> = emptyList(),
+data class UserUiState(
+    val users: List<User> = emptyList(),
     val isLoading: Boolean = false,
     val error: String? = null
 )
 
 @HiltViewModel
-class StatusViewModel @Inject constructor(
-    private val repository: StatusRepository
+class UserViewModel @Inject constructor(
+    private val repository: UserRepository
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(StatusUiState())
-    val uiState: StateFlow<StatusUiState> = _uiState.asStateFlow()
+    private val _uiState = MutableStateFlow(UserUiState())
+    val uiState: StateFlow<UserUiState> = _uiState.asStateFlow()
 
     init {
-        loadAllStatuses()
+        loadAllUsers()
     }
 
-    fun loadAllStatuses() {
+    fun loadAllUsers() {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, error = null) }
 
-            when (val result = repository.getAllStatuses()) {
+            when (val result = repository.getAllUsers()) {
                 is Result.Success -> {
                     _uiState.update {
                         it.copy(
-                            statuses = result.data,
+                            users = result.data,
                             isLoading = false,
                             error = null
                         )

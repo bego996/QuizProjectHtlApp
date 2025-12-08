@@ -1,4 +1,4 @@
-package com.app.quizapp.presentation.topic
+package com.app.quizapp.presentation.subtopic
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -8,6 +8,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -23,50 +24,50 @@ import com.app.quizapp.QuizTopAppBar
 import com.app.quizapp.navigation.NavigationDestination
 import com.app.quizapp.R
 
-object TopicDestination : NavigationDestination {
-    override val route: String = "topics"
-    override val titleRes: Int = R.string.topics
+object SubtopicDestination : NavigationDestination {
+    override val route: String = "subtopics"
+    override val titleRes: Int = R.string.subtopics
 }
 
 /**
- * Data class representing a quiz topic
+ * Data class representing a quiz subtopic
  */
-data class Topic(
+data class Subtopic(
     val id: String,
     val name: String,
     val color: Color
 )
 
 /**
- * Main Topics screen showing all available topics for a category
+ * Main Subtopics screen showing all available subtopics for a topic
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TopicScreen(
+fun SubtopicScreen(
     categoryName: String = "Maths",
+    topicName: String = "Arithmetic",
     onBackClick: () -> Unit = {},
-    onTopicClick: (Topic) -> Unit = {},
+    onSubtopicClick: (Subtopic) -> Unit = {},
     onHomeClick: () -> Unit = {},
     onDiscoverClick: () -> Unit = {},
     onProfileClick: () -> Unit = {}
 ) {
-    // Sample topics - will be replaced with ViewModel data
-    val topics = listOf(
-        Topic("1", "Arithmetic", Color(0xFF2D1B1B)),
-        Topic("2", "Geometry", Color(0xFFD4A418)),
-        Topic("3", "Algebra", Color(0xFFB71C1C)),
-        Topic("4", "Analysis", Color(0xFF0D2968)),
-        Topic("5", "Probability", Color(0xFF1A1410)),
-        Topic("6", "Logic & Set Theory", Color(0xFFB71C1C)),
-        Topic("7", "Applied\nMathematics", Color(0xFF1976D2)),
-        Topic("8", "Trigonometry", Color(0xFF2E7D32))
+    // Sample subtopics - will be replaced with ViewModel data
+    val subtopics = listOf(
+        Subtopic("1", "Addition", Color(0xFF2D1B1B)),
+        Subtopic("2", "Subtraction", Color(0xFFD4A418)),
+        Subtopic("3", "Multiplication", Color(0xFFB71C1C)),
+        Subtopic("4", "Division", Color(0xFF0D2968)),
+        Subtopic("5", "Fractions", Color(0xFF1A1410)),
+        Subtopic("6", "Percentage\nCalculation", Color(0xFFB71C1C)),
+        Subtopic("7", "Powers & Roots", Color(0xFF1976D2))
     )
 
     Scaffold(
         topBar = {
             QuizTopAppBar(
                 modifier = Modifier,
-                title = "$categoryName -> ${stringResource(TopicDestination.titleRes)}",
+                title = "$categoryName -> $topicName",
                 canNavigateBack = true,
                 navigateUp = onBackClick
             )
@@ -88,10 +89,10 @@ fun TopicScreen(
             verticalArrangement = Arrangement.spacedBy(16.dp),
             contentPadding = PaddingValues(vertical = 16.dp)
         ) {
-            items(topics) { topic ->
-                TopicCard(
-                    topic = topic,
-                    onClick = { onTopicClick(topic) }
+            items(subtopics) { subtopic ->
+                SubtopicCard(
+                    subtopic = subtopic,
+                    onClick = { onSubtopicClick(subtopic) }
                 )
             }
         }
@@ -99,12 +100,12 @@ fun TopicScreen(
 }
 
 /**
- * Individual topic card with gradient background
+ * Individual subtopic card with gradient background and play icon
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TopicCard(
-    topic: Topic,
+fun SubtopicCard(
+    subtopic: Subtopic,
     onClick: () -> Unit
 ) {
     Card(
@@ -123,21 +124,31 @@ fun TopicCard(
                 .background(
                     brush = Brush.horizontalGradient(
                         colors = listOf(
-                            topic.color,
-                            topic.color.copy(alpha = 0.7f),
-                            topic.color.copy(alpha = 0.3f)
+                            subtopic.color,
+                            subtopic.color.copy(alpha = 0.7f),
+                            subtopic.color.copy(alpha = 0.3f)
                         )
                     )
                 )
                 .padding(20.dp)
         ) {
-            // Topic name
+            // Subtopic name
             Text(
-                text = topic.name,
+                text = subtopic.name,
                 fontSize = 24.sp,
                 fontWeight = FontWeight.SemiBold,
                 color = Color.White,
                 modifier = Modifier.align(Alignment.CenterStart)
+            )
+
+            // Play icon
+            Icon(
+                imageVector = Icons.Filled.PlayArrow,
+                contentDescription = "Start quiz",
+                tint = Color(0xFF4DB6AC),
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .size(32.dp)
             )
         }
     }
