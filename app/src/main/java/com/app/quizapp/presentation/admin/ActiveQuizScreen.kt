@@ -19,8 +19,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.app.quizapp.BottomNavigationBar
+import com.app.quizapp.QuizTopAppBar
 import com.app.quizapp.R
 import com.app.quizapp.navigation.NavigationDestination
+import com.app.quizapp.presentation.category.CategoryDestination
 
 object ActiveQuizDestination : NavigationDestination {
     override val route: String = "active_quiz"
@@ -29,8 +32,7 @@ object ActiveQuizDestination : NavigationDestination {
 
 enum class QuizStatus {
     ACTIVE,
-    INACTIVE,
-    DELETED
+    INACTIVE
 }
 
 data class QuizItem(
@@ -45,6 +47,7 @@ data class QuizItem(
 /**
  * Admin screen for viewing and managing active quizzes
  */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ActiveQuizScreen(
     onBackClick: () -> Unit = {},
@@ -52,7 +55,7 @@ fun ActiveQuizScreen(
     onDeleteClick: (String) -> Unit = {},
     onHomeClick: () -> Unit = {},
     onDiscoverClick: () -> Unit = {},
-    onAdminClick: () -> Unit = {}
+    onProfileClick: () -> Unit = {}
 ) {
     // Sample quiz data - will be replaced with ViewModel data
     val quizzes = remember {
@@ -79,7 +82,7 @@ fun ActiveQuizScreen(
                 question = "Was ist die Hauptstadt von Deutschland?",
                 reviewedBy = null,
                 createdDate = "04.12.2025",
-                status = QuizStatus.DELETED
+                status = QuizStatus.INACTIVE
             ),
             QuizItem(
                 id = "#12348",
@@ -94,87 +97,19 @@ fun ActiveQuizScreen(
 
     Scaffold(
         topBar = {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(Color(0xFFB0E5E0))
-                    .padding(horizontal = 16.dp, vertical = 16.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                IconButton(onClick = onBackClick) {
-                    Icon(
-                        imageVector = Icons.Filled.ArrowBack,
-                        contentDescription = "Back",
-                        tint = Color(0xFF654321),
-                        modifier = Modifier.size(28.dp)
-                    )
-                }
-                Spacer(modifier = Modifier.width(8.dp))
-                Text(
-                    text = "Active Quiz",
-                    fontSize = 24.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color(0xFF654321)
-                )
-            }
+            QuizTopAppBar(
+                modifier = Modifier,
+                title = stringResource(ActiveQuizDestination.titleRes),
+                canNavigateBack = true,
+                navigateUp = onBackClick
+            )
         },
         bottomBar = {
-            NavigationBar(
-                containerColor = Color(0xFF00ACC1),
-                modifier = Modifier.height(64.dp)
-            ) {
-                NavigationBarItem(
-                    icon = {
-                        Icon(
-                            imageVector = Icons.Filled.Home,
-                            contentDescription = "Home",
-                            tint = Color.White
-                        )
-                    },
-                    label = { Text("Home", color = Color.White, fontSize = 12.sp) },
-                    selected = false,
-                    onClick = onHomeClick,
-                    colors = NavigationBarItemDefaults.colors(
-                        selectedIconColor = Color.White,
-                        unselectedIconColor = Color.White,
-                        indicatorColor = Color(0xFF00838F)
-                    )
-                )
-                NavigationBarItem(
-                    icon = {
-                        Icon(
-                            imageVector = Icons.Filled.Search,
-                            contentDescription = "Discover",
-                            tint = Color.White
-                        )
-                    },
-                    label = { Text("Discover", color = Color.White, fontSize = 12.sp) },
-                    selected = false,
-                    onClick = onDiscoverClick,
-                    colors = NavigationBarItemDefaults.colors(
-                        selectedIconColor = Color.White,
-                        unselectedIconColor = Color.White,
-                        indicatorColor = Color(0xFF00838F)
-                    )
-                )
-                NavigationBarItem(
-                    icon = {
-                        Icon(
-                            imageVector = Icons.Filled.Person,
-                            contentDescription = "Admin",
-                            tint = Color.White
-                        )
-                    },
-                    label = { Text("Admin", color = Color.White, fontSize = 12.sp) },
-                    selected = true,
-                    onClick = onAdminClick,
-                    colors = NavigationBarItemDefaults.colors(
-                        selectedIconColor = Color.White,
-                        unselectedIconColor = Color.White,
-                        indicatorColor = Color(0xFF00838F)
-                    )
-                )
-            }
+            BottomNavigationBar(
+                onHomeClick = onHomeClick,
+                onDiscoverClick = onDiscoverClick,
+                onProfileClick = onProfileClick
+            )
         }
     ) { paddingValues ->
         LazyColumn(
@@ -208,7 +143,6 @@ fun QuizItemCard(
     val statusColor = when (quiz.status) {
         QuizStatus.ACTIVE -> Color(0xFF2E7D32)
         QuizStatus.INACTIVE -> Color(0xFFFF8F00)
-        QuizStatus.DELETED -> Color(0xFFD32F2F)
     }
 
     Card(
@@ -309,7 +243,9 @@ fun QuizItemCard(
             ) {
                 Button(
                     onClick = onDetailsClick,
-                    modifier = Modifier.weight(1f).height(40.dp),
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(40.dp),
                     shape = RoundedCornerShape(20.dp),
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Color(0xFF2E7D32)
@@ -322,23 +258,22 @@ fun QuizItemCard(
                         color = Color.White
                     )
                 }
-
-                if (quiz.status == QuizStatus.DELETED) {
-                    Button(
-                        onClick = onDeleteClick,
-                        modifier = Modifier.weight(1f).height(40.dp),
-                        shape = RoundedCornerShape(20.dp),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = Color(0xFFD32F2F)
-                        )
-                    ) {
-                        Text(
-                            text = "Delete anyway",
-                            fontSize = 13.sp,
-                            fontWeight = FontWeight.SemiBold,
-                            color = Color.White
-                        )
-                    }
+                Button(
+                    onClick = onDeleteClick,
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(40.dp),
+                    shape = RoundedCornerShape(20.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(0xFFD32F2F)
+                    )
+                ) {
+                    Text(
+                        text = "Delete anyway",
+                        fontSize = 13.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        color = Color.White
+                    )
                 }
             }
         }

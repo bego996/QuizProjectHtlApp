@@ -223,7 +223,7 @@ fun MettingNavHost(                                           // Hauptfunktion f
                 onSeeResultsClick = { navController.navigate(ActiveQuizDestination.route) },
                 onHomeClick = { navController.navigate(HomeDestination.route) },
                 onDiscoverClick = { navController.navigate(CategoryDestination.route) },
-                onAdminClick = { navController.navigate(ProfileOverviewDestination.route) }
+                onProfileClick = { navController.navigate(ProfileOverviewDestination.route) }
             )
         }
 
@@ -234,7 +234,7 @@ fun MettingNavHost(                                           // Hauptfunktion f
                 onDeleteClick = { quizId -> /* TODO: Handle quiz deletion */ },
                 onHomeClick = { navController.navigate(HomeDestination.route) },
                 onDiscoverClick = { navController.navigate(CategoryDestination.route) },
-                onAdminClick = { navController.navigate(ProfileOverviewDestination.route) }
+                onProfileClick = { navController.navigate(ProfileOverviewDestination.route) }
             )
         }
 
@@ -244,7 +244,7 @@ fun MettingNavHost(                                           // Hauptfunktion f
                 onUserClick = { email -> /* TODO: Navigate to user details */ },
                 onHomeClick = { navController.navigate(HomeDestination.route) },
                 onDiscoverClick = { navController.navigate(CategoryDestination.route) },
-                onAdminClick = { navController.navigate(ProfileOverviewDestination.route) }
+                onProfileClick = { navController.navigate(ProfileOverviewDestination.route) }
             )
         }
     }

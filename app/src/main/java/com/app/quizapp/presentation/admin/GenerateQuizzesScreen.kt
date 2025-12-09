@@ -22,6 +22,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.app.quizapp.BottomNavigationBar
+import com.app.quizapp.QuizTopAppBar
 import com.app.quizapp.R
 import com.app.quizapp.navigation.NavigationDestination
 
@@ -33,6 +35,7 @@ object GenerateQuizzesDestination : NavigationDestination {
 /**
  * Admin screen for generating quizzes and topics
  */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun GenerateQuizzesScreen(
     onBackClick: () -> Unit = {},
@@ -40,7 +43,7 @@ fun GenerateQuizzesScreen(
     onSeeResultsClick: () -> Unit = {},
     onHomeClick: () -> Unit = {},
     onDiscoverClick: () -> Unit = {},
-    onAdminClick: () -> Unit = {}
+    onProfileClick: () -> Unit = {}
 ) {
     var isQuizMode by remember { mutableStateOf(true) } // true = Quiz erstellen, false = Thema erstellen
     var questionText by remember { mutableStateOf("Was ist die Hauptstadt von Deutschland?") }
@@ -51,87 +54,19 @@ fun GenerateQuizzesScreen(
 
     Scaffold(
         topBar = {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(Color(0xFFB0E5E0))
-                    .padding(horizontal = 16.dp, vertical = 16.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                IconButton(onClick = onBackClick) {
-                    Icon(
-                        imageVector = Icons.Filled.ArrowBack,
-                        contentDescription = "Back",
-                        tint = Color(0xFF654321),
-                        modifier = Modifier.size(28.dp)
-                    )
-                }
-                Spacer(modifier = Modifier.width(8.dp))
-                Text(
-                    text = "Generate Quizzes",
-                    fontSize = 24.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color(0xFF654321)
-                )
-            }
+            QuizTopAppBar(
+                modifier = Modifier,
+                title = stringResource(GenerateQuizzesDestination.titleRes),
+                canNavigateBack = true,
+                navigateUp = onBackClick
+            )
         },
         bottomBar = {
-            NavigationBar(
-                containerColor = Color(0xFF00ACC1),
-                modifier = Modifier.height(64.dp)
-            ) {
-                NavigationBarItem(
-                    icon = {
-                        Icon(
-                            imageVector = Icons.Filled.Home,
-                            contentDescription = "Home",
-                            tint = Color.White
-                        )
-                    },
-                    label = { Text("Home", color = Color.White, fontSize = 12.sp) },
-                    selected = false,
-                    onClick = onHomeClick,
-                    colors = NavigationBarItemDefaults.colors(
-                        selectedIconColor = Color.White,
-                        unselectedIconColor = Color.White,
-                        indicatorColor = Color(0xFF00838F)
-                    )
-                )
-                NavigationBarItem(
-                    icon = {
-                        Icon(
-                            imageVector = Icons.Filled.Search,
-                            contentDescription = "Discover",
-                            tint = Color.White
-                        )
-                    },
-                    label = { Text("Discover", color = Color.White, fontSize = 12.sp) },
-                    selected = false,
-                    onClick = onDiscoverClick,
-                    colors = NavigationBarItemDefaults.colors(
-                        selectedIconColor = Color.White,
-                        unselectedIconColor = Color.White,
-                        indicatorColor = Color(0xFF00838F)
-                    )
-                )
-                NavigationBarItem(
-                    icon = {
-                        Icon(
-                            imageVector = Icons.Filled.Person,
-                            contentDescription = "Admin",
-                            tint = Color.White
-                        )
-                    },
-                    label = { Text("Admin", color = Color.White, fontSize = 12.sp) },
-                    selected = true,
-                    onClick = onAdminClick,
-                    colors = NavigationBarItemDefaults.colors(
-                        selectedIconColor = Color.White,
-                        unselectedIconColor = Color.White,
-                        indicatorColor = Color(0xFF00838F)
-                    )
-                )
-            }
+            BottomNavigationBar(
+                onHomeClick = onHomeClick,
+                onDiscoverClick = onDiscoverClick,
+                onProfileClick = onProfileClick
+            )
         }
     ) { paddingValues ->
         Column(

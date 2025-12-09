@@ -20,6 +20,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.app.quizapp.BottomNavigationBar
 import com.app.quizapp.QuizTopAppBar
 import com.app.quizapp.navigation.NavigationDestination
 import com.app.quizapp.R
@@ -151,81 +152,5 @@ fun SubtopicCard(
                     .size(32.dp)
             )
         }
-    }
-}
-
-/**
- * Bottom navigation bar with Home, Discover, and Profile tabs
- */
-@Composable
-fun BottomNavigationBar(
-    onHomeClick: () -> Unit,
-    onDiscoverClick: () -> Unit,
-    onProfileClick: () -> Unit
-) {
-    NavigationBar(
-        containerColor = Color(0xFF00ACC1),
-        contentColor = Color.White,
-        modifier = Modifier.height(80.dp)
-    ) {
-        NavigationBarItem(
-            icon = {
-                Icon(
-                    imageVector = Icons.Filled.Home,
-                    contentDescription = "Home",
-                    modifier = Modifier.size(28.dp)
-                )
-            },
-            label = { Text("Home", fontSize = 12.sp) },
-            selected = false,
-            onClick = onHomeClick,
-            colors = NavigationBarItemDefaults.colors(
-                selectedIconColor = Color.White,
-                unselectedIconColor = Color(0xFF004D56),
-                selectedTextColor = Color.White,
-                unselectedTextColor = Color(0xFF004D56),
-                indicatorColor = Color.Transparent
-            )
-        )
-
-        NavigationBarItem(
-            icon = {
-                Icon(
-                    imageVector = Icons.Outlined.Search,
-                    contentDescription = "Discover",
-                    modifier = Modifier.size(28.dp)
-                )
-            },
-            label = { Text("Discover", fontSize = 12.sp) },
-            selected = true,
-            onClick = onDiscoverClick,
-            colors = NavigationBarItemDefaults.colors(
-                selectedIconColor = Color.White,
-                unselectedIconColor = Color(0xFF004D56),
-                selectedTextColor = Color.White,
-                unselectedTextColor = Color(0xFF004D56),
-                indicatorColor = Color(0xFF00796B)
-            )
-        )
-
-        NavigationBarItem(
-            icon = {
-                Icon(
-                    imageVector = Icons.Filled.Person,
-                    contentDescription = "Profile",
-                    modifier = Modifier.size(28.dp)
-                )
-            },
-            label = { Text("Profile", fontSize = 12.sp) },
-            selected = false,
-            onClick = onProfileClick,
-            colors = NavigationBarItemDefaults.colors(
-                selectedIconColor = Color.White,
-                unselectedIconColor = Color(0xFF004D56),
-                selectedTextColor = Color.White,
-                unselectedTextColor = Color(0xFF004D56),
-                indicatorColor = Color.Transparent
-            )
-        )
     }
 }

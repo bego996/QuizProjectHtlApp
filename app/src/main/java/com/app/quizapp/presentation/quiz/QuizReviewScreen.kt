@@ -18,8 +18,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.app.quizapp.QuizTopAppBar
 import com.app.quizapp.R
 import com.app.quizapp.navigation.NavigationDestination
+import com.app.quizapp.presentation.category.CategoryDestination
 
 object QuizReviewDestination : NavigationDestination {
     override val route: String = "quiz_review"
@@ -38,6 +40,7 @@ data class ReviewQuestion(
 /**
  * Quiz review screen showing all questions with correct/incorrect answers
  */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun QuizReviewScreen(
     onBackClick: () -> Unit = {}
@@ -90,29 +93,12 @@ fun QuizReviewScreen(
 
     Scaffold(
         topBar = {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(Color(0xFFB0E5E0))
-                    .padding(horizontal = 16.dp, vertical = 16.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                IconButton(onClick = onBackClick) {
-                    Icon(
-                        imageVector = Icons.Filled.ArrowBack,
-                        contentDescription = "Back",
-                        tint = Color(0xFF654321),
-                        modifier = Modifier.size(28.dp)
-                    )
-                }
-                Spacer(modifier = Modifier.width(8.dp))
-                Text(
-                    text = "Review",
-                    fontSize = 24.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color(0xFF654321)
-                )
-            }
+            QuizTopAppBar(
+                modifier = Modifier,
+                title = stringResource(QuizReviewDestination.titleRes),
+                canNavigateBack = true,
+                navigateUp = onBackClick
+            )
         }
     ) { paddingValues ->
         LazyColumn(

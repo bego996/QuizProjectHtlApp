@@ -23,6 +23,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.app.quizapp.BottomNavigationBar
 import com.app.quizapp.R
 import com.app.quizapp.navigation.NavigationDestination
 
@@ -53,74 +54,11 @@ fun HomeScreen(
 
     Scaffold(
         bottomBar = {
-            NavigationBar(
-                containerColor = Color(0xFF00ACC1),
-                modifier = Modifier.height(80.dp)
-            ) {
-                NavigationBarItem(
-                    selected = true,
-                    onClick = onHomeClick,
-                    icon = {
-                        Icon(
-                            imageVector = Icons.Filled.Home,
-                            contentDescription = "Home",
-                            tint = Color(0xFF654321)
-                        )
-                    },
-                    label = {
-                        Text(
-                            "Home",
-                            color = Color(0xFF654321),
-                            fontWeight = FontWeight.Bold
-                        )
-                    },
-                    colors = NavigationBarItemDefaults.colors(
-                        selectedIconColor = Color(0xFF654321),
-                        selectedTextColor = Color(0xFF654321),
-                        indicatorColor = Color.Transparent
-                    )
-                )
-                NavigationBarItem(
-                    selected = false,
-                    onClick = onDiscoverClick,
-                    icon = {
-                        Icon(
-                            imageVector = Icons.Filled.Search,
-                            contentDescription = "Discover",
-                            tint = Color(0xFF1A1A1A)
-                        )
-                    },
-                    label = {
-                        Text(
-                            "Discover",
-                            color = Color(0xFF1A1A1A)
-                        )
-                    },
-                    colors = NavigationBarItemDefaults.colors(
-                        indicatorColor = Color.Transparent
-                    )
-                )
-                NavigationBarItem(
-                    selected = false,
-                    onClick = onProfileClick,
-                    icon = {
-                        Icon(
-                            imageVector = Icons.Filled.Person,
-                            contentDescription = "Profile",
-                            tint = Color(0xFF1A1A1A)
-                        )
-                    },
-                    label = {
-                        Text(
-                            "Profile",
-                            color = Color(0xFF1A1A1A)
-                        )
-                    },
-                    colors = NavigationBarItemDefaults.colors(
-                        indicatorColor = Color.Transparent
-                    )
-                )
-            }
+            BottomNavigationBar(
+                onHomeClick = onHomeClick,
+                onDiscoverClick = onDiscoverClick,
+                onProfileClick = onProfileClick
+            )
         }
     ) { paddingValues ->
         LazyColumn(

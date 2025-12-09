@@ -18,8 +18,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.app.quizapp.BottomNavigationBar
+import com.app.quizapp.QuizTopAppBar
 import com.app.quizapp.R
 import com.app.quizapp.navigation.NavigationDestination
+import com.app.quizapp.presentation.category.CategoryDestination
 
 object SettingsDestination : NavigationDestination {
     override val route: String = "settings"
@@ -34,6 +37,7 @@ data class SettingsOption(
 /**
  * Settings screen with various app configuration options
  */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
     isAdmin: Boolean = false,
@@ -62,96 +66,19 @@ fun SettingsScreen(
 
     Scaffold(
         topBar = {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(Color(0xFFB0E5E0))
-                    .padding(horizontal = 16.dp, vertical = 16.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                IconButton(onClick = onBackClick) {
-                    Icon(
-                        imageVector = Icons.Filled.ArrowBack,
-                        contentDescription = "Back",
-                        tint = Color(0xFF654321),
-                        modifier = Modifier.size(28.dp)
-                    )
-                }
-                Spacer(modifier = Modifier.width(8.dp))
-                Text(
-                    text = "Settings",
-                    fontSize = 24.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color(0xFF654321)
-                )
-            }
+            QuizTopAppBar(
+                modifier = Modifier,
+                title = stringResource(SettingsDestination.titleRes),
+                canNavigateBack = true,
+                navigateUp = onBackClick
+            )
         },
         bottomBar = {
-            NavigationBar(
-                containerColor = Color(0xFF00ACC1),
-                modifier = Modifier.height(80.dp)
-            ) {
-                NavigationBarItem(
-                    selected = false,
-                    onClick = onHomeClick,
-                    icon = {
-                        Icon(
-                            imageVector = Icons.Filled.Home,
-                            contentDescription = "Home",
-                            tint = Color(0xFF1A1A1A)
-                        )
-                    },
-                    label = {
-                        Text(
-                            "Home",
-                            color = Color(0xFF1A1A1A)
-                        )
-                    },
-                    colors = NavigationBarItemDefaults.colors(
-                        indicatorColor = Color.Transparent
-                    )
-                )
-                NavigationBarItem(
-                    selected = false,
-                    onClick = onDiscoverClick,
-                    icon = {
-                        Icon(
-                            imageVector = Icons.Filled.Search,
-                            contentDescription = "Discover",
-                            tint = Color(0xFF1A1A1A)
-                        )
-                    },
-                    label = {
-                        Text(
-                            "Discover",
-                            color = Color(0xFF1A1A1A)
-                        )
-                    },
-                    colors = NavigationBarItemDefaults.colors(
-                        indicatorColor = Color.Transparent
-                    )
-                )
-                NavigationBarItem(
-                    selected = false,
-                    onClick = onProfileClick,
-                    icon = {
-                        Icon(
-                            imageVector = Icons.Filled.Person,
-                            contentDescription = "Profile",
-                            tint = Color(0xFF1A1A1A)
-                        )
-                    },
-                    label = {
-                        Text(
-                            "Profile",
-                            color = Color(0xFF1A1A1A)
-                        )
-                    },
-                    colors = NavigationBarItemDefaults.colors(
-                        indicatorColor = Color.Transparent
-                    )
-                )
-            }
+            BottomNavigationBar(
+                onHomeClick = onHomeClick,
+                onDiscoverClick = onDiscoverClick,
+                onProfileClick = onProfileClick
+            )
         }
     ) { paddingValues ->
         LazyColumn(
