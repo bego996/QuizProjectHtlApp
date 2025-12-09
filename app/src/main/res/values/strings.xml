@@ -13,4 +13,7 @@
     <string name="quiz">Quiz</string>
     <string name="quiz_result">Quiz Result</string>
     <string name="quiz_review">Quiz Review</string>
+    <string name="generate_quizzes">Generate Quizzes</string>
+    <string name="active_quiz">Active Quiz</string>
+    <string name="users">Users</string>
 </resources>

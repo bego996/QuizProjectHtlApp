@@ -36,10 +36,15 @@ object HomeDestination : NavigationDestination {
  */
 @Composable
 fun HomeScreen(
+    userName: String = "Georgiette",
+    isAdmin: Boolean = false,
     onDailyQuizClick: () -> Unit = {},
     onCategoryClick: (String) -> Unit = {},
     onSeeAllCategoriesClick: () -> Unit = {},
     onSeeAllStatsClick: () -> Unit = {},
+    onActiveUsersClick: () -> Unit = {},
+    onActiveQuizClick: () -> Unit = {},
+    onGenerateQuizzesClick: () -> Unit = {},
     onHomeClick: () -> Unit = {},
     onDiscoverClick: () -> Unit = {},
     onProfileClick: () -> Unit = {}
@@ -136,13 +141,13 @@ fun HomeScreen(
                 ) {
                     Column {
                         Text(
-                            text = "Hello Georgiette",
+                            text = "Hello $userName${if (isAdmin) "(Admin)" else ""}",
                             fontSize = 24.sp,
                             fontWeight = FontWeight.Bold,
                             color = Color(0xFF654321)
                         )
                         Text(
-                            text = "Let's start your quiz now",
+                            text = if (isAdmin) "Let's start your quiz now or do administration" else "Let's start your quiz now",
                             fontSize = 14.sp,
                             color = Color(0xFF654321)
                         )
@@ -255,6 +260,186 @@ fun HomeScreen(
                                 text = "5 Questions",
                                 fontSize = 16.sp,
                                 color = Color.White.copy(alpha = 0.9f)
+                            )
+                        }
+                    }
+                }
+            }
+
+            // Admin-only cards
+            if (isAdmin) {
+                item {
+                    // Active Users card
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(120.dp)
+                            .padding(bottom = 12.dp)
+                            .clickable { onActiveUsersClick() },
+                        shape = RoundedCornerShape(16.dp),
+                        colors = CardDefaults.cardColors(
+                            containerColor = Color.Transparent
+                        )
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .background(
+                                    brush = Brush.horizontalGradient(
+                                        colors = listOf(
+                                            Color(0xFF2E7D32),
+                                            Color(0xFF43A047)
+                                        )
+                                    )
+                                )
+                        ) {
+                            // Decorative circles
+                            Box(
+                                modifier = Modifier
+                                    .size(80.dp)
+                                    .offset(x = (-20).dp, y = (-20).dp)
+                                    .clip(CircleShape)
+                                    .background(Color(0xFFDCE775).copy(alpha = 0.4f))
+                                    .align(Alignment.TopStart)
+                            )
+                            Box(
+                                modifier = Modifier
+                                    .size(100.dp)
+                                    .offset(x = 20.dp, y = 20.dp)
+                                    .clip(CircleShape)
+                                    .background(Color(0xFF8D6E63).copy(alpha = 0.3f))
+                                    .align(Alignment.BottomEnd)
+                            )
+
+                            Text(
+                                text = "Active Users",
+                                fontSize = 28.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = Color.White,
+                                modifier = Modifier
+                                    .align(Alignment.CenterStart)
+                                    .padding(24.dp)
+                            )
+                        }
+                    }
+                }
+
+                item {
+                    // Active/Unreviewed Quizzes card
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(120.dp)
+                            .padding(bottom = 12.dp)
+                            .clickable { onActiveQuizClick() },
+                        shape = RoundedCornerShape(16.dp),
+                        colors = CardDefaults.cardColors(
+                            containerColor = Color.Transparent
+                        )
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .background(
+                                    brush = Brush.horizontalGradient(
+                                        colors = listOf(
+                                            Color(0xFF2E7D32),
+                                            Color(0xFF43A047)
+                                        )
+                                    )
+                                )
+                        ) {
+                            // Decorative circles
+                            Box(
+                                modifier = Modifier
+                                    .size(80.dp)
+                                    .offset(x = (-20).dp, y = (-20).dp)
+                                    .clip(CircleShape)
+                                    .background(Color(0xFFDCE775).copy(alpha = 0.4f))
+                                    .align(Alignment.TopStart)
+                            )
+                            Box(
+                                modifier = Modifier
+                                    .size(100.dp)
+                                    .offset(x = 20.dp, y = 20.dp)
+                                    .clip(CircleShape)
+                                    .background(Color(0xFF8D6E63).copy(alpha = 0.3f))
+                                    .align(Alignment.BottomEnd)
+                            )
+
+                            Column(
+                                modifier = Modifier
+                                    .align(Alignment.CenterStart)
+                                    .padding(24.dp)
+                            ) {
+                                Text(
+                                    text = "Active/Unreviewed",
+                                    fontSize = 24.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = Color.White
+                                )
+                                Text(
+                                    text = "Quizzes",
+                                    fontSize = 24.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = Color.White
+                                )
+                            }
+                        }
+                    }
+                }
+
+                item {
+                    // Generate Quizzes card
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(120.dp)
+                            .padding(bottom = 24.dp)
+                            .clickable { onGenerateQuizzesClick() },
+                        shape = RoundedCornerShape(16.dp),
+                        colors = CardDefaults.cardColors(
+                            containerColor = Color.Transparent
+                        )
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .background(
+                                    brush = Brush.horizontalGradient(
+                                        colors = listOf(
+                                            Color(0xFF2E7D32),
+                                            Color(0xFF43A047)
+                                        )
+                                    )
+                                )
+                        ) {
+                            // Decorative circles
+                            Box(
+                                modifier = Modifier
+                                    .size(80.dp)
+                                    .offset(x = (-20).dp, y = (-20).dp)
+                                    .clip(CircleShape)
+                                    .background(Color(0xFFDCE775).copy(alpha = 0.4f))
+                                    .align(Alignment.TopStart)
+                            )
+                            Box(
+                                modifier = Modifier
+                                    .size(100.dp)
+                                    .offset(x = 20.dp, y = 20.dp)
+                                    .clip(CircleShape)
+                                    .background(Color(0xFF8D6E63).copy(alpha = 0.3f))
+                                    .align(Alignment.BottomEnd)
+                            )
+
+                            Text(
+                                text = "Generate Quizzes",
+                                fontSize = 28.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = Color.White,
+                                modifier = Modifier
+                                    .align(Alignment.CenterStart)
+                                    .padding(24.dp)
                             )
                         }
                     }

@@ -39,6 +39,8 @@ object ProfileStatisticsDestination : NavigationDestination {
  */
 @Composable
 fun ProfileStatisticsScreen(
+    userName: String = "Georgiette Ansaah",
+    isAdmin: Boolean = false,
     onEditProfileClick: () -> Unit = {},
     onOverviewClick: () -> Unit = {},
     onSettingsClick: () -> Unit = {},
@@ -179,7 +181,7 @@ fun ProfileStatisticsScreen(
                     Spacer(modifier = Modifier.height(12.dp))
 
                     Text(
-                        text = "Georgiette Ansaah",
+                        text = "$userName${if (isAdmin) "(Admin)" else ""}",
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
                         color = Color(0xFF654321)

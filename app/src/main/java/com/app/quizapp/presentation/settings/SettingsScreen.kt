@@ -36,11 +36,13 @@ data class SettingsOption(
  */
 @Composable
 fun SettingsScreen(
+    isAdmin: Boolean = false,
     onBackClick: () -> Unit = {},
     onPersonalInfoClick: () -> Unit = {},
     onNotificationClick: () -> Unit = {},
     onSoundClick: () -> Unit = {},
     onApplyForAdminClick: () -> Unit = {},
+    onApplyForAdminRemovalClick: () -> Unit = {},
     onHelpCenterClick: () -> Unit = {},
     onAboutClick: () -> Unit = {},
     onLogoutClick: () -> Unit = {},
@@ -52,7 +54,7 @@ fun SettingsScreen(
         SettingsOption("Personal Info", Icons.Filled.Person),
         SettingsOption("Notification", Icons.Filled.Notifications),
         SettingsOption("Sound", Icons.Filled.Notifications),
-        SettingsOption("Apply for Admin", Icons.Filled.Add),
+        SettingsOption(if (isAdmin) "Apply for Admin Removal" else "Apply for Admin", Icons.Filled.Add),
         SettingsOption("Help Center", Icons.Filled.Person),
         SettingsOption("About QuizToGo", Icons.Filled.Info),
         SettingsOption("Logout", Icons.Filled.ExitToApp)
@@ -170,6 +172,7 @@ fun SettingsScreen(
                                 "Notification" -> onNotificationClick()
                                 "Sound" -> onSoundClick()
                                 "Apply for Admin" -> onApplyForAdminClick()
+                                "Apply for Admin Removal" -> onApplyForAdminRemovalClick()
                                 "Help Center" -> onHelpCenterClick()
                                 "About QuizToGo" -> onAboutClick()
                                 "Logout" -> onLogoutClick()

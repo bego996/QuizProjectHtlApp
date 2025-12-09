@@ -33,6 +33,12 @@ import com.app.quizapp.presentation.quiz.QuizResultDestination
 import com.app.quizapp.presentation.quiz.QuizResultScreen
 import com.app.quizapp.presentation.quiz.QuizReviewDestination
 import com.app.quizapp.presentation.quiz.QuizReviewScreen
+import com.app.quizapp.presentation.admin.GenerateQuizzesDestination
+import com.app.quizapp.presentation.admin.GenerateQuizzesScreen
+import com.app.quizapp.presentation.admin.ActiveQuizDestination
+import com.app.quizapp.presentation.admin.ActiveQuizScreen
+import com.app.quizapp.presentation.admin.UsersDestination
+import com.app.quizapp.presentation.admin.UsersScreen
 
 
 @Composable
@@ -76,10 +82,15 @@ fun MettingNavHost(                                           // Hauptfunktion f
 
         composable(route = HomeDestination.route) {                        // Home-Screen
             HomeScreen(
+                userName = "Georgiette",
+                isAdmin = true, // TODO: Get from ViewModel/Auth
                 onDailyQuizClick = { navController.navigate(QuizDestination.route) },
                 onCategoryClick = { navController.navigate(CategoryDestination.route) },
                 onSeeAllCategoriesClick = { navController.navigate(CategoryDestination.route) },
                 onSeeAllStatsClick = { navController.navigate(ProfileStatisticsDestination.route) },
+                onActiveUsersClick = { navController.navigate(UsersDestination.route) },
+                onActiveQuizClick = { navController.navigate(ActiveQuizDestination.route) },
+                onGenerateQuizzesClick = { navController.navigate(GenerateQuizzesDestination.route) },
                 onHomeClick = { navController.navigate(HomeDestination.route) },
                 onDiscoverClick = { navController.navigate(CategoryDestination.route) },
                 onProfileClick = { navController.navigate(ProfileOverviewDestination.route) }
@@ -117,6 +128,8 @@ fun MettingNavHost(                                           // Hauptfunktion f
 
         composable(route = ProfileOverviewDestination.route) {             // Profile Overview-Screen
             ProfileOverviewScreen(
+                userName = "Georgiette Alaabalh",
+                isAdmin = true, // TODO: Get from ViewModel/Auth
                 onEditProfileClick = { /* TODO: Navigate to edit profile */ },
                 onStatisticsClick = { navController.navigate(ProfileStatisticsDestination.route) },
                 onSettingsClick = { navController.navigate(SettingsDestination.route) },
@@ -129,6 +142,8 @@ fun MettingNavHost(                                           // Hauptfunktion f
 
         composable(route = ProfileStatisticsDestination.route) {          // Profile Statistics-Screen
             ProfileStatisticsScreen(
+                userName = "Georgiette Alaabalh",
+                isAdmin = true, // TODO: Get from ViewModel/Auth
                 onEditProfileClick = { /* TODO: Navigate to edit profile */ },
                 onOverviewClick = { navController.navigate(ProfileOverviewDestination.route) },
                 onSettingsClick = { navController.navigate(SettingsDestination.route) },
@@ -140,11 +155,13 @@ fun MettingNavHost(                                           // Hauptfunktion f
 
         composable(route = SettingsDestination.route) {                   // Settings-Screen
             SettingsScreen(
+                isAdmin = true, // TODO: Get from ViewModel/Auth
                 onBackClick = { navController.popBackStack() },
                 onPersonalInfoClick = { /* TODO: Navigate to personal info */ },
                 onNotificationClick = { /* TODO: Navigate to notification settings */ },
                 onSoundClick = { /* TODO: Navigate to sound settings */ },
                 onApplyForAdminClick = { /* TODO: Navigate to admin application */ },
+                onApplyForAdminRemovalClick = { /* TODO: Navigate to admin removal */ },
                 onHelpCenterClick = { /* TODO: Navigate to help center */ },
                 onAboutClick = { /* TODO: Navigate to about page */ },
                 onLogoutClick = {
@@ -196,6 +213,38 @@ fun MettingNavHost(                                           // Hauptfunktion f
         composable(route = "${QuizReviewDestination.route}/{score}/{totalQuestions}") { backStackEntry ->
             QuizReviewScreen(
                 onBackClick = { navController.popBackStack() }
+            )
+        }
+
+        composable(route = GenerateQuizzesDestination.route) {                // Generate Quizzes (Admin)
+            GenerateQuizzesScreen(
+                onBackClick = { navController.popBackStack() },
+                onApplyQuizClick = { /* TODO: Handle quiz creation */ },
+                onSeeResultsClick = { navController.navigate(ActiveQuizDestination.route) },
+                onHomeClick = { navController.navigate(HomeDestination.route) },
+                onDiscoverClick = { navController.navigate(CategoryDestination.route) },
+                onAdminClick = { navController.navigate(ProfileOverviewDestination.route) }
+            )
+        }
+
+        composable(route = ActiveQuizDestination.route) {                     // Active Quiz (Admin)
+            ActiveQuizScreen(
+                onBackClick = { navController.popBackStack() },
+                onDetailsClick = { quizId -> /* TODO: Navigate to quiz details */ },
+                onDeleteClick = { quizId -> /* TODO: Handle quiz deletion */ },
+                onHomeClick = { navController.navigate(HomeDestination.route) },
+                onDiscoverClick = { navController.navigate(CategoryDestination.route) },
+                onAdminClick = { navController.navigate(ProfileOverviewDestination.route) }
+            )
+        }
+
+        composable(route = UsersDestination.route) {                          // Users (Admin)
+            UsersScreen(
+                onBackClick = { navController.popBackStack() },
+                onUserClick = { email -> /* TODO: Navigate to user details */ },
+                onHomeClick = { navController.navigate(HomeDestination.route) },
+                onDiscoverClick = { navController.navigate(CategoryDestination.route) },
+                onAdminClick = { navController.navigate(ProfileOverviewDestination.route) }
             )
         }
     }
