@@ -7,6 +7,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ExitToApp
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -22,7 +23,6 @@ import com.app.quizapp.BottomNavigationBar
 import com.app.quizapp.QuizTopAppBar
 import com.app.quizapp.R
 import com.app.quizapp.navigation.NavigationDestination
-import com.app.quizapp.presentation.category.CategoryDestination
 
 object SettingsDestination : NavigationDestination {
     override val route: String = "settings"
@@ -61,7 +61,7 @@ fun SettingsScreen(
         SettingsOption(if (isAdmin) "Apply for Admin Removal" else "Apply for Admin", Icons.Filled.Add),
         SettingsOption("Help Center", Icons.Filled.Person),
         SettingsOption("About QuizToGo", Icons.Filled.Info),
-        SettingsOption("Logout", Icons.Filled.ExitToApp)
+        SettingsOption("Logout", Icons.AutoMirrored.Filled.ExitToApp)
     )
 
     Scaffold(

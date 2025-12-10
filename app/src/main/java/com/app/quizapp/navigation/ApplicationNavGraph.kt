@@ -15,12 +15,12 @@ import com.app.quizapp.presentation.register.CreateAccountDestination
 import com.app.quizapp.presentation.register.CreateAccountScreen
 import com.app.quizapp.presentation.home.HomeDestination
 import com.app.quizapp.presentation.home.HomeScreen
-import com.app.quizapp.presentation.category.CategoryDestination
-import com.app.quizapp.presentation.category.CategoryScreen
-import com.app.quizapp.presentation.topic.TopicDestination
-import com.app.quizapp.presentation.topic.TopicScreen
-import com.app.quizapp.presentation.subtopic.SubtopicDestination
-import com.app.quizapp.presentation.subtopic.SubtopicScreen
+import com.app.quizapp.presentation.categories.CategoryDestination
+import com.app.quizapp.presentation.categories.CategoryScreen
+import com.app.quizapp.presentation.categories.TopicDestination
+import com.app.quizapp.presentation.categories.TopicScreen
+import com.app.quizapp.presentation.categories.SubtopicDestination
+import com.app.quizapp.presentation.categories.SubtopicScreen
 import com.app.quizapp.presentation.profile.ProfileOverviewDestination
 import com.app.quizapp.presentation.profile.ProfileOverviewScreen
 import com.app.quizapp.presentation.profile.ProfileStatisticsDestination
@@ -42,7 +42,7 @@ import com.app.quizapp.presentation.admin.UsersScreen
 
 
 @Composable
-fun MettingNavHost(                                           // Hauptfunktion für den Navigations-Host
+fun MettingNavHost(                                            // Hauptfunktion für den Navigations-Host
     navController: NavHostController,                         // Controller zur Verwaltung des Navigationsverhaltens
     modifier: Modifier = Modifier
 ) {

@@ -4,9 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material3.*
@@ -21,7 +19,6 @@ import androidx.compose.ui.unit.sp
 import com.app.quizapp.QuizTopAppBar
 import com.app.quizapp.R
 import com.app.quizapp.navigation.NavigationDestination
-import com.app.quizapp.presentation.category.CategoryDestination
 
 object QuizReviewDestination : NavigationDestination {
     override val route: String = "quiz_review"
@@ -202,7 +199,7 @@ fun ReviewQuestionCard(
         )
 
         // Divider
-        Divider(
+        HorizontalDivider(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 16.dp),

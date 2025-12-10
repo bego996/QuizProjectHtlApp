@@ -1,4 +1,4 @@
-package com.app.quizapp.presentation.subtopic
+package com.app.quizapp.presentation.categories
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -6,10 +6,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.material.icons.outlined.Search
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -25,50 +22,53 @@ import com.app.quizapp.QuizTopAppBar
 import com.app.quizapp.navigation.NavigationDestination
 import com.app.quizapp.R
 
-object SubtopicDestination : NavigationDestination {
-    override val route: String = "subtopics"
-    override val titleRes: Int = R.string.subtopics
+object CategoryDestination : NavigationDestination {
+    override val route: String = "categories"
+    override val titleRes: Int = R.string.categories
 }
 
+
 /**
- * Data class representing a quiz subtopic
+ * Data class representing a quiz category
  */
-data class Subtopic(
+data class Category(
     val id: String,
     val name: String,
-    val color: Color
+    val color: Color,
+    val isBookmarked: Boolean = false
 )
 
 /**
- * Main Subtopics screen showing all available subtopics for a topic
+ * Main Categories screen showing all available quiz categories
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SubtopicScreen(
-    categoryName: String = "Maths",
-    topicName: String = "Arithmetic",
+fun CategoryScreen(
     onBackClick: () -> Unit = {},
-    onSubtopicClick: (Subtopic) -> Unit = {},
+    onCategoryClick: (Category) -> Unit = {},
     onHomeClick: () -> Unit = {},
     onDiscoverClick: () -> Unit = {},
     onProfileClick: () -> Unit = {}
 ) {
-    // Sample subtopics - will be replaced with ViewModel data
-    val subtopics = listOf(
-        Subtopic("1", "Addition", Color(0xFF2D1B1B)),
-        Subtopic("2", "Subtraction", Color(0xFFD4A418)),
-        Subtopic("3", "Multiplication", Color(0xFFB71C1C)),
-        Subtopic("4", "Division", Color(0xFF0D2968)),
-        Subtopic("5", "Fractions", Color(0xFF1A1410)),
-        Subtopic("6", "Percentage\nCalculation", Color(0xFFB71C1C)),
-        Subtopic("7", "Powers & Roots", Color(0xFF1976D2))
+    // Sample categories - will be replaced with ViewModel data
+    val categories = listOf(
+        Category("1", "Maths", Color(0xFF2D1B1B)),
+        Category("2", "History", Color(0xFFD4A418)),
+        Category("3", "Chemistry", Color(0xFFB71C1C), isBookmarked = true),
+        Category("4", "Biology", Color(0xFF0D2968), isBookmarked = true),
+        Category("5", "Networks", Color(0xFF1A1410)),
+        Category("6", "Informatics", Color(0xFF4A5490)),
+        Category("7", "Geography", Color(0xFF1976D2), isBookmarked = true),
+        Category("8", "Medicine", Color(0xFF2E7D32), isBookmarked = true),
+        Category("9", "Electrical\nengineering", Color(0xFF6A1B5A), isBookmarked = true),
+        Category("10", "Customized", Color(0xFF4DB6AC), isBookmarked = true)
     )
 
     Scaffold(
         topBar = {
             QuizTopAppBar(
                 modifier = Modifier,
-                title = "$categoryName -> $topicName",
+                title = stringResource(CategoryDestination.titleRes),
                 canNavigateBack = true,
                 navigateUp = onBackClick
             )
@@ -90,10 +90,10 @@ fun SubtopicScreen(
             verticalArrangement = Arrangement.spacedBy(16.dp),
             contentPadding = PaddingValues(vertical = 16.dp)
         ) {
-            items(subtopics) { subtopic ->
-                SubtopicCard(
-                    subtopic = subtopic,
-                    onClick = { onSubtopicClick(subtopic) }
+            items(categories) { category ->
+                CategoryCard(
+                    category = category,
+                    onClick = { onCategoryClick(category) }
                 )
             }
         }
@@ -101,12 +101,12 @@ fun SubtopicScreen(
 }
 
 /**
- * Individual subtopic card with gradient background and play icon
+ * Individual category card with gradient background and bookmark icon
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SubtopicCard(
-    subtopic: Subtopic,
+fun CategoryCard(
+    category: Category,
     onClick: () -> Unit
 ) {
     Card(
@@ -125,32 +125,34 @@ fun SubtopicCard(
                 .background(
                     brush = Brush.horizontalGradient(
                         colors = listOf(
-                            subtopic.color,
-                            subtopic.color.copy(alpha = 0.7f),
-                            subtopic.color.copy(alpha = 0.3f)
+                            category.color,
+                            category.color.copy(alpha = 0.7f),
+                            category.color.copy(alpha = 0.3f)
                         )
                     )
                 )
                 .padding(20.dp)
         ) {
-            // Subtopic name
+            // Category name
             Text(
-                text = subtopic.name,
+                text = category.name,
                 fontSize = 24.sp,
                 fontWeight = FontWeight.SemiBold,
                 color = Color.White,
                 modifier = Modifier.align(Alignment.CenterStart)
             )
 
-            // Play icon
-            Icon(
-                imageVector = Icons.Filled.PlayArrow,
-                contentDescription = "Start quiz",
-                tint = Color(0xFF4DB6AC),
-                modifier = Modifier
-                    .align(Alignment.TopEnd)
-                    .size(32.dp)
-            )
+            // Bookmark icon
+            if (category.isBookmarked) {
+                Icon(
+                    imageVector = Icons.Filled.Favorite,
+                    contentDescription = "Bookmarked",
+                    tint = Color(0xFF4DB6AC),
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .size(28.dp)
+                )
+            }
         }
     }
 }
