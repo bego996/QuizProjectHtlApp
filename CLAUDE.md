@@ -20,13 +20,15 @@ private const val BASE_URL = "http://10.0.2.2:8080/"  // Emulator (10.0.2.2 = ho
 ## Project Structure
 ```
 app/src/main/java/com/app/quizapp/
-├── di/                    # NetworkModule.kt, RepositoryModule.kt
+├── di/                    # NetworkModule.kt, RepositoryModule.kt, SecurityModule.kt
 ├── data/
 │   ├── remote/           # *ApiService.kt, dto/*Dto.kt
-│   └── repository/       # *RepositoryImpl.kt
+│   ├── repository/       # *RepositoryImpl.kt
+│   └── security/         # SecureTokenManager.kt, AuthInterceptor.kt
 ├── domain/
 │   ├── model/            # Domain models
 │   ├── repository/       # Repository interfaces
+│   ├── security/         # TokenManager.kt (interface)
 │   └── util/Result.kt    # Sealed class for error handling
 ├── presentation/         # *ViewModel.kt, *Screen.kt (Composables)
 │   └── [feature]/        # Each feature: Screen.kt, ViewModel.kt, Destination object
@@ -61,12 +63,19 @@ app/src/main/java/com/app/quizapp/
 - Debug Network: Logcat filter "OkHttp"
 
 ## Dependencies (Key Versions)
-Compose BOM 2024.10.01, Hilt 2.51.1, Retrofit 2.11.0, OkHttp 4.12.0, Coroutines 1.7.3, Lifecycle 2.8.7, hilt-navigation-compose 1.2.0
+Compose BOM 2024.10.01, Hilt 2.51.1, Retrofit 2.11.0, OkHttp 4.12.0, Coroutines 1.7.3, Lifecycle 2.8.7, hilt-navigation-compose 1.2.0, security-crypto 1.1.0-alpha06
 
 ## Error Handling
 - **Result Type**: All repository methods return `Result<T>` (sealed class: `Success<T>` or `Error`)
-
 - **UI Display**: Error messages from `uiState.error` shown in UI (currently no centralized Snackbar/Dialog strategy)
+
+## Authentication & Security
+- **Token Storage**: `TokenManager` interface in `domain/security/`, implemented by `SecureTokenManager` in `data/security/`
+- **Encryption**: EncryptedSharedPreferences with AES256-GCM backed by Android Keystore (security-crypto:1.1.0-alpha06)
+- **Auto-Injection**: `AuthInterceptor` automatically adds `Authorization: Bearer <token>` header to all HTTP requests
+- **DI Module**: `di/SecurityModule.kt` provides `TokenManager` singleton
+- **Usage**: Inject `TokenManager` in ViewModels → `saveToken()` after login → `getToken()`/`hasToken()`/`clearToken()` as needed
+- **No Manual Headers**: Repositories don't handle auth - AuthInterceptor works transparently on HTTP layer
 
 ## Coding Conventions
 - **Comments**: Always add compact comments to new functions. Document purpose and parameters
@@ -77,4 +86,4 @@ Compose BOM 2024.10.01, Hilt 2.51.1, Retrofit 2.11.0, OkHttp 4.12.0, Coroutines 
 ## Notes
 - Uses `.claudeignore` to exclude files
 - Network security: `network_security_config.xml` allows HTTP (for local backend)
-- No authentication implemented yet (TODOs in navigation for user/admin role handling)
+- JWT token management implemented with secure encrypted storage (TODOs in navigation for user/admin role handling)

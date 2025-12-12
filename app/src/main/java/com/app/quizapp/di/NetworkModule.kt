@@ -9,6 +9,8 @@ import com.app.quizapp.data.remote.TopicApiService
 import com.app.quizapp.data.remote.QuestionApiService
 import com.app.quizapp.data.remote.UserApiService
 import com.app.quizapp.data.remote.UserQuestionApiService
+import com.app.quizapp.data.security.AuthInterceptor
+import com.app.quizapp.domain.security.TokenManager
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -57,12 +59,16 @@ object NetworkModule {
      * - Timeouts
      * - Connection Pooling
      *
+     * @param tokenManager Verwaltet JWT-Token für Authentication
      * @Provides sagt Hilt, dass diese Methode eine Dependency bereitstellt
      * @Singleton sorgt dafür, dass nur eine Instanz erstellt wird
      */
     @Provides
     @Singleton
-    fun provideOkHttpClient(): OkHttpClient {
+    fun provideOkHttpClient(tokenManager: TokenManager): OkHttpClient {
+        // Auth Interceptor für automatisches Hinzufügen von JWT-Token
+        val authInterceptor = AuthInterceptor(tokenManager)
+
         // Logging Interceptor für Debug-Zwecke
         // Zeigt alle HTTP-Requests und Responses in den Logs an
         val loggingInterceptor = HttpLoggingInterceptor().apply {
@@ -70,6 +76,7 @@ object NetworkModule {
         }
 
         return OkHttpClient.Builder()
+            .addInterceptor(authInterceptor)    // Fügt JWT-Token zu Requests hinzu
             .addInterceptor(loggingInterceptor) // Fügt Logging hinzu
             .connectTimeout(30, TimeUnit.SECONDS) // Timeout für Verbindungsaufbau
             .readTimeout(30, TimeUnit.SECONDS)    // Timeout für Daten empfangen

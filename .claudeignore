@@ -40,3 +40,4 @@ gradlew.bat
 *.swo
 *~
 .tmp/
+API_ENDPOINTS.md
