@@ -4,30 +4,42 @@ import com.app.quizapp.domain.model.Answer
 import com.app.quizapp.domain.util.Result
 
 /**
- * Repository Interface für Answer-Daten
- *
- * Das Repository ist die einzige Datenquelle für das ViewModel.
- * Es abstrahiert, woher die Daten kommen (Backend, Datenbank, Cache, etc.)
- *
- * Vorteile des Repository Patterns:
- * - Single Source of Truth
- * - Testbar (Interface kann gemockt werden)
- * - Kann mehrere Datenquellen kombinieren (z.B. Cache + Backend)
- * - Business-Logik ist unabhängig von der Datenquelle
+ * Repository interface for Answer operations
+ * Provides CRUD operations for answer management
  */
-
 interface AnswerRepository {
+
     /**
-     * Lädt alle verfügbaren Answer
-     * @return Result mit Liste von Answer oder Error
+     * Get all answers (max 10)
+     * @return List of answers
      */
     suspend fun getAllAnswers(): Result<List<Answer>>
 
     /**
-     * Lädt ein bestimmtes Answer
-     * @param answerId Die ID des Quiz
-     * @return Result mit Answer oder Error
+     * Get answer by ID
+     * @param answerId Answer ID
+     * @return Answer entity
      */
-    suspend fun geAnswerById(answerId: Int): Result<Answer>
+    suspend fun getAnswerById(answerId: Int): Result<Answer>
 
+    /**
+     * Create new answer (admin only)
+     * @param answer Answer entity
+     * @return Created answer
+     */
+    suspend fun createAnswer(answer: Answer): Result<Answer>
+
+    /**
+     * Update answer (admin only)
+     * @param answer Answer entity with updates
+     * @return Updated answer
+     */
+    suspend fun updateAnswer(answer: Answer): Result<Answer>
+
+    /**
+     * Delete answer (admin only)
+     * @param answerId Answer ID to delete
+     * @return Deleted answer
+     */
+    suspend fun deleteAnswer(answerId: Int): Result<Answer>
 }

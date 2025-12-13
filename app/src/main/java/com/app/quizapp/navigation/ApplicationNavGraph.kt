@@ -82,7 +82,7 @@ fun MettingNavHost(                                            // Hauptfunktion 
 
         composable(route = HomeDestination.route) {                        // Home-Screen
             HomeScreen(
-                userName = "Georgiette",
+                userName = "Georgiette", //TODO: Get from ViewModel if no nickname passed then use email
                 isAdmin = true, // TODO: Get from ViewModel/Auth
                 onDailyQuizClick = { navController.navigate(QuizDestination.route) },
                 onCategoryClick = { navController.navigate(CategoryDestination.route) },
@@ -241,7 +241,6 @@ fun MettingNavHost(                                            // Hauptfunktion 
         composable(route = UsersDestination.route) {                          // Users (Admin)
             UsersScreen(
                 onBackClick = { navController.popBackStack() },
-                onUserClick = { email -> /* TODO: Navigate to user details */ },
                 onHomeClick = { navController.navigate(HomeDestination.route) },
                 onDiscoverClick = { navController.navigate(CategoryDestination.route) },
                 onProfileClick = { navController.navigate(ProfileOverviewDestination.route) }

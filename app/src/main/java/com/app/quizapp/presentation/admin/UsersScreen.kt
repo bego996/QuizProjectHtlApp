@@ -52,9 +52,9 @@ data class UserItem(
 @Composable
 fun UsersScreen(
     onBackClick: () -> Unit = {},
-    onUserClick: (String) -> Unit = {},
     onHomeClick: () -> Unit = {},
     onDiscoverClick: () -> Unit = {},
+    onUserDeleteClick: () -> Unit = {},
     onProfileClick: () -> Unit = {}
 ) {
     // Sample user data - will be replaced with ViewModel data
@@ -126,7 +126,7 @@ fun UsersScreen(
             items(users) { user ->
                 UserItemCard(
                     user = user,
-                    onClick = { onUserClick(user.email) }
+                    onUserDeleteClick = onUserDeleteClick
                 )
             }
         }
@@ -139,7 +139,7 @@ fun UsersScreen(
 @Composable
 fun UserItemCard(
     user: UserItem,
-    onClick: () -> Unit
+    onUserDeleteClick: () -> Unit
 ) {
     val roleColor = when (user.role) {
         UserRole.USER -> Color(0xFF2E7D32)
@@ -219,12 +219,17 @@ fun UserItemCard(
                 horizontalAlignment = Alignment.End,
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                Icon(
-                    imageVector = Icons.Filled.Person,
-                    contentDescription = "User status",
-                    tint = if (user.isActive) Color(0xFF2E7D32) else Color(0xFFD32F2F),
-                    modifier = Modifier.size(24.dp)
-                )
+                Button(
+                    onClick = onUserDeleteClick
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.Person,
+                        contentDescription = "User status",
+                        tint = if (user.isActive) Color(0xFF2E7D32) else Color(0xFFD32F2F),
+                        modifier = Modifier.size(24.dp),
+                    )
+                }
+
                 Icon(
                     imageVector = Icons.Filled.Email,
                     contentDescription = "Message",

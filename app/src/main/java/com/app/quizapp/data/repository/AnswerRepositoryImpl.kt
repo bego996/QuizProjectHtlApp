@@ -1,7 +1,8 @@
 package com.app.quizapp.data.repository
 
 import com.app.quizapp.data.remote.AnswerApiService
-//import com.app.quizapp.data.remote.QuizApiService
+import com.app.quizapp.data.remote.dto.AnswerDto
+import com.app.quizapp.data.remote.dto.QuestionDto
 import com.app.quizapp.data.remote.dto.toDomain
 import com.app.quizapp.domain.model.Answer
 import com.app.quizapp.domain.repository.AnswerRepository
@@ -9,64 +10,100 @@ import com.app.quizapp.domain.util.Result
 import javax.inject.Inject
 import javax.inject.Singleton
 
-
 /**
- * Implementierung des AnswerRepository
- *
- * Diese Klasse implementiert das Repository Interface und kommuniziert
- * mit dem Backend über das AnswerApiService.
- *
- * @Inject Constructor Injection: Hilt injiziert automatisch das AnswerApiService
- * @Singleton Nur eine Instanz dieser Klasse während der App-Laufzeit
- *
- * Fehlerbehandlung:
- * - Alle API-Calls sind in try-catch Blöcken
- * - Bei Erfolg: Result.Success mit den Daten
- * - Bei Fehler: Result.Error mit einer nutzerfreundlichen Meldung
+ * Implementation of AnswerRepository
+ * Handles answer CRUD operations
  */
-
 @Singleton
 class AnswerRepositoryImpl @Inject constructor(
     private val apiService: AnswerApiService
-) : AnswerRepository  {
+) : AnswerRepository {
 
-    /**
-     * Lädt alle Answer vom Backend
-     */
     override suspend fun getAllAnswers(): Result<List<Answer>> {
         return try {
-             //Api Call durchführen
-            val answerDtos = apiService.getAllAnswers()
-
-            //Dtos in Domain Models umwandeln
-            val answers = answerDtos.map { it.toDomain() }
-
-            //Erfolg zurückgeben
-            Result.Success(answers)
+            val response = apiService.getAllAnswers()
+            Result.Success(response.map { it.toDomain() })
         } catch (e: Exception) {
-            // Fehlerbehandlung mit nutzerfreundlicher Nachricht
             Result.Error(
-                message = "Fehler beim Laden der Quiz: ${e.localizedMessage ?: "Unbekannter Fehler"}",
+                message = "Failed to get answers: ${e.localizedMessage ?: "Unknown error"}",
                 throwable = e
             )
         }
     }
 
-
-    /**
-     * Lädt ein bestimmtes Answer vom Backend
-     */
-    override suspend fun geAnswerById(answerId: Int): Result<Answer> {
+    override suspend fun getAnswerById(answerId: Int): Result<Answer> {
         return try {
-            val answerDto = apiService.getAnswerById(answerId)
-            val answer = answerDto.toDomain()
-            Result.Success(answer)
-        }catch (e: Exception){
+            val response = apiService.getAnswerById(answerId)
+            Result.Success(response.toDomain())
+        } catch (e: Exception) {
             Result.Error(
-                message = "Fehler beim Laden des Quiz: ${e.localizedMessage ?: "Unbekannter Fehler"}",
+                message = "Failed to get answer: ${e.localizedMessage ?: "Unknown error"}",
                 throwable = e
             )
         }
     }
 
+    override suspend fun createAnswer(answer: Answer): Result<Answer> {
+        return try {
+            val answerDto = answer.toDto()
+            val response = apiService.createAnswer(answerDto)
+            Result.Success(response.toDomain())
+        } catch (e: Exception) {
+            Result.Error(
+                message = "Failed to create answer: ${e.localizedMessage ?: "Unknown error"}",
+                throwable = e
+            )
+        }
+    }
+
+    override suspend fun updateAnswer(answer: Answer): Result<Answer> {
+        return try {
+            val answerDto = answer.toDto()
+            val response = apiService.updateAnswer(answerDto)
+            Result.Success(response.toDomain())
+        } catch (e: Exception) {
+            Result.Error(
+                message = "Failed to update answer: ${e.localizedMessage ?: "Unknown error"}",
+                throwable = e
+            )
+        }
+    }
+
+    override suspend fun deleteAnswer(answerId: Int): Result<Answer> {
+        return try {
+            val response = apiService.deleteAnswer(answerId)
+            Result.Success(response.toDomain())
+        } catch (e: Exception) {
+            Result.Error(
+                message = "Failed to delete answer: ${e.localizedMessage ?: "Unknown error"}",
+                throwable = e
+            )
+        }
+    }
+
+    // Helper function to convert Answer domain model to DTO
+    private fun Answer.toDto(): AnswerDto {
+        return AnswerDto(
+            answerId = answerId,
+            text = text,
+            correct = correct,
+            question = QuestionDto(
+                questionId = question.questionId,
+                questionText = question.questionText,
+                reviewedBy = question.reviewedBy,
+                topic = com.app.quizapp.data.remote.dto.TopicDto(
+                    topicId = question.topic.topicId,
+                    topic = question.topic.topic
+                ),
+                status = com.app.quizapp.data.remote.dto.StatusDto(
+                    statusId = question.status.statusId,
+                    text = question.status.text
+                ),
+                difficulty = com.app.quizapp.data.remote.dto.DifficultyDto(
+                    difficultyId = question.difficulty.difficultyId,
+                    mode = question.difficulty.mode
+                )
+            )
+        )
+    }
 }

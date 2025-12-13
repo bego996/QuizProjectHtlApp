@@ -22,7 +22,8 @@ private const val BASE_URL = "http://10.0.2.2:8080/"  // Emulator (10.0.2.2 = ho
 app/src/main/java/com/app/quizapp/
 ├── di/                    # NetworkModule.kt, RepositoryModule.kt, SecurityModule.kt
 ├── data/
-│   ├── remote/           # *ApiService.kt, dto/*Dto.kt
+│   ├── remote/           # AuthApiService, MemberApiService, LlmApiService, *ApiService.kt (with CRUD)
+│   │                     # dto/*RequestDto.kt, dto/*ResponseDto.kt (Login, Register, Quiz, etc.)
 │   ├── repository/       # *RepositoryImpl.kt
 │   └── security/         # SecureTokenManager.kt, AuthInterceptor.kt
 ├── domain/
@@ -41,6 +42,7 @@ app/src/main/java/com/app/quizapp/
 ## Key Files & Patterns
 - **DI Setup**: `QuizApplication.kt`, `di/NetworkModule.kt` (Retrofit/OkHttp), `di/RepositoryModule.kt`
 - **Data Flow**: UI → ViewModel → Repository (interface) → RepositoryImpl → ApiService → Backend
+- **Backend Integration**: Full API coverage (Auth, User Profile, Quiz, Admin CRUD, AI/LLM)
 - **New API**: Add to `*ApiService.kt` → DTO in `dto/` → Interface in `domain/repository/` → Impl in `data/repository/` → Call from ViewModel
 - **New Screen**: Package in `presentation/[feature]/` → Create `*Destination` object (implements `NavigationDestination`) → ViewModel with `@HiltViewModel` → Composable `*Screen.kt` → Use `hiltViewModel()` → Add route to `ApplicationNavGraph.kt`
 
@@ -87,3 +89,6 @@ Compose BOM 2024.10.01, Hilt 2.51.1, Retrofit 2.11.0, OkHttp 4.12.0, Coroutines 
 - Uses `.claudeignore` to exclude files
 - Network security: `network_security_config.xml` allows HTTP (for local backend)
 - JWT token management implemented with secure encrypted storage (TODOs in navigation for user/admin role handling)
+- Full REST API integration: Auth (login/register), User profile management, Quiz operations, Admin CRUD for all entities, AI/LLM quiz generation
+- Ask me before every big task you need to do, if i want to have the code you changed showed in this terminal, because sometimes it consumes unnecessary tokens.
+- Use always an compact summary when i ask you to upgrade the Claude.md after a big feature we made. It should fit to the actually format

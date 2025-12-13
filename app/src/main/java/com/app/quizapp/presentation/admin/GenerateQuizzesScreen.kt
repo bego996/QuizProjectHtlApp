@@ -46,11 +46,12 @@ fun GenerateQuizzesScreen(
     onProfileClick: () -> Unit = {}
 ) {
     var isQuizMode by remember { mutableStateOf(true) } // true = Quiz erstellen, false = Thema erstellen
-    var questionText by remember { mutableStateOf("Was ist die Hauptstadt von Deutschland?") }
-    var selectedTopics by remember { mutableStateOf(listOf("Hamburg", "München", "Tönig")) }
+    var selectedTopics by remember { mutableStateOf(listOf("Maths", "Informatics", "Chemistry","Biology","Medicine")) }
+    var selectedSubTopics by remember { mutableStateOf(listOf("ALgebra", "Geometry")) }
+    var selectedSubSubTopics by remember { mutableStateOf(listOf("Addition", "Subtraction")) }
     var selectedDifficulty by remember { mutableStateOf<String?>(null) }
 
-    val difficulties = listOf("Easy", "Medium", "Hard", "Experte")
+    val difficulties = listOf("Easy", "Medium", "Hard")
 
     Scaffold(
         topBar = {
@@ -78,12 +79,8 @@ fun GenerateQuizzesScreen(
                 .verticalScroll(rememberScrollState())
         ) {
             // Toggle buttons for Quiz/Thema creation
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 24.dp),
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
+
+            Row() {
                 Button(
                     onClick = { isQuizMode = true },
                     modifier = Modifier.weight(1f).height(48.dp),
@@ -93,44 +90,38 @@ fun GenerateQuizzesScreen(
                     )
                 ) {
                     Text(
-                        text = "Quiz erstellen",
+                        text = "Quiz generieren",
                         fontSize = 16.sp,
                         fontWeight = FontWeight.SemiBold,
                         color = if (isQuizMode) Color.White else Color(0xFF9E9E9E)
                     )
                 }
+            }
+
+
+                    Spacer(modifier = Modifier.weight(1f))
+
+
+            Row() {
+                // Apply Quiz button
                 Button(
-                    onClick = { isQuizMode = false },
-                    modifier = Modifier.weight(1f).height(48.dp),
-                    shape = RoundedCornerShape(24.dp),
+                    onClick = onApplyQuizClick,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(56.dp),
+                    shape = RoundedCornerShape(28.dp),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = if (!isQuizMode) Color(0xFFFF8F00) else Color(0xFFE0E0E0)
+                        containerColor = Color(0xFF2E7D32)
                     )
                 ) {
                     Text(
-                        text = "Thema erstellen",
-                        fontSize = 16.sp,
+                        text = "Apply Quiz",
+                        fontSize = 18.sp,
                         fontWeight = FontWeight.SemiBold,
-                        color = if (!isQuizMode) Color.White else Color(0xFF9E9E9E)
+                        color = Color.White
                     )
-                }
             }
-
-            // Question text field
-            OutlinedTextField(
-                value = questionText,
-                onValueChange = { questionText = it },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 24.dp),
-                shape = RoundedCornerShape(12.dp),
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedContainerColor = Color.White,
-                    unfocusedContainerColor = Color.White,
-                    focusedBorderColor = Color(0xFF00695C),
-                    unfocusedBorderColor = Color.Transparent
-                )
-            )
+            }
 
             // Topic selection section
             Text(
@@ -149,6 +140,102 @@ fun GenerateQuizzesScreen(
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 selectedTopics.forEach { topic ->
+                    Surface(
+                        modifier = Modifier,
+                        shape = RoundedCornerShape(20.dp),
+                        color = Color.White,
+                        border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFF00695C))
+                    ) {
+                        Row(
+                            modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(4.dp)
+                        ) {
+                            Text(
+                                text = topic,
+                                fontSize = 14.sp,
+                                color = Color(0xFF654321)
+                            )
+                            Icon(
+                                imageVector = Icons.Filled.Close,
+                                contentDescription = "Remove",
+                                tint = Color(0xFFD32F2F),
+                                modifier = Modifier
+                                    .size(16.dp)
+                                    .clickable {
+                                        selectedTopics = selectedTopics.filter { it != topic }
+                                    }
+                            )
+                        }
+                    }
+                }
+            }
+
+            // Topic selection section
+            Text(
+                text = "Wähle ein Subtopic:",
+                fontSize = 16.sp,
+                fontWeight = FontWeight.SemiBold,
+                color = Color(0xFF654321),
+                modifier = Modifier.padding(bottom = 12.dp)
+            )
+
+            // Topic chips
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 24.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                selectedSubTopics.forEach { topic ->
+                    Surface(
+                        modifier = Modifier,
+                        shape = RoundedCornerShape(20.dp),
+                        color = Color.White,
+                        border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFF00695C))
+                    ) {
+                        Row(
+                            modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(4.dp)
+                        ) {
+                            Text(
+                                text = topic,
+                                fontSize = 14.sp,
+                                color = Color(0xFF654321)
+                            )
+                            Icon(
+                                imageVector = Icons.Filled.Close,
+                                contentDescription = "Remove",
+                                tint = Color(0xFFD32F2F),
+                                modifier = Modifier
+                                    .size(16.dp)
+                                    .clickable {
+                                        selectedTopics = selectedTopics.filter { it != topic }
+                                    }
+                            )
+                        }
+                    }
+                }
+            }
+
+            // Topic selection section
+            Text(
+                text = "Wähle ein SubSUBtopic:",
+                fontSize = 16.sp,
+                fontWeight = FontWeight.SemiBold,
+                color = Color(0xFF654321),
+                modifier = Modifier.padding(bottom = 12.dp)
+            )
+
+            // Topic chips
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 24.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                selectedSubSubTopics.forEach { topic ->
                     Surface(
                         modifier = Modifier,
                         shape = RoundedCornerShape(20.dp),
@@ -216,27 +303,6 @@ fun GenerateQuizzesScreen(
                         )
                     }
                 }
-            }
-
-            Spacer(modifier = Modifier.weight(1f))
-
-            // Apply Quiz button
-            Button(
-                onClick = onApplyQuizClick,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(56.dp),
-                shape = RoundedCornerShape(28.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFF2E7D32)
-                )
-            ) {
-                Text(
-                    text = "Apply Quiz",
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    color = Color.White
-                )
             }
 
             Spacer(modifier = Modifier.height(16.dp))

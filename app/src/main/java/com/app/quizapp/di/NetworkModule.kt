@@ -1,14 +1,15 @@
 package com.app.quizapp.di
 
-//import com.app.quizapp.data.remote.QuizApiService
 import com.app.quizapp.data.remote.AnswerApiService
-import com.app.quizapp.data.remote.UserRoleApiService
+import com.app.quizapp.data.remote.AuthApiService
 import com.app.quizapp.data.remote.DifficultyApiService
+import com.app.quizapp.data.remote.LlmApiService
+import com.app.quizapp.data.remote.QuestionApiService
 import com.app.quizapp.data.remote.StatusApiService
 import com.app.quizapp.data.remote.TopicApiService
-import com.app.quizapp.data.remote.QuestionApiService
 import com.app.quizapp.data.remote.UserApiService
 import com.app.quizapp.data.remote.UserQuestionApiService
+import com.app.quizapp.data.remote.UserRoleApiService
 import com.app.quizapp.data.security.AuthInterceptor
 import com.app.quizapp.domain.security.TokenManager
 import dagger.Module
@@ -156,5 +157,25 @@ object NetworkModule {
     @Singleton
     fun provideUserQuestionApiService(retrofit: Retrofit): UserQuestionApiService {
         return retrofit.create(UserQuestionApiService::class.java)
+    }
+
+    /**
+     * Stellt das AuthApiService Interface bereit
+     * Für Login und Registrierung (öffentliche Endpoints)
+     */
+    @Provides
+    @Singleton
+    fun provideAuthApiService(retrofit: Retrofit): AuthApiService {
+        return retrofit.create(AuthApiService::class.java)
+    }
+
+    /**
+     * Stellt das LlmApiService Interface bereit
+     * Für AI/LLM Quiz-Generierung (Admin)
+     */
+    @Provides
+    @Singleton
+    fun provideLlmApiService(retrofit: Retrofit): LlmApiService {
+        return retrofit.create(LlmApiService::class.java)
     }
 }
