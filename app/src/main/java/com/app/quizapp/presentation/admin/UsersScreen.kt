@@ -26,6 +26,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.app.quizapp.BottomNavigationBar
 import com.app.quizapp.QuizTopAppBar
 import com.app.quizapp.R
+import com.app.quizapp.domain.model.User
 import com.app.quizapp.navigation.NavigationDestination
 
 object UsersDestination : NavigationDestination {
@@ -62,17 +63,19 @@ fun UsersScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
+
+
     // Map domain User to UI UserItem
-    val users = uiState.users.map { user ->
-        UserItem(
-            userId = user.userId,
-            name = "${user.firstname} ${user.surname}",
-            birthDate = user.birthdate,
-            email = user.email,
-            role = if (user.userRole.userRole == "admin") UserRole.ADMIN else UserRole.USER,
-            isActive = true // TODO: Add active status to User model if needed
-        )
-    }
+//    val users = uiState.users.map { user ->
+//        UserItem(
+//            userId = user.userId,
+//            name = "${user.firstname} ${user.surname}",
+//            birthDate = user.birthdate,
+//            email = user.email,
+//            role = if (user.userRole.userRole == "admin") UserRole.ADMIN else UserRole.USER,
+//            isActive = true // TODO: Add active status to User model if needed
+//        )
+//    }
 
     Scaffold(
         topBar = {
@@ -99,7 +102,7 @@ fun UsersScreen(
             contentPadding = PaddingValues(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            items(users) { user ->
+            items(uiState.users) { user ->
                 UserItemCard(
                     user = user,
                     onUserDeleteClick = { viewModel.deleteUser(user.userId) }
@@ -114,12 +117,13 @@ fun UsersScreen(
  */
 @Composable
 fun UserItemCard(
-    user: UserItem,
+    user: User,
     onUserDeleteClick: () -> Unit
 ) {
-    val roleColor = when (user.role) {
-        UserRole.USER -> Color(0xFF2E7D32)
-        UserRole.ADMIN -> Color(0xFFFF8F00)
+    val roleColor = when (user.userRole.userRole) {
+        "user" -> Color(0xFF2E7D32)
+        "admin" -> Color(0xFFFF8F00)
+        else -> {}
     }
 
     Card(
@@ -158,14 +162,14 @@ fun UserItemCard(
                 modifier = Modifier.weight(1f)
             ) {
                 Text(
-                    text = user.name,
+                    text = "${user.firstname} ${user.surname}",
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color.White,
                     modifier = Modifier.padding(bottom = 4.dp)
                 )
                 Text(
-                    text = user.birthDate,
+                    text = user.birthdate,
                     fontSize = 13.sp,
                     color = Color.White.copy(alpha = 0.9f),
                     modifier = Modifier.padding(bottom = 4.dp)
@@ -178,10 +182,10 @@ fun UserItemCard(
                 )
                 Surface(
                     shape = RoundedCornerShape(12.dp),
-                    color = roleColor
+                    color = roleColor as Color
                 ) {
                     Text(
-                        text = user.role.name.lowercase().replaceFirstChar { it.uppercase() },
+                        text = user.userRole.userRole.lowercase().replaceFirstChar { it.uppercase() },
                         fontSize = 12.sp,
                         fontWeight = FontWeight.Bold,
                         color = Color.White,
@@ -201,7 +205,7 @@ fun UserItemCard(
                     Icon(
                         imageVector = Icons.Filled.Person,
                         contentDescription = "User status",
-                        tint = if (user.isActive) Color(0xFF2E7D32) else Color(0xFFD32F2F),
+                        tint = Color(0xFFD32F2F),
                         modifier = Modifier.size(24.dp),
                     )
                 }

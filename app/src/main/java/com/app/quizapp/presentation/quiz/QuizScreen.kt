@@ -20,6 +20,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.app.quizapp.R
 import com.app.quizapp.navigation.NavigationDestination
 
@@ -27,14 +28,6 @@ object QuizDestination : NavigationDestination {
     override val route: String = "quiz"
     override val titleRes: Int = R.string.quiz
 }
-
-data class QuizQuestion(
-    val id: Int,
-    val questionText: String,
-    val topic: String,
-    val answers: List<String>,
-    val correctAnswerIndex: Int
-)
 
 enum class AnswerState {
     UNSELECTED,
@@ -45,62 +38,79 @@ enum class AnswerState {
 
 /**
  * Quiz screen displaying questions with multiple choice answers
+ * Integrates with QuizViewModel to load real questions from backend
  */
 @Composable
 fun QuizScreen(
     onCloseClick: () -> Unit = {},
     onContinueClick: (Int, Int) -> Unit = { _, _ -> }, // currentQuestion, totalQuestions
-    onQuizComplete: (Int, Int) -> Unit = { _, _ -> } // score, totalQuestions
+    onQuizComplete: (Int, Int) -> Unit = { _, _ -> }, // score, totalQuestions
+    viewModel: QuizViewModel = hiltViewModel()
 ) {
-    // Sample quiz data - will be replaced with ViewModel data
-    val questions = remember {
-        listOf(
-            QuizQuestion(
-                id = 1,
-                questionText = "What is the formula for calculating the pythagoras?",
-                topic = "Geometrie",
-                answers = listOf("Hogbetsotso", "Odwira", "Bakatue", "Homowo"),
-                correctAnswerIndex = 3
-            ),
-            QuizQuestion(
-                id = 2,
-                questionText = "Which is the largest planet in our solar system?",
-                topic = "Astronomy",
-                answers = listOf("Earth", "Mars", "Jupiter", "Saturn"),
-                correctAnswerIndex = 2
-            ),
-            QuizQuestion(
-                id = 3,
-                questionText = "What is the capital of France?",
-                topic = "Geography",
-                answers = listOf("London", "Berlin", "Paris", "Madrid"),
-                correctAnswerIndex = 2
-            ),
-            QuizQuestion(
-                id = 4,
-                questionText = "Who painted the Mona Lisa?",
-                topic = "Art",
-                answers = listOf("Michelangelo", "Leonardo da Vinci", "Raphael", "Donatello"),
-                correctAnswerIndex = 1
-            ),
-            QuizQuestion(
-                id = 5,
-                questionText = "What is H2O commonly known as?",
-                topic = "Chemistry",
-                answers = listOf("Oxygen", "Hydrogen", "Water", "Carbon Dioxide"),
-                correctAnswerIndex = 2
-            )
-        )
+    val uiState by viewModel.uiState.collectAsState()
+
+    // Handle quiz completion
+    LaunchedEffect(uiState.isQuizComplete) {
+        if (uiState.isQuizComplete) {
+            onQuizComplete(uiState.score, uiState.questions.size)
+            viewModel.resetQuizComplete()
+        }
     }
 
-    var currentQuestionIndex by remember { mutableStateOf(0) }
-    var selectedAnswerIndex by remember { mutableStateOf<Int?>(null) }
+    // Show loading state
+    if (uiState.isLoading) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color(0xFFB0E5E0)),
+            contentAlignment = Alignment.Center
+        ) {
+            CircularProgressIndicator(color = Color(0xFF2E7D32))
+        }
+        return
+    }
+
+    // Show error state
+    if (uiState.error != null) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color(0xFFB0E5E0))
+                .padding(16.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Text(
+                    text = uiState.error ?: "Unknown error",
+                    color = Color.Red,
+                    fontSize = 16.sp,
+                    modifier = Modifier.padding(bottom = 16.dp)
+                )
+                Button(onClick = onCloseClick) {
+                    Text("Close")
+                }
+            }
+        }
+        return
+    }
+
+    // Get current question and answers
+    val currentQuestion = viewModel.getCurrentQuestion()
+    val currentAnswers = viewModel.getCurrentAnswers()
+
+    if (currentQuestion == null || currentAnswers.isEmpty()) {
+        return
+    }
+
+    val totalQuestions = uiState.questions.size
     var showResult by remember { mutableStateOf(false) }
-    var score by remember { mutableStateOf(0) }
     var timeRemaining by remember { mutableStateOf(13) }
 
-    val currentQuestion = questions[currentQuestionIndex]
-    val totalQuestions = questions.size
+    // Reset showResult when question changes
+    LaunchedEffect(uiState.currentQuestionIndex) {
+        showResult = false
+        timeRemaining = 13
+    }
 
     Box(
         modifier = Modifier
@@ -186,7 +196,7 @@ fun QuizScreen(
                         .padding(20.dp)
                 ) {
                     Text(
-                        text = "Question ${currentQuestionIndex + 1}/$totalQuestions",
+                        text = "Question ${uiState.currentQuestionIndex + 1}/$totalQuestions",
                         fontSize = 14.sp,
                         color = Color(0xFF654321),
                         modifier = Modifier.padding(bottom = 16.dp)
@@ -199,7 +209,7 @@ fun QuizScreen(
                         modifier = Modifier.padding(bottom = 16.dp)
                     )
                     Text(
-                        text = "Topic ${currentQuestion.topic}",
+                        text = "Topic: ${currentQuestion.topic.topic}",
                         fontSize = 12.sp,
                         color = Color(0xFF654321)
                     )
@@ -207,20 +217,20 @@ fun QuizScreen(
             }
 
             // Answer options
-            currentQuestion.answers.forEachIndexed { index, answer ->
+            currentAnswers.forEach { answer ->
                 val answerState = when {
-                    !showResult && selectedAnswerIndex == index -> AnswerState.SELECTED
-                    showResult && index == currentQuestion.correctAnswerIndex -> AnswerState.CORRECT
-                    showResult && selectedAnswerIndex == index && index != currentQuestion.correctAnswerIndex -> AnswerState.INCORRECT
+                    !showResult && uiState.selectedAnswerId == answer.answerId -> AnswerState.SELECTED
+                    showResult && answer.correct -> AnswerState.CORRECT
+                    showResult && uiState.selectedAnswerId == answer.answerId && !answer.correct -> AnswerState.INCORRECT
                     else -> AnswerState.UNSELECTED
                 }
 
                 AnswerOption(
-                    text = answer,
+                    text = answer.text,
                     state = answerState,
                     onClick = {
                         if (!showResult) {
-                            selectedAnswerIndex = index
+                            viewModel.selectAnswer(answer.answerId)
                         }
                     },
                     modifier = Modifier.padding(bottom = 12.dp)
@@ -232,23 +242,12 @@ fun QuizScreen(
             // Continue button
             Button(
                 onClick = {
-                    if (!showResult && selectedAnswerIndex != null) {
+                    if (!showResult && uiState.selectedAnswerId != null) {
                         // Show result for current answer
                         showResult = true
-                        if (selectedAnswerIndex == currentQuestion.correctAnswerIndex) {
-                            score++
-                        }
                     } else if (showResult) {
-                        // Move to next question or finish quiz
-                        if (currentQuestionIndex < totalQuestions - 1) {
-                            currentQuestionIndex++
-                            selectedAnswerIndex = null
-                            showResult = false
-                            timeRemaining = 13
-                        } else {
-                            // Quiz complete
-                            onQuizComplete(score, totalQuestions)
-                        }
+                        // Submit answer and move to next question
+                        viewModel.submitAnswer()
                     }
                 },
                 modifier = Modifier
@@ -258,7 +257,7 @@ fun QuizScreen(
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Color(0xFF2E7D32)
                 ),
-                enabled = selectedAnswerIndex != null
+                enabled = uiState.selectedAnswerId != null
             ) {
                 Text(
                     text = "Continue",

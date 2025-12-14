@@ -29,7 +29,7 @@ interface UserApiService {
      * GET /api/users
      * @return List of users with HATEOAS links
      */
-    @GET("api/users")
+    @GET("users")
     suspend fun getAllUsers(): List<UserDto>
 
     /**
@@ -38,7 +38,7 @@ interface UserApiService {
      * @param userId User ID
      * @return User with HATEOAS links
      */
-    @GET("api/users/{userId}")
+    @GET("users/{userId}")
     suspend fun getUserById(@Path("userId") userId: Int): UserDto
 
     /**
@@ -65,7 +65,7 @@ interface UserApiService {
      * @param userId User ID to delete
      * @return Deleted user
      */
-    @DELETE("api/users/{userId}")
+    @DELETE("users/{userId}")
     suspend fun deleteUser(@Path("userId") userId: Int): UserDto
 
     // ============================================

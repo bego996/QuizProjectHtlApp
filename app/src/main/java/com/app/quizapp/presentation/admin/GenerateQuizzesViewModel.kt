@@ -2,6 +2,7 @@ package com.app.quizapp.presentation.admin
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.app.quizapp.domain.model.Difficulty
 import com.app.quizapp.domain.model.Question
 import com.app.quizapp.domain.model.Topic
 import com.app.quizapp.domain.repository.LlmRepository
@@ -29,7 +30,8 @@ import javax.inject.Inject
 data class GenerateQuizzesUiState(
     val topics: List<Topic> = emptyList(),
     val selectedTopic: Topic? = null,
-    val difficulty: String = "MEDIUM",
+    val difficulty: List<Difficulty> = emptyList(),
+    val selectedDifficulty: Difficulty? = null,
     val isGenerating: Boolean = false,
     val isLoading: Boolean = true,
     val error: String? = null,
@@ -86,16 +88,19 @@ class GenerateQuizzesViewModel @Inject constructor(
 
     /**
      * Select topic for quiz generation
+     * If the same topic is selected again, deselect it
      */
     fun selectTopic(topic: Topic) {
-        _uiState.update { it.copy(selectedTopic = topic) }
+        _uiState.update {
+            it.copy(selectedTopic = if (it.selectedTopic == topic) null else topic)
+        }
     }
 
     /**
      * Set difficulty level
      */
-    fun setDifficulty(difficulty: String) {
-        _uiState.update { it.copy(difficulty = difficulty) }
+    fun setDifficulty(difficulty: Difficulty) {
+        _uiState.update { it.copy(selectedDifficulty = difficulty) }
     }
 
     /**
@@ -116,7 +121,7 @@ class GenerateQuizzesViewModel @Inject constructor(
             // TODO: Implement actual LLM call
             // For now, show placeholder
             val generatedText = """
-                Generated Quiz for ${currentState.selectedTopic.topic} (${currentState.difficulty}):
+                Generated Quiz for ${currentState.selectedTopic.topic} (${currentState.selectedDifficulty?.mode ?: "No difficulty"}):
                 Question: Sample AI-generated question
                 A) Answer 1
                 B) Answer 2

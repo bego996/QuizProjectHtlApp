@@ -100,7 +100,7 @@ fun UserCard(user: User) {
             modifier = Modifier.padding(12.dp)
         ) {
             Text(
-                text = "${user.firstname} ${user.surname} (${user.nickname})",
+                text = "${user.firstname} ${user.surname} (${user.nickname ?: "Kein Nickname"})",
                 style = MaterialTheme.typography.bodyLarge
             )
 

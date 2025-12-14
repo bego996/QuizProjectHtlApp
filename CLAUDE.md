@@ -32,7 +32,10 @@ app/src/main/java/com/app/quizapp/
 │   ├── security/         # TokenManager.kt (interface)
 │   └── util/Result.kt    # Sealed class for error handling
 ├── presentation/         # *ViewModel.kt, *Screen.kt (Composables)
-│   └── [feature]/        # Each feature: Screen.kt, ViewModel.kt, Destination object
+│   ├── [feature]/        # User features: login, register, home, quiz, profile, categories, etc.
+│   └── admin/            # Admin features (ROLE_admin required)
+│       ├── [entity]/     # CRUD screens: user, topic, question, answer, difficulty, status, userrole, userquestion
+│       └── *.kt          # Root admin screens: UsersScreen, ActiveQuizScreen, GenerateQuizzesScreen
 ├── navigation/           # ApplicationNavGraph.kt, NavigationDestination.kt
 ├── ui/theme/             # Material3 theme
 ├── QuizApplication.kt    # @HiltAndroidApp

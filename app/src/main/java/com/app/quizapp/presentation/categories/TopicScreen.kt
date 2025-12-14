@@ -7,6 +7,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -15,6 +17,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.app.quizapp.BottomNavigationBar
 import com.app.quizapp.QuizTopAppBar
 import com.app.quizapp.navigation.NavigationDestination
@@ -36,6 +39,7 @@ data class Topic(
 
 /**
  * Main Topics screen showing all available topics for a category
+ * Integrates with TopicViewModel to load real topics
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -45,25 +49,31 @@ fun TopicScreen(
     onTopicClick: (Topic) -> Unit = {},
     onHomeClick: () -> Unit = {},
     onDiscoverClick: () -> Unit = {},
-    onProfileClick: () -> Unit = {}
+    onProfileClick: () -> Unit = {},
+    viewModel: TopicViewModel = hiltViewModel()
 ) {
-    // Sample topics - will be replaced with ViewModel data
-    val topics = listOf(
-        Topic("1", "Arithmetic", Color(0xFF2D1B1B)),
-        Topic("2", "Geometry", Color(0xFFD4A418)),
-        Topic("3", "Algebra", Color(0xFFB71C1C)),
-        Topic("4", "Analysis", Color(0xFF0D2968)),
-        Topic("5", "Probability", Color(0xFF1A1410)),
-        Topic("6", "Logic & Set Theory", Color(0xFFB71C1C)),
-        Topic("7", "Applied\nMathematics", Color(0xFF1976D2)),
-        Topic("8", "Trigonometry", Color(0xFF2E7D32))
+    val uiState by viewModel.uiState.collectAsState()
+
+    // Map domain Topic to UI Topic with colors
+    val topicColors = listOf(
+        Color(0xFF2D1B1B), Color(0xFFD4A418), Color(0xFFB71C1C), Color(0xFF0D2968),
+        Color(0xFF1A1410), Color(0xFF4A5490), Color(0xFF1976D2), Color(0xFF2E7D32),
+        Color(0xFF6A1B5A), Color(0xFF4DB6AC)
     )
+
+    val topics = uiState.topics.mapIndexed { index, domainTopic ->
+        Topic(
+            id = domainTopic.topicId.toString(),
+            name = domainTopic.topic,
+            color = topicColors[index % topicColors.size]
+        )
+    }
 
     Scaffold(
         topBar = {
             QuizTopAppBar(
                 modifier = Modifier,
-                title = "$categoryName -> ${stringResource(TopicDestination.titleRes)}",
+                title = "${uiState.parentCategory} -> ${stringResource(TopicDestination.titleRes)}",
                 canNavigateBack = true,
                 navigateUp = onBackClick
             )

@@ -52,13 +52,14 @@ fun GenerateQuizzesScreen(
 
     var isQuizMode by remember { mutableStateOf(true) } // true = Quiz erstellen, false = Thema erstellen
 
-    // Use topics from ViewModel
-    val topicNames = uiState.topics.map { it.topic }
-    var selectedTopics by remember { mutableStateOf(topicNames) }
+    // Use topics and difficulties from ViewModel
+    val difficulties = uiState.difficulty
+
+    // Subtopics and SubSubtopics are hardcoded for now (TODO: implement in ViewModel)
     var selectedSubTopics by remember { mutableStateOf(listOf("Algebra", "Geometry")) }
     var selectedSubSubTopics by remember { mutableStateOf(listOf("Addition", "Subtraction")) }
 
-    val difficulties = listOf("Easy", "Medium", "Hard")
+
 
     Scaffold(
         topBar = {
@@ -146,7 +147,8 @@ fun GenerateQuizzesScreen(
                     .padding(bottom = 24.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                selectedTopics.forEach { topic ->
+                // Show selected topic from ViewModel
+                uiState.selectedTopic?.let { topic ->
                     Surface(
                         modifier = Modifier,
                         shape = RoundedCornerShape(20.dp),
@@ -159,7 +161,7 @@ fun GenerateQuizzesScreen(
                             horizontalArrangement = Arrangement.spacedBy(4.dp)
                         ) {
                             Text(
-                                text = topic,
+                                text = topic.topic,
                                 fontSize = 14.sp,
                                 color = Color(0xFF654321)
                             )
@@ -170,7 +172,7 @@ fun GenerateQuizzesScreen(
                                 modifier = Modifier
                                     .size(16.dp)
                                     .clickable {
-                                        selectedTopics = selectedTopics.filter { it != topic }
+                                        viewModel.selectTopic(topic) // Deselect by selecting same topic
                                     }
                             )
                         }
@@ -218,7 +220,7 @@ fun GenerateQuizzesScreen(
                                 modifier = Modifier
                                     .size(16.dp)
                                     .clickable {
-                                        selectedTopics = selectedTopics.filter { it != topic }
+                                        selectedSubTopics = selectedSubTopics.filter { it != topic }
                                     }
                             )
                         }
@@ -266,7 +268,7 @@ fun GenerateQuizzesScreen(
                                 modifier = Modifier
                                     .size(16.dp)
                                     .clickable {
-                                        selectedTopics = selectedTopics.filter { it != topic }
+                                        selectedSubSubTopics = selectedSubSubTopics.filter { it != topic }
                                     }
                             )
                         }
@@ -290,26 +292,26 @@ fun GenerateQuizzesScreen(
                     .padding(bottom = 32.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-//                difficulties.forEach { difficulty ->
-//                    Surface(
-//                        modifier = Modifier.clickable {
-//                           selectedDifficulty = if (selectedDifficulty == difficulty) null else difficulty
-//                        },
-//                        shape = RoundedCornerShape(20.dp),
-//                        color = if (selectedDifficulty == difficulty) Color(0xFF00695C) else Color.White,
-//                        border = androidx.compose.foundation.BorderStroke(
-//                            1.dp,
-//                            if (selectedDifficulty == difficulty) Color(0xFF00695C) else Color(0xFFE0E0E0)
-//                        )
-//                    ) {
-//                        Text(
-//                            text = difficulty,
-//                            fontSize = 14.sp,
-//                            color = if (selectedDifficulty == difficulty) Color.White else Color(0xFF654321),
-//                            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
-//                        )
-//                    }
-//                }
+                difficulties.forEach { difficulty ->
+                    Surface(
+                        modifier = Modifier.clickable {
+                            viewModel.setDifficulty(difficulty)
+                        },
+                        shape = RoundedCornerShape(20.dp),
+                        color = if (uiState.selectedDifficulty == difficulty) Color(0xFF00695C) else Color.White,
+                        border = androidx.compose.foundation.BorderStroke(
+                            1.dp,
+                            if (uiState.selectedDifficulty == difficulty) Color(0xFF00695C) else Color(0xFFE0E0E0)
+                        )
+                    ) {
+                        Text(
+                            text = difficulty.mode,
+                            fontSize = 14.sp,
+                            color = if (uiState.selectedDifficulty == difficulty) Color.White else Color(0xFF654321),
+                            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+                        )
+                    }
+                }
             }
 
             Spacer(modifier = Modifier.height(16.dp))
