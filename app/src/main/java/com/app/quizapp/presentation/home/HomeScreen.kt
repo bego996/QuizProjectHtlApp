@@ -23,6 +23,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.app.quizapp.BottomNavigationBar
 import com.app.quizapp.R
 import com.app.quizapp.navigation.NavigationDestination
@@ -34,11 +35,10 @@ object HomeDestination : NavigationDestination {
 
 /**
  * Home screen shown after login - displays daily quiz, popular categories, and user stats
+ * Integrates with HomeViewModel to load user information
  */
 @Composable
 fun HomeScreen(
-    userName: String = "Georgiette",
-    isAdmin: Boolean = false,
     onDailyQuizClick: () -> Unit = {},
     onCategoryClick: (String) -> Unit = {},
     onSeeAllCategoriesClick: () -> Unit = {},
@@ -48,9 +48,14 @@ fun HomeScreen(
     onGenerateQuizzesClick: () -> Unit = {},
     onHomeClick: () -> Unit = {},
     onDiscoverClick: () -> Unit = {},
-    onProfileClick: () -> Unit = {}
+    onProfileClick: () -> Unit = {},
+    viewModel: HomeViewModel = hiltViewModel()
 ) {
+    val uiState by viewModel.uiState.collectAsState()
     var searchQuery by remember { mutableStateOf("") }
+
+    val userName = uiState.userName
+    val isAdmin = uiState.isAdmin
 
     Scaffold(
         bottomBar = {

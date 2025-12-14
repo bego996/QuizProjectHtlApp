@@ -21,6 +21,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.app.quizapp.BottomNavigationBar
 import com.app.quizapp.R
 import com.app.quizapp.navigation.NavigationDestination
@@ -37,19 +38,23 @@ data class Achievement(
 
 /**
  * Profile overview screen showing user info, favourite categories, and achievements
+ * Integrates with ProfileViewModel to load user data
  */
 @Composable
 fun ProfileOverviewScreen(
-    userName: String = "Georgiette Ansaah",
-    isAdmin: Boolean = false,
     onEditProfileClick: () -> Unit = {},
     onStatisticsClick: () -> Unit = {},
     onSettingsClick: () -> Unit = {},
     onCategoryClick: (String) -> Unit = {},
     onHomeClick: () -> Unit = {},
     onDiscoverClick: () -> Unit = {},
-    onProfileClick: () -> Unit = {}
+    onProfileClick: () -> Unit = {},
+    viewModel: ProfileViewModel = hiltViewModel()
 ) {
+    val uiState by viewModel.uiState.collectAsState()
+
+    val userName = viewModel.getDisplayName()
+    val isAdmin = viewModel.isAdmin()
     val achievements = listOf(
         Achievement("Bolt", "Completed quiz in less than 2 minutes."),
         Achievement("Genius", "Completed 10 quizzes with perfect score."),

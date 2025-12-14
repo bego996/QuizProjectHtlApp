@@ -9,11 +9,19 @@ data class TopicDto(
 
     @SerializedName("topic")
     val topic: String,
+
+    @SerializedName("parent_topic")
+    val parentTopic: TopicDto? = null
 )
 
+/**
+ * Converts TopicDto to domain Topic model
+ * Recursively converts parent topic if present
+ */
 fun TopicDto.toDomain(): Topic {
     return Topic(
         topicId = topicId,
-        topic = topic
+        topic = topic,
+        parentTopic = parentTopic?.toDomain()
     )
 }

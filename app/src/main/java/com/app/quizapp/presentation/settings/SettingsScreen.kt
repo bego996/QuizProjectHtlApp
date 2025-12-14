@@ -19,6 +19,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.app.quizapp.BottomNavigationBar
 import com.app.quizapp.QuizTopAppBar
 import com.app.quizapp.R
@@ -36,11 +37,11 @@ data class SettingsOption(
 
 /**
  * Settings screen with various app configuration options
+ * Integrates with SettingsViewModel for logout functionality
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
-    isAdmin: Boolean = false,
     onBackClick: () -> Unit = {},
     onPersonalInfoClick: () -> Unit = {},
     onNotificationClick: () -> Unit = {},
@@ -49,11 +50,23 @@ fun SettingsScreen(
     onApplyForAdminRemovalClick: () -> Unit = {},
     onHelpCenterClick: () -> Unit = {},
     onAboutClick: () -> Unit = {},
-    onLogoutClick: () -> Unit = {},
+    onLogoutAndNavigate: () -> Unit = {},
     onHomeClick: () -> Unit = {},
     onDiscoverClick: () -> Unit = {},
-    onProfileClick: () -> Unit = {}
+    onProfileClick: () -> Unit = {},
+    viewModel: SettingsViewModel = hiltViewModel()
 ) {
+    val uiState by viewModel.uiState.collectAsState()
+
+    // Handle logout navigation
+    LaunchedEffect(uiState.shouldNavigateToWelcome) {
+        if (uiState.shouldNavigateToWelcome) {
+            viewModel.onNavigationHandled()
+            onLogoutAndNavigate()
+        }
+    }
+
+    val isAdmin = uiState.isAdmin
     val settingsOptions = listOf(
         SettingsOption("Personal Info", Icons.Filled.Person),
         SettingsOption("Notification", Icons.Filled.Notifications),
@@ -102,7 +115,7 @@ fun SettingsScreen(
                                 "Apply for Admin Removal" -> onApplyForAdminRemovalClick()
                                 "Help Center" -> onHelpCenterClick()
                                 "About QuizToGo" -> onAboutClick()
-                                "Logout" -> onLogoutClick()
+                                "Logout" -> viewModel.logoutUser()
                             }
                         },
                     shape = RoundedCornerShape(12.dp),

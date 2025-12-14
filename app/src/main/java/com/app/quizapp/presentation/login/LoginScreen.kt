@@ -23,6 +23,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.app.quizapp.R
 import com.app.quizapp.navigation.NavigationDestination
 
@@ -33,15 +34,32 @@ object LoginDestination : NavigationDestination {
 
 /**
  * Login screen for existing users
+ * Integrates with LoginViewModel for authentication
  */
 @Composable
 fun LoginScreen(
-    onLoginClick: () -> Unit = {},
+    onLoginSuccess: () -> Unit = {},
     onCreateAccountClick: () -> Unit = {},
-    onForgotPasswordClick: () -> Unit = {}
+    onForgotPasswordClick: () -> Unit = {},
+    viewModel: LoginViewModel = hiltViewModel()
 ) {
-    var username by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
+    val uiState by viewModel.uiState.collectAsState()
+
+    // Handle successful login navigation
+    LaunchedEffect(uiState.isLoggedIn) {
+        if (uiState.isLoggedIn) {
+            viewModel.resetLoginState()
+            onLoginSuccess()
+        }
+    }
+
+    // Show error snackbar if present
+    uiState.error?.let { error ->
+        LaunchedEffect(error) {
+            // Error will be displayed in UI, could also use Snackbar here
+            // For now just clear after showing
+        }
+    }
 
     Box(
         modifier = Modifier
@@ -84,9 +102,9 @@ fun LoginScreen(
 
             Spacer(modifier = Modifier.height(48.dp))
 
-            // Username field
+            // Email field
             Text(
-                text = "Username",
+                text = "Email",
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Medium,
                 color = Color(0xFF1A1A1A),
@@ -96,18 +114,18 @@ fun LoginScreen(
             )
 
             OutlinedTextField(
-                value = username,
-                onValueChange = { username = it },
+                value = uiState.email,
+                onValueChange = viewModel::onEmailChange,
                 placeholder = {
                     Text(
-                        text = "Enter preferred username or mail",
+                        text = "Enter your email",
                         color = Color(0xFFB0A090)
                     )
                 },
                 leadingIcon = {
                     Icon(
                         imageVector = Icons.Filled.Person,
-                        contentDescription = "Username",
+                        contentDescription = "Email",
                         tint = Color(0xFF654321)
                     )
                 },
@@ -119,7 +137,8 @@ fun LoginScreen(
                     unfocusedBorderColor = Color.Transparent,
                     focusedBorderColor = Color(0xFF654321)
                 ),
-                singleLine = true
+                singleLine = true,
+                enabled = !uiState.isLoading
             )
 
             Spacer(modifier = Modifier.height(24.dp))
@@ -136,8 +155,8 @@ fun LoginScreen(
             )
 
             OutlinedTextField(
-                value = password,
-                onValueChange = { password = it },
+                value = uiState.password,
+                onValueChange = viewModel::onPasswordChange,
                 placeholder = {
                     Text(
                         text = "at least 8 characters",
@@ -160,7 +179,8 @@ fun LoginScreen(
                     unfocusedBorderColor = Color.Transparent,
                     focusedBorderColor = Color(0xFF654321)
                 ),
-                singleLine = true
+                singleLine = true,
+                enabled = !uiState.isLoading
             )
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -176,25 +196,45 @@ fun LoginScreen(
                     .clickable { onForgotPasswordClick() }
             )
 
-            Spacer(modifier = Modifier.height(48.dp))
+            Spacer(modifier = Modifier.height(24.dp))
+
+            // Error message
+            uiState.error?.let { error ->
+                Text(
+                    text = error,
+                    fontSize = 14.sp,
+                    color = Color.Red,
+                    modifier = Modifier.padding(bottom = 16.dp)
+                )
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
 
             // Login button
             Button(
-                onClick = onLoginClick,
+                onClick = { viewModel.login() },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(56.dp),
                 shape = RoundedCornerShape(28.dp),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Color(0xFF2E7D32)
-                )
+                ),
+                enabled = !uiState.isLoading
             ) {
-                Text(
-                    text = "Login",
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    color = Color.White
-                )
+                if (uiState.isLoading) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(24.dp),
+                        color = Color.White
+                    )
+                } else {
+                    Text(
+                        text = "Login",
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        color = Color.White
+                    )
+                }
             }
 
             Spacer(modifier = Modifier.height(24.dp))

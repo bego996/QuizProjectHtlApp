@@ -1,0 +1,171 @@
+package com.app.quizapp.presentation.admin
+
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.app.quizapp.domain.model.Question
+import com.app.quizapp.domain.model.Topic
+import com.app.quizapp.domain.repository.LlmRepository
+import com.app.quizapp.domain.repository.QuestionRepository
+import com.app.quizapp.domain.repository.TopicRepository
+import com.app.quizapp.domain.util.Result
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
+import javax.inject.Inject
+
+/**
+ * UI state for GenerateQuizzesScreen (Admin)
+ * @param topics List of available topics for quiz generation
+ * @param selectedTopic Selected topic for quiz generation
+ * @param difficulty Selected difficulty level
+ * @param isGenerating Whether quiz is being generated
+ * @param error Error message if operation fails
+ * @param generatedQuiz Generated quiz question (null if not generated yet)
+ * @param isSaved Whether quiz was successfully saved
+ */
+data class GenerateQuizzesUiState(
+    val topics: List<Topic> = emptyList(),
+    val selectedTopic: Topic? = null,
+    val difficulty: String = "MEDIUM",
+    val isGenerating: Boolean = false,
+    val isLoading: Boolean = true,
+    val error: String? = null,
+    val generatedQuiz: String? = null,
+    val isSaved: Boolean = false
+)
+
+/**
+ * ViewModel for Generate Quizzes screen (Admin only)
+ * Handles AI quiz generation using LLM and saving to backend
+ */
+@HiltViewModel
+class GenerateQuizzesViewModel @Inject constructor(
+    private val topicRepository: TopicRepository,
+    private val llmRepository: LlmRepository,
+    private val questionRepository: QuestionRepository
+) : ViewModel() {
+
+    private val _uiState = MutableStateFlow(GenerateQuizzesUiState())
+    val uiState: StateFlow<GenerateQuizzesUiState> = _uiState.asStateFlow()
+
+    init {
+        loadTopics()
+    }
+
+    /**
+     * Load all topics for quiz generation
+     */
+    private fun loadTopics() {
+        viewModelScope.launch {
+            _uiState.update { it.copy(isLoading = true, error = null) }
+
+            when (val result = topicRepository.getAllTopics()) {
+                is Result.Success -> {
+                    _uiState.update {
+                        it.copy(
+                            topics = result.data,
+                            isLoading = false,
+                            error = null
+                        )
+                    }
+                }
+                is Result.Error -> {
+                    _uiState.update {
+                        it.copy(
+                            isLoading = false,
+                            error = result.message
+                        )
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Select topic for quiz generation
+     */
+    fun selectTopic(topic: Topic) {
+        _uiState.update { it.copy(selectedTopic = topic) }
+    }
+
+    /**
+     * Set difficulty level
+     */
+    fun setDifficulty(difficulty: String) {
+        _uiState.update { it.copy(difficulty = difficulty) }
+    }
+
+    /**
+     * Generate quiz using AI/LLM
+     * TODO: Implement actual LLM API call when LlmRepository methods are defined
+     */
+    fun generateQuiz() {
+        val currentState = _uiState.value
+
+        if (currentState.selectedTopic == null) {
+            _uiState.update { it.copy(error = "Please select a topic") }
+            return
+        }
+
+        viewModelScope.launch {
+            _uiState.update { it.copy(isGenerating = true, error = null, generatedQuiz = null) }
+
+            // TODO: Implement actual LLM call
+            // For now, show placeholder
+            val generatedText = """
+                Generated Quiz for ${currentState.selectedTopic.topic} (${currentState.difficulty}):
+                Question: Sample AI-generated question
+                A) Answer 1
+                B) Answer 2
+                C) Answer 3
+                D) Answer 4
+                Correct: A
+            """.trimIndent()
+
+            _uiState.update {
+                it.copy(
+                    isGenerating = false,
+                    generatedQuiz = generatedText
+                )
+            }
+        }
+    }
+
+    /**
+     * Save generated quiz to backend
+     * TODO: Parse generated quiz and create Question/Answer entities
+     */
+    fun saveQuiz() {
+        val currentState = _uiState.value
+
+        if (currentState.generatedQuiz == null) {
+            _uiState.update { it.copy(error = "No quiz to save") }
+            return
+        }
+
+        viewModelScope.launch {
+            _uiState.update { it.copy(isGenerating = true, error = null) }
+
+            // TODO: Parse generatedQuiz and create Question entity
+            // TODO: Call questionRepository.createQuestion()
+            // For now, just mark as saved
+            _uiState.update {
+                it.copy(
+                    isGenerating = false,
+                    isSaved = true,
+                    error = "Quiz save not yet implemented (TODO)"
+                )
+            }
+        }
+    }
+
+    /**
+     * Reset save state
+     */
+    fun resetSaveState() {
+        _uiState.update { it.copy(isSaved = false, generatedQuiz = null) }
+    }
+}

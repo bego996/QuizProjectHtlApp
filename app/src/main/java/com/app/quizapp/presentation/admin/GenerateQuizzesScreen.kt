@@ -22,6 +22,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.app.quizapp.BottomNavigationBar
 import com.app.quizapp.QuizTopAppBar
 import com.app.quizapp.R
@@ -34,6 +35,7 @@ object GenerateQuizzesDestination : NavigationDestination {
 
 /**
  * Admin screen for generating quizzes and topics
+ * Integrates with GenerateQuizzesViewModel for AI quiz generation
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -43,13 +45,18 @@ fun GenerateQuizzesScreen(
     onSeeResultsClick: () -> Unit = {},
     onHomeClick: () -> Unit = {},
     onDiscoverClick: () -> Unit = {},
-    onProfileClick: () -> Unit = {}
+    onProfileClick: () -> Unit = {},
+    viewModel: GenerateQuizzesViewModel = hiltViewModel()
 ) {
+    val uiState by viewModel.uiState.collectAsState()
+
     var isQuizMode by remember { mutableStateOf(true) } // true = Quiz erstellen, false = Thema erstellen
-    var selectedTopics by remember { mutableStateOf(listOf("Maths", "Informatics", "Chemistry","Biology","Medicine")) }
-    var selectedSubTopics by remember { mutableStateOf(listOf("ALgebra", "Geometry")) }
+
+    // Use topics from ViewModel
+    val topicNames = uiState.topics.map { it.topic }
+    var selectedTopics by remember { mutableStateOf(topicNames) }
+    var selectedSubTopics by remember { mutableStateOf(listOf("Algebra", "Geometry")) }
     var selectedSubSubTopics by remember { mutableStateOf(listOf("Addition", "Subtraction")) }
-    var selectedDifficulty by remember { mutableStateOf<String?>(null) }
 
     val difficulties = listOf("Easy", "Medium", "Hard")
 
@@ -283,26 +290,26 @@ fun GenerateQuizzesScreen(
                     .padding(bottom = 32.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                difficulties.forEach { difficulty ->
-                    Surface(
-                        modifier = Modifier.clickable {
-                            selectedDifficulty = if (selectedDifficulty == difficulty) null else difficulty
-                        },
-                        shape = RoundedCornerShape(20.dp),
-                        color = if (selectedDifficulty == difficulty) Color(0xFF00695C) else Color.White,
-                        border = androidx.compose.foundation.BorderStroke(
-                            1.dp,
-                            if (selectedDifficulty == difficulty) Color(0xFF00695C) else Color(0xFFE0E0E0)
-                        )
-                    ) {
-                        Text(
-                            text = difficulty,
-                            fontSize = 14.sp,
-                            color = if (selectedDifficulty == difficulty) Color.White else Color(0xFF654321),
-                            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
-                        )
-                    }
-                }
+//                difficulties.forEach { difficulty ->
+//                    Surface(
+//                        modifier = Modifier.clickable {
+//                           selectedDifficulty = if (selectedDifficulty == difficulty) null else difficulty
+//                        },
+//                        shape = RoundedCornerShape(20.dp),
+//                        color = if (selectedDifficulty == difficulty) Color(0xFF00695C) else Color.White,
+//                        border = androidx.compose.foundation.BorderStroke(
+//                            1.dp,
+//                            if (selectedDifficulty == difficulty) Color(0xFF00695C) else Color(0xFFE0E0E0)
+//                        )
+//                    ) {
+//                        Text(
+//                            text = difficulty,
+//                            fontSize = 14.sp,
+//                            color = if (selectedDifficulty == difficulty) Color.White else Color(0xFF654321),
+//                            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+//                        )
+//                    }
+//                }
             }
 
             Spacer(modifier = Modifier.height(16.dp))

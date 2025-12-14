@@ -9,6 +9,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -17,6 +19,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.app.quizapp.BottomNavigationBar
 import com.app.quizapp.QuizTopAppBar
 import com.app.quizapp.navigation.NavigationDestination
@@ -40,6 +43,7 @@ data class Category(
 
 /**
  * Main Categories screen showing all available quiz categories
+ * Integrates with CategoryViewModel to load real categories
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -48,21 +52,26 @@ fun CategoryScreen(
     onCategoryClick: (Category) -> Unit = {},
     onHomeClick: () -> Unit = {},
     onDiscoverClick: () -> Unit = {},
-    onProfileClick: () -> Unit = {}
+    onProfileClick: () -> Unit = {},
+    viewModel: CategoryViewModel = hiltViewModel()
 ) {
-    // Sample categories - will be replaced with ViewModel data
-    val categories = listOf(
-        Category("1", "Maths", Color(0xFF2D1B1B)),
-        Category("2", "History", Color(0xFFD4A418)),
-        Category("3", "Chemistry", Color(0xFFB71C1C), isBookmarked = true),
-        Category("4", "Biology", Color(0xFF0D2968), isBookmarked = true),
-        Category("5", "Networks", Color(0xFF1A1410)),
-        Category("6", "Informatics", Color(0xFF4A5490)),
-        Category("7", "Geography", Color(0xFF1976D2), isBookmarked = true),
-        Category("8", "Medicine", Color(0xFF2E7D32), isBookmarked = true),
-        Category("9", "Electrical\nengineering", Color(0xFF6A1B5A), isBookmarked = true),
-        Category("10", "Customized", Color(0xFF4DB6AC), isBookmarked = true)
+    val uiState by viewModel.uiState.collectAsState()
+
+    // Map domain Topic to UI Category with colors
+    val categoryColors = listOf(
+        Color(0xFF2D1B1B), Color(0xFFD4A418), Color(0xFFB71C1C), Color(0xFF0D2968),
+        Color(0xFF1A1410), Color(0xFF4A5490), Color(0xFF1976D2), Color(0xFF2E7D32),
+        Color(0xFF6A1B5A), Color(0xFF4DB6AC)
     )
+
+    val categories = uiState.categories.mapIndexed { index, topic ->
+        Category(
+            id = topic.topicId.toString(),
+            name = topic.topic,
+            color = categoryColors[index % categoryColors.size],
+            isBookmarked = false // TODO: Add bookmark functionality if needed
+        )
+    }
 
     Scaffold(
         topBar = {

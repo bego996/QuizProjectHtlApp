@@ -14,6 +14,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.app.quizapp.BottomNavigationBar
 import com.app.quizapp.QuizTopAppBar
 import com.app.quizapp.R
@@ -30,6 +31,7 @@ enum class QuizStatus {
 }
 
 data class QuizItem(
+    val questionId: Int,
     val id: String,
     val topic: String,
     val question: String,
@@ -40,52 +42,30 @@ data class QuizItem(
 
 /**
  * Admin screen for viewing and managing active quizzes
+ * Integrates with ActiveQuizViewModel to load real quiz data
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ActiveQuizScreen(
     onBackClick: () -> Unit = {},
     onDetailsClick: (String) -> Unit = {},
-    onDeleteClick: (String) -> Unit = {},
     onHomeClick: () -> Unit = {},
     onDiscoverClick: () -> Unit = {},
-    onProfileClick: () -> Unit = {}
+    onProfileClick: () -> Unit = {},
+    viewModel: ActiveQuizViewModel = hiltViewModel()
 ) {
-    // Sample quiz data - will be replaced with ViewModel data
-    val quizzes = remember {
-        listOf(
-            QuizItem(
-                id = "#12345",
-                topic = "Geografie",
-                question = "Was ist die Hauptstadt von Deutschland?",
-                reviewedBy = "Administrator",
-                createdDate = "04.12.2025",
-                status = QuizStatus.ACTIVE
-            ),
-            QuizItem(
-                id = "#12346",
-                topic = "Geografie",
-                question = "Was ist die Hauptstadt von Deutschland?",
-                reviewedBy = "Mihir",
-                createdDate = "04.12.2025",
-                status = QuizStatus.INACTIVE
-            ),
-            QuizItem(
-                id = "#12347",
-                topic = "Geografie",
-                question = "Was ist die Hauptstadt von Deutschland?",
-                reviewedBy = null,
-                createdDate = "04.12.2025",
-                status = QuizStatus.INACTIVE
-            ),
-            QuizItem(
-                id = "#12348",
-                topic = "Geografie",
-                question = "Was ist die Hauptstadt von Deutschland?",
-                reviewedBy = "Mihir",
-                createdDate = "04.12.2025",
-                status = QuizStatus.ACTIVE
-            )
+    val uiState by viewModel.uiState.collectAsState()
+
+    // Map domain Question to UI QuizItem
+    val quizzes = uiState.quizzes.map { question ->
+        QuizItem(
+            questionId = question.questionId,
+            id = "#${question.questionId}",
+            topic = question.topic.topic,
+            question = question.questionText,
+            reviewedBy = if (question.reviewedBy > 0) "Admin ${question.reviewedBy}" else null,
+            createdDate = "N/A", // TODO: Add creation date to Question model if needed
+            status = if (question.status.text == "active") QuizStatus.ACTIVE else QuizStatus.INACTIVE
         )
     }
 
@@ -118,7 +98,7 @@ fun ActiveQuizScreen(
                 QuizItemCard(
                     quiz = quiz,
                     onDetailsClick = { onDetailsClick(quiz.id) },
-                    onDeleteClick = { onDeleteClick(quiz.id) }
+                    onDeleteClick = { viewModel.deleteQuiz(quiz.questionId) }
                 )
             }
         }

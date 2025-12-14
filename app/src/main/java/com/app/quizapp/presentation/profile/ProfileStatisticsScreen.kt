@@ -20,6 +20,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.app.quizapp.R
 import com.app.quizapp.navigation.NavigationDestination
 import androidx.compose.foundation.Canvas
@@ -37,19 +38,23 @@ object ProfileStatisticsDestination : NavigationDestination {
 
 /**
  * Profile statistics screen showing detailed quiz performance metrics
+ * Integrates with ProfileViewModel to load user data
  */
 @Composable
 fun ProfileStatisticsScreen(
-    userName: String = "Georgiette Ansaah",
-    isAdmin: Boolean = false,
     onEditProfileClick: () -> Unit = {},
     onOverviewClick: () -> Unit = {},
     onSettingsClick: () -> Unit = {},
     onHomeClick: () -> Unit = {},
     onDiscoverClick: () -> Unit = {},
-    onProfileClick: () -> Unit = {}
+    onProfileClick: () -> Unit = {},
+    viewModel: ProfileViewModel = hiltViewModel()
 ) {
+    val uiState by viewModel.uiState.collectAsState()
     var selectedPeriod by remember { mutableStateOf("Monthly") }
+
+    val userName = viewModel.getDisplayName()
+    val isAdmin = viewModel.isAdmin()
 
     Scaffold(
         topBar = {

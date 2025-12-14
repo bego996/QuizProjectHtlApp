@@ -16,4 +16,5 @@
     <string name="generate_quizzes">Generate Quizzes</string>
     <string name="active_quiz">Active Quiz</string>
     <string name="users">Users</string>
+    <string name="edit_profile">Edit Profile</string>
 </resources>

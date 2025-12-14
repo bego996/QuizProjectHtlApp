@@ -6,6 +6,8 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -14,6 +16,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.app.quizapp.R
 import com.app.quizapp.navigation.NavigationDestination
 import kotlinx.coroutines.delay
@@ -25,15 +28,28 @@ object CoverDestination : NavigationDestination {
 
 /**
  * Cover/Splash screen shown briefly when app starts
+ * Checks for existing auth token and performs auto-login
  */
 @Composable
 fun CoverScreen(
-    onTimeout: () -> Unit = {}
+    onNavigateToHome: () -> Unit = {},
+    onNavigateToWelcome: () -> Unit = {},
+    viewModel: CoverViewModel = hiltViewModel()
 ) {
-    // Auto-navigate to Welcome screen after 2 seconds
-    LaunchedEffect(Unit) {
-        delay(2000)
-        onTimeout()
+    val uiState by viewModel.uiState.collectAsState()
+
+    // Handle navigation based on auto-login result
+    LaunchedEffect(uiState.navigationDestination) {
+        when (uiState.navigationDestination) {
+            "home" -> {
+                viewModel.onNavigationHandled()
+                onNavigateToHome()
+            }
+            "welcome" -> {
+                viewModel.onNavigationHandled()
+                onNavigateToWelcome()
+            }
+        }
     }
 
     Box(

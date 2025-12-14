@@ -22,6 +22,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.app.quizapp.BottomNavigationBar
 import com.app.quizapp.QuizTopAppBar
 import com.app.quizapp.R
@@ -38,6 +39,7 @@ enum class UserRole {
 }
 
 data class UserItem(
+    val userId: Int,
     val name: String,
     val birthDate: String,
     val email: String,
@@ -47,6 +49,7 @@ data class UserItem(
 
 /**
  * Admin screen for viewing and managing users
+ * Integrates with UsersScreenViewModel to load real user data
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -54,47 +57,20 @@ fun UsersScreen(
     onBackClick: () -> Unit = {},
     onHomeClick: () -> Unit = {},
     onDiscoverClick: () -> Unit = {},
-    onUserDeleteClick: () -> Unit = {},
-    onProfileClick: () -> Unit = {}
+    onProfileClick: () -> Unit = {},
+    viewModel: UsersScreenViewModel = hiltViewModel()
 ) {
-    // Sample user data - will be replaced with ViewModel data
-    val users = remember {
-        listOf(
-            UserItem(
-                name = "Soliane Biga",
-                birthDate = "05.12.1994",
-                email = "sallie.big@email.com",
-                role = UserRole.USER,
-                isActive = false
-            ),
-            UserItem(
-                name = "Soliane Biga",
-                birthDate = "05.12.1994",
-                email = "sallie.big@email.com",
-                role = UserRole.ADMIN,
-                isActive = true
-            ),
-            UserItem(
-                name = "Soliane Biga",
-                birthDate = "05.12.1994",
-                email = "sallie.big@email.com",
-                role = UserRole.USER,
-                isActive = true
-            ),
-            UserItem(
-                name = "Soliane Biga",
-                birthDate = "05.12.1994",
-                email = "sallie.big@email.com",
-                role = UserRole.USER,
-                isActive = false
-            ),
-            UserItem(
-                name = "Soliane Biga",
-                birthDate = "05.12.1994",
-                email = "sallie.big@email.com",
-                role = UserRole.ADMIN,
-                isActive = true
-            )
+    val uiState by viewModel.uiState.collectAsState()
+
+    // Map domain User to UI UserItem
+    val users = uiState.users.map { user ->
+        UserItem(
+            userId = user.userId,
+            name = "${user.firstname} ${user.surname}",
+            birthDate = user.birthdate,
+            email = user.email,
+            role = if (user.userRole.userRole == "admin") UserRole.ADMIN else UserRole.USER,
+            isActive = true // TODO: Add active status to User model if needed
         )
     }
 
@@ -126,7 +102,7 @@ fun UsersScreen(
             items(users) { user ->
                 UserItemCard(
                     user = user,
-                    onUserDeleteClick = onUserDeleteClick
+                    onUserDeleteClick = { viewModel.deleteUser(user.userId) }
                 )
             }
         }
