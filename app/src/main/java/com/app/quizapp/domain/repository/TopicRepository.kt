@@ -1,5 +1,6 @@
 package com.app.quizapp.domain.repository
 
+import com.app.quizapp.data.remote.dto.TopicDto
 import com.app.quizapp.domain.model.Topic
 import com.app.quizapp.domain.util.Result
 
@@ -10,10 +11,16 @@ import com.app.quizapp.domain.util.Result
 interface TopicRepository {
 
     /**
-     * Get all topics (max 10)
      * @return List of topics
      */
     suspend fun getAllTopics(): Result<List<Topic>>
+
+
+    /**
+     * Get all highest topics
+     * @return List of highest topics
+     */
+    suspend fun getAllHighestTopics(): Result<List<Topic>>
 
     /**
      * Get topic by ID

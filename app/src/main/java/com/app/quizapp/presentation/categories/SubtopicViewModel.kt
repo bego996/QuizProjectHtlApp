@@ -31,8 +31,8 @@ data class SubtopicUiState(
 /**
  * ViewModel for Subtopic screen
  * Loads subtopics for a specific parent topic
- * Note: Currently loads all topics and filters client-side
- * TODO: Add parentTopicId parameter to navigation when implementing dynamic routing
+ * @param savedStateHandle is used to get the passed parentTopicId trough the navGraph
+ * its also used for saving stats on screen rotation for example
  */
 @HiltViewModel
 class SubtopicViewModel @Inject constructor(
@@ -44,9 +44,7 @@ class SubtopicViewModel @Inject constructor(
     val uiState: StateFlow<SubtopicUiState> = _uiState.asStateFlow()
 
     init {
-        // TODO: Get parentTopicId from navigation args when implementing dynamic routing
-        // For now, load all subtopics
-        loadSubtopics()
+        loadSubtopics(savedStateHandle["parentTopicId"])
     }
 
     /**

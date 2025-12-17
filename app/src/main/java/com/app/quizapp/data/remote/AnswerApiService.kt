@@ -15,12 +15,20 @@ import retrofit2.http.Path
 interface AnswerApiService {
 
     /**
-     * Get all answers (max 10 with HATEOAS links)
-     * GET /api/answers
+     * Get all answers
+     * GET answers
      * @return List of answers
      */
-    @GET("api/answers")
+    @GET("answers")
     suspend fun getAllAnswers(): List<AnswerDto>
+
+    /**
+     * Get all answers by questionId
+     * GET answers
+     * @return List of answers
+     */
+    @GET("answers?questionId={questionId}")
+    suspend fun getAllAnswersByQuestionId(@Path ("questionId") questionId: Int ): List<AnswerDto>
 
     /**
      * Get answer by ID
@@ -28,7 +36,7 @@ interface AnswerApiService {
      * @param answerId Answer ID
      * @return Answer with HATEOAS links
      */
-    @GET("api/answers/{answerId}")
+    @GET("answers/{answerId}")
     suspend fun getAnswerById(@Path("answerId") answerId: Int): AnswerDto
 
     /**
@@ -37,7 +45,7 @@ interface AnswerApiService {
      * @param answer Answer entity
      * @return Created answer
      */
-    @POST("api/answers")
+    @POST("answers")
     suspend fun createAnswer(@Body answer: AnswerDto): AnswerDto
 
     /**
@@ -46,7 +54,7 @@ interface AnswerApiService {
      * @param answer Answer entity
      * @return Updated answer
      */
-    @PUT("api/answers")
+    @PUT("answers")
     suspend fun updateAnswer(@Body answer: AnswerDto): AnswerDto
 
     /**
@@ -55,6 +63,6 @@ interface AnswerApiService {
      * @param answerId Answer ID to delete
      * @return Deleted answer
      */
-    @DELETE("api/answers/{answerId}")
+    @DELETE("answers/{answerId}")
     suspend fun deleteAnswer(@Path("answerId") answerId: Int): AnswerDto
 }

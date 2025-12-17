@@ -2,9 +2,13 @@ package com.app.quizapp.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
+import com.app.quizapp.domain.model.Topic
 import com.app.quizapp.presentation.cover.CoverDestination
 import com.app.quizapp.presentation.cover.CoverScreen
 import com.app.quizapp.presentation.welcome.WelcomeDestination
@@ -85,42 +89,55 @@ fun MettingNavHost(                                            // Hauptfunktion 
 
         composable(route = HomeDestination.route) {                        // Home-Screen with ViewModel
             HomeScreen(
-                onDailyQuizClick = { navController.navigate(QuizDestination.route) },
+                onDailyQuizClick = { navController.navigate("${QuizDestination.route}/0") },
                 onCategoryClick = { navController.navigate(CategoryDestination.route) },
                 onSeeAllCategoriesClick = { navController.navigate(CategoryDestination.route) },
                 onSeeAllStatsClick = { navController.navigate(ProfileStatisticsDestination.route) },
                 onActiveUsersClick = { navController.navigate(UsersDestination.route) },
                 onActiveQuizClick = { navController.navigate(ActiveQuizDestination.route) },
                 onGenerateQuizzesClick = { navController.navigate(GenerateQuizzesDestination.route) },
-                onHomeClick = { navController.navigate(HomeDestination.route) },
+                onHomeClick = { navController.navigate(HomeDestination.route)},
                 onDiscoverClick = { navController.navigate(CategoryDestination.route) },
                 onProfileClick = { navController.navigate(ProfileOverviewDestination.route) }
             )
         }
         composable(route = CategoryDestination.route) {                 // Categories-Screen als Start-Route
             CategoryScreen(
-                onBackClick = { navController.popBackStack()},
-                onCategoryClick = { navController.navigate(TopicDestination.route)},
+                onBackClick = { navController.popBackStack() },
+                onCategoryClick = { category ->
+                    navController.navigate("${TopicDestination.route}/${category.id.toIntOrNull() ?: 1}")
+                },
                 onHomeClick = { navController.navigate(HomeDestination.route) },
                 onDiscoverClick = { navController.navigate(CategoryDestination.route) },
                 onProfileClick = { navController.navigate(ProfileOverviewDestination.route) }
             )
         }
 
-        composable(route = TopicDestination.route) {                    // Topics-Screen
+        composable(
+            route = "${TopicDestination.route}/{parentTopicId}",
+            arguments = listOf(navArgument("parentTopicId") {type = NavType.IntType})
+        )
+        { // Topics-Screen
             TopicScreen(
                 onBackClick = { navController.popBackStack() },
-                onTopicClick = { navController.navigate(SubtopicDestination.route) },
+                onTopicClick = { topic ->
+                    navController.navigate("${SubtopicDestination.route}/${topic.id.toIntOrNull() ?: 1}")
+                },
                 onHomeClick = { navController.navigate(HomeDestination.route) },
                 onDiscoverClick = { navController.navigate(CategoryDestination.route) },
                 onProfileClick = { navController.navigate(ProfileOverviewDestination.route) }
             )
         }
 
-        composable(route = SubtopicDestination.route) {                 // Subtopics-Screen
+        composable(
+            route = "${SubtopicDestination.route}/{parentTopicId}",
+            arguments = listOf(navArgument("parentTopicId") {type = NavType.IntType})
+        ) {                 // Subtopics-Screen
             SubtopicScreen(
-                onBackClick = { navController.popBackStack()},
-                onSubtopicClick = { navController.navigate(QuizDestination.route) },
+                onBackClick = { navController.popBackStack() },
+                onSubtopicClick = { subtopic ->
+                    navController.navigate("${QuizDestination.route}/${subtopic.id.toIntOrNull() ?: 1}")
+                },
                 onHomeClick = { navController.navigate(HomeDestination.route) },
                 onDiscoverClick = { navController.navigate(CategoryDestination.route) },
                 onProfileClick = { navController.navigate(ProfileOverviewDestination.route) }
@@ -178,7 +195,10 @@ fun MettingNavHost(                                            // Hauptfunktion 
             )
         }
 
-        composable(route = QuizDestination.route) {                       // Quiz-Screen
+        composable(
+            route = "${QuizDestination.route}/{subTopicId}",
+            arguments = listOf(navArgument("subTopicId") {type = NavType.IntType})
+        ) {                       // Quiz-Screen
             QuizScreen(
                 onCloseClick = { navController.navigate(HomeDestination.route) },
                 onContinueClick = { currentQuestion, totalQuestions ->

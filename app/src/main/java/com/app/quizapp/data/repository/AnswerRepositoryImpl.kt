@@ -31,6 +31,19 @@ class AnswerRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun getAllAnswersByQuestionId(questionId: Int): Result<List<Answer>> {
+        return try {
+            val response = apiService.getAllAnswersByQuestionId(questionId)
+            Result.Success(response.map { it.toDomain() })
+        } catch (e: Exception) {
+            Result.Error(
+                message = "Failed to get answers: ${e.localizedMessage ?: "Unknown error"}",
+                throwable = e
+            )
+        }
+    }
+
+
     override suspend fun getAnswerById(answerId: Int): Result<Answer> {
         return try {
             val response = apiService.getAnswerById(answerId)

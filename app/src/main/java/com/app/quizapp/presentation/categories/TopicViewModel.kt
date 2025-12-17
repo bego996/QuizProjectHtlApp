@@ -31,8 +31,9 @@ data class TopicUiState(
 /**
  * ViewModel for Topic screen
  * Loads topics for a specific parent category
- * Note: Currently loads all topics and filters client-side
- * TODO: Add parentTopicId parameter to navigation when implementing dynamic routing
+ * * Note: Currently loads all topics and filters client-side
+ * @param savedStateHandle is used to get the passed parentTopicId trough the navGraph
+ * its also used for saving stats on screen rotation for example
  */
 @HiltViewModel
 class TopicViewModel @Inject constructor(
@@ -44,9 +45,7 @@ class TopicViewModel @Inject constructor(
     val uiState: StateFlow<TopicUiState> = _uiState.asStateFlow()
 
     init {
-        // TODO: Get parentTopicId from navigation args when implementing dynamic routing
-        // For now, load all topics
-        loadTopics()
+        loadTopics(savedStateHandle["parentTopicId"])
     }
 
     /**

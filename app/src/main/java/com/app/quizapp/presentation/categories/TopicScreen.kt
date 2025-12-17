@@ -44,7 +44,6 @@ data class Topic(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TopicScreen(
-    categoryName: String = "Maths",
     onBackClick: () -> Unit = {},
     onTopicClick: (Topic) -> Unit = {},
     onHomeClick: () -> Unit = {},

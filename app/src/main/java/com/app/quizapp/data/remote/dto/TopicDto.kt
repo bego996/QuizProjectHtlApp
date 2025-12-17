@@ -10,7 +10,7 @@ data class TopicDto(
     @SerializedName("topic")
     val topic: String,
 
-    @SerializedName("parent_topic")
+    @SerializedName("topicParent")
     val parentTopic: TopicDto? = null
 )
 

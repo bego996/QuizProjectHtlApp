@@ -1,5 +1,6 @@
 package com.app.quizapp.data.repository
 
+import android.view.PixelCopy
 import com.app.quizapp.data.remote.TopicApiService
 import com.app.quizapp.data.remote.dto.TopicDto
 import com.app.quizapp.data.remote.dto.toDomain
@@ -24,6 +25,16 @@ class TopicRepositoryImpl @Inject constructor(
             Result.Error(e.message ?: "Failed to get topics")
         }
     }
+
+    override suspend fun getAllHighestTopics(): Result<List<Topic>> {
+        return try {
+            val response = apiService.getAllHighestTopics()
+            Result.Success(response.map { it.toDomain()})
+        }catch (e: Exception){
+            Result.Error(e.message ?: "Failed to get highest Topics")
+        }
+    }
+
 
     override suspend fun getTopicById(topicId: Int): Result<Topic> {
         return try {

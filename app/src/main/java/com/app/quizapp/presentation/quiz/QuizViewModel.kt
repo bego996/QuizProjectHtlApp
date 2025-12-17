@@ -1,5 +1,6 @@
 package com.app.quizapp.presentation.quiz
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.app.quizapp.data.remote.dto.StartQuizRequestDto
@@ -53,14 +54,15 @@ data class QuizUiState(
 class QuizViewModel @Inject constructor(
     private val questionRepository: QuestionRepository,
     private val answerRepository: AnswerRepository,
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
+    private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(QuizUiState())
     val uiState: StateFlow<QuizUiState> = _uiState.asStateFlow()
 
     init {
-        loadDailyQuiz()
+        loadDailyQuiz(savedStateHandle["subTopicId"])
     }
 
     /**
@@ -89,26 +91,28 @@ class QuizViewModel @Inject constructor(
             }
             val allQuestions = (questionsResult as Result.Success).data
 
-            // Load all answers
-            val answersResult = answerRepository.getAllAnswers()
-            if (answersResult is Result.Error) {
-                _uiState.update {
-                    it.copy(
-                        isLoading = false,
-                        error = "Failed to load answers: ${answersResult.message}"
-                    )
+            // Load all answers for each question
+            val answersMap = mutableMapOf<Int, List<Answer>>()
+            allQuestions.forEach { question ->
+                when (val result = answerRepository.getAllAnswersByQuestionId(question.questionId)) {
+                    is Result.Success -> {
+                        answersMap[question.questionId] = result.data
+                    }
+                    is Result.Error -> {
+                        // Skip this question if answers fail to load
+                        // Could also handle error more explicitly if needed
+                    }
                 }
-                return@launch
             }
-            val allAnswers = (answersResult as Result.Success).data
-
-            // Group answers by questionId
-            val answersMap = allAnswers.groupBy { it.question.questionId }
 
             // Load quiz attempts to filter out completed questions
             val attemptsResult = userRepository.getQuizAttempts()
             val completedQuestionIds = if (attemptsResult is Result.Success) {
-                attemptsResult.data.map { it.question.questionId }.toSet()
+
+                // If question is already solved and has score greater than 0
+                val completeQuestionToData = attemptsResult.data.filter { it.score >= 0 }
+
+                completeQuestionToData.map { it.question.questionId }.toSet()
             } else {
                 emptySet()
             }

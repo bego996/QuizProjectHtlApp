@@ -15,12 +15,18 @@ import retrofit2.http.Path
 interface TopicApiService {
 
     /**
-     * Get all topics (max 10 with HATEOAS links)
      * GET /api/topics
      * @return List of topics
      */
-    @GET("api/topics")
+    @GET("topics")
     suspend fun getAllTopics(): List<TopicDto>
+
+    /**
+     * GET /api/topics?justHighestTopics=1
+     * @return List of topics with just highest Topics
+     */
+    @GET("topics?justHighestTopics=1")
+    suspend fun getAllHighestTopics(): List<TopicDto>
 
     /**
      * Get topic by ID
@@ -28,7 +34,7 @@ interface TopicApiService {
      * @param topicId Topic ID
      * @return Topic with HATEOAS links
      */
-    @GET("api/topics/{topicId}")
+    @GET("topics/{topicId}")
     suspend fun getTopicById(@Path("topicId") topicId: Int): TopicDto
 
     /**
@@ -37,7 +43,7 @@ interface TopicApiService {
      * @param topic Topic entity
      * @return Created topic
      */
-    @POST("api/topics")
+    @POST("topics")
     suspend fun createTopic(@Body topic: TopicDto): TopicDto
 
     /**
@@ -46,7 +52,7 @@ interface TopicApiService {
      * @param topic Topic entity
      * @return Updated topic
      */
-    @PUT("api/topics")
+    @PUT("topics")
     suspend fun updateTopic(@Body topic: TopicDto): TopicDto
 
     /**
@@ -55,6 +61,6 @@ interface TopicApiService {
      * @param topicId Topic ID to delete
      * @return Deleted topic
      */
-    @DELETE("api/topics/{topicId}")
+    @DELETE("topics/{topicId}")
     suspend fun deleteTopic(@Path("topicId") topicId: Int): TopicDto
 }

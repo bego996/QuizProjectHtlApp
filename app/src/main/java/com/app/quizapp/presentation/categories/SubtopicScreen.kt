@@ -15,6 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -45,8 +46,6 @@ data class Subtopic(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SubtopicScreen(
-    categoryName: String = "Maths",
-    topicName: String = "Arithmetic",
     onBackClick: () -> Unit = {},
     onSubtopicClick: (Subtopic) -> Unit = {},
     onHomeClick: () -> Unit = {},
@@ -75,7 +74,7 @@ fun SubtopicScreen(
         topBar = {
             QuizTopAppBar(
                 modifier = Modifier,
-                title = uiState.parentTopic,
+                title = "${uiState.parentTopic} -> ${stringResource(SubtopicDestination.titleRes)}",
                 canNavigateBack = true,
                 navigateUp = onBackClick
             )

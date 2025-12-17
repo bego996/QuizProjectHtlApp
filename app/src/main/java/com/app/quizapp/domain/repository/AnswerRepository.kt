@@ -1,7 +1,9 @@
 package com.app.quizapp.domain.repository
 
+import com.app.quizapp.data.remote.dto.AnswerDto
 import com.app.quizapp.domain.model.Answer
 import com.app.quizapp.domain.util.Result
+import retrofit2.http.Path
 
 /**
  * Repository interface for Answer operations
@@ -10,10 +12,17 @@ import com.app.quizapp.domain.util.Result
 interface AnswerRepository {
 
     /**
-     * Get all answers (max 10)
+     * Get all answers
      * @return List of answers
      */
     suspend fun getAllAnswers(): Result<List<Answer>>
+
+    /**
+     * Get all answers by questionId
+     * @param questionId Question Id
+     * @return List of answers
+     */
+    suspend fun getAllAnswersByQuestionId(@Path ("questionId") questionId: Int ): Result<List<Answer>>
 
     /**
      * Get answer by ID
