@@ -210,6 +210,7 @@ class QuizViewModel @Inject constructor(
             // Quiz complete - update state and submit to backend
             _uiState.update {
                 it.copy(
+                    currentQuestionIndex = nextIndex,
                     score = newScore,
                     isQuizComplete = true,
                     selectedAnswerId = null,

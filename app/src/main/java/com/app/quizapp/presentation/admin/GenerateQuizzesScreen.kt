@@ -1,18 +1,13 @@
 package com.app.quizapp.presentation.admin
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -49,11 +44,15 @@ fun GenerateQuizzesScreen(
     viewModel: GenerateQuizzesViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    var difficulties by remember { mutableStateOf(uiState.difficulty)}
+
+    LaunchedEffect(uiState) {
+        difficulties = uiState.difficulty
+    }
 
     var isQuizMode by remember { mutableStateOf(true) } // true = Quiz erstellen, false = Thema erstellen
 
     // Use topics and difficulties from ViewModel
-    val difficulties = uiState.difficulty
 
     var selectedTopics by remember { mutableStateOf(listOf("Math","Geography","Informatics")) }
     var selectedSubTopics by remember { mutableStateOf(listOf("Algebra", "Geometry")) }
@@ -148,7 +147,7 @@ fun GenerateQuizzesScreen(
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 // Show selected topic from ViewModel
-                uiState.selectedTopic?.let { topic ->
+                uiState.selectedCategory?.let { topic ->
                     Surface(
                         modifier = Modifier,
                         shape = RoundedCornerShape(20.dp),
@@ -196,7 +195,7 @@ fun GenerateQuizzesScreen(
                     .padding(bottom = 24.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                selectedSubTopics.forEach { topic ->
+                uiState.difficulty.forEach { diff ->
                     Surface(
                         modifier = Modifier,
                         shape = RoundedCornerShape(20.dp),
@@ -209,7 +208,7 @@ fun GenerateQuizzesScreen(
                             horizontalArrangement = Arrangement.spacedBy(4.dp)
                         ) {
                             Text(
-                                text = topic,
+                                text = diff.mode,
                                 fontSize = 14.sp,
                                 color = Color(0xFF654321)
                             )
@@ -220,7 +219,7 @@ fun GenerateQuizzesScreen(
                                 modifier = Modifier
                                     .size(16.dp)
                                     .clickable {
-                                        selectedSubTopics = selectedSubTopics.filter { it != topic }
+                                        selectedSubTopics = selectedSubTopics.filter { it != diff.mode }
                                     }
                             )
                         }
