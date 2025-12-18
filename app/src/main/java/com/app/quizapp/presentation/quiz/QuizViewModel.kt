@@ -1,10 +1,9 @@
 package com.app.quizapp.presentation.quiz
 
+import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.app.quizapp.data.remote.dto.StartQuizRequestDto
-import com.app.quizapp.data.remote.dto.SubmitAnswerRequestDto
 import com.app.quizapp.domain.model.Answer
 import com.app.quizapp.domain.model.Question
 import com.app.quizapp.domain.repository.AnswerRepository
@@ -28,7 +27,8 @@ import javax.inject.Inject
  * @param isLoading Whether quiz data is being loaded
  * @param error Error message if loading fails
  * @param isQuizComplete Whether quiz is finished
- * @param currentUserQuestionId Current UserQuestion ID for backend tracking
+ * @param userAnswers Map of user's answers: questionId -> Pair(answerId, isCorrect)
+ * @param isSavingToBackend Whether quiz results are being saved to backend
  */
 data class QuizUiState(
     val questions: List<Question> = emptyList(),
@@ -39,7 +39,8 @@ data class QuizUiState(
     val isLoading: Boolean = true,
     val error: String? = null,
     val isQuizComplete: Boolean = false,
-    val currentUserQuestionId: Int? = null
+    val userAnswers: Map<Int, Pair<Int, Boolean>> = emptyMap(), // questionId -> (answerId, isCorrect)
+    val isSavingToBackend: Boolean = false
 )
 
 /**
@@ -78,8 +79,15 @@ class QuizViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, error = null) }
 
-            // Load all questions
-            val questionsResult = questionRepository.getAllQuestions(topicId = topicId)
+            val questionsResult: Result<List<Question>>;
+
+            // Load all questions if no param for topicId passed then load all question to pick randoms.
+            if (topicId == null || topicId == 0){
+                questionsResult = questionRepository.getAllQuestions()
+            }else{
+                questionsResult = questionRepository.getAllQuestions(topicId = topicId)
+            }
+
             if (questionsResult is Result.Error) {
                 _uiState.update {
                     it.copy(
@@ -90,6 +98,7 @@ class QuizViewModel @Inject constructor(
                 return@launch
             }
             val allQuestions = (questionsResult as Result.Success).data
+            Log.e("QuizViewModel","size of questions : ${questionsResult.data.size}")
 
             // Load all answers for each question
             val answersMap = mutableMapOf<Int, List<Answer>>()
@@ -97,29 +106,45 @@ class QuizViewModel @Inject constructor(
                 when (val result = answerRepository.getAllAnswersByQuestionId(question.questionId)) {
                     is Result.Success -> {
                         answersMap[question.questionId] = result.data
+                        Log.e("QuizViewModel","size of answers =${result.data.size}")
                     }
                     is Result.Error -> {
                         // Skip this question if answers fail to load
-                        // Could also handle error more explicitly if needed
+                        Log.e("QuizViewModel","Failed to fetch answers for the question id:${question.questionId}")
                     }
                 }
+            }
+            Log.e("QuizViewModel","size of answers : ${answersMap.size}")
+
+            // Check if any answers were loaded
+            if (answersMap.isEmpty()) {
+                _uiState.update {
+                    it.copy(
+                        isLoading = false,
+                        error = "Failed to load answers for questions"
+                    )
+                }
+                return@launch
             }
 
             // Load quiz attempts to filter out completed questions
             val attemptsResult = userRepository.getQuizAttempts()
             val completedQuestionIds = if (attemptsResult is Result.Success) {
-
-                // If question is already solved and has score greater than 0
-                val completeQuestionToData = attemptsResult.data.filter { it.score >= 0 }
-
-                completeQuestionToData.map { it.question.questionId }.toSet()
+                // Filter questions that were answered correctly (score > 0)
+                // Backend uses score: 100 = correct, 0 = incorrect
+                attemptsResult.data
+                    .filter { it.score > 0 }
+                    .map { it.question.questionId }
+                    .toSet()
             } else {
                 emptySet()
             }
 
-            // Filter uncompleted questions
+            // Filter uncompleted questions that have answers loaded
             val uncompletedQuestions = allQuestions.filter { question ->
-                question.questionId !in completedQuestionIds
+                question.questionId !in completedQuestionIds &&
+                answersMap.containsKey(question.questionId) &&
+                answersMap[question.questionId]?.isNotEmpty() == true
             }
 
             // Randomly select up to 5 questions
@@ -144,36 +169,6 @@ class QuizViewModel @Inject constructor(
                     error = null
                 )
             }
-
-            // Start quiz with first question
-            startQuizQuestion()
-        }
-    }
-
-    /**
-     * Start quiz question on backend
-     * Creates UserQuestion entry for tracking
-     */
-    private fun startQuizQuestion() {
-        val currentState = _uiState.value
-        if (currentState.questions.isEmpty()) return
-
-        val currentQuestion = currentState.questions[currentState.currentQuestionIndex]
-
-        viewModelScope.launch {
-            when (val result = userRepository.startQuiz(StartQuizRequestDto(currentQuestion.questionId).questionId)) {
-                is Result.Success -> {
-                    _uiState.update {
-                        it.copy(currentUserQuestionId = result.data.userQuestionId)
-                    }
-                }
-                is Result.Error -> {
-                    // Continue quiz even if backend tracking fails
-                    _uiState.update {
-                        it.copy(error = "Warning: Quiz tracking failed")
-                    }
-                }
-            }
         }
     }
 
@@ -186,6 +181,7 @@ class QuizViewModel @Inject constructor(
 
     /**
      * Submit answer and move to next question
+     * Stores answer locally, submits to backend only when quiz is complete
      */
     fun submitAnswer() {
         val currentState = _uiState.value
@@ -196,46 +192,75 @@ class QuizViewModel @Inject constructor(
             return
         }
 
-        viewModelScope.launch {
-            // Submit answer to backend if userQuestionId is available
-            currentState.currentUserQuestionId?.let { userQuestionId ->
-                userRepository.submitAnswer(
-                    userQuestionId,
-                    SubmitAnswerRequestDto(selectedAnswerId).answerId
+        // Check if answer is correct
+        val currentQuestion = currentState.questions[currentState.currentQuestionIndex]
+        val answers = currentState.answers[currentQuestion.questionId] ?: emptyList()
+        val selectedAnswer = answers.find { it.answerId == selectedAnswerId }
+        val isCorrect = selectedAnswer?.correct == true
+
+        val newScore = if (isCorrect) currentState.score + 1 else currentState.score
+
+        // Store answer locally
+        val updatedUserAnswers = currentState.userAnswers.toMutableMap()
+        updatedUserAnswers[currentQuestion.questionId] = Pair(selectedAnswerId, isCorrect)
+
+        // Move to next question or complete quiz
+        val nextIndex = currentState.currentQuestionIndex + 1
+        if (nextIndex >= currentState.questions.size) {
+            // Quiz complete - update state and submit to backend
+            _uiState.update {
+                it.copy(
+                    score = newScore,
+                    isQuizComplete = true,
+                    selectedAnswerId = null,
+                    userAnswers = updatedUserAnswers
                 )
             }
-
-            // Check if answer is correct and update score
-            val currentQuestion = currentState.questions[currentState.currentQuestionIndex]
-            val answers = currentState.answers[currentQuestion.questionId] ?: emptyList()
-            val selectedAnswer = answers.find { it.answerId == selectedAnswerId }
-            val isCorrect = selectedAnswer?.correct == true
-
-            val newScore = if (isCorrect) currentState.score + 1 else currentState.score
-
-            // Move to next question or complete quiz
-            val nextIndex = currentState.currentQuestionIndex + 1
-            if (nextIndex >= currentState.questions.size) {
-                // Quiz complete
-                _uiState.update {
-                    it.copy(
-                        score = newScore,
-                        isQuizComplete = true,
-                        selectedAnswerId = null
-                    )
-                }
-            } else {
-                // Move to next question
-                _uiState.update {
-                    it.copy(
-                        currentQuestionIndex = nextIndex,
-                        score = newScore,
-                        selectedAnswerId = null,
-                        currentUserQuestionId = null
-                    )
-                }
-                startQuizQuestion()
+            // Submit all answers to backend
+            completeQuiz()
+        } else {
+            // Move to next question
+            _uiState.update {
+                it.copy(
+                    currentQuestionIndex = nextIndex,
+                    score = newScore,
+                    selectedAnswerId = null,
+                    userAnswers = updatedUserAnswers
+                )
             }
+        }
+    }
+
+    /**
+     * Submit all quiz answers to backend
+     * Called when quiz is complete
+     */
+    private fun completeQuiz() {
+        val currentState = _uiState.value
+
+        viewModelScope.launch {
+            _uiState.update { it.copy(isSavingToBackend = true) }
+
+            // Submit each answered question to backend
+            currentState.userAnswers.forEach { (questionId, answerData) ->
+                val (answerId, _) = answerData
+
+                // Start quiz for this question
+                when (val startResult = userRepository.startQuiz(questionId)) {
+                    is Result.Success -> {
+                        val userQuestionId = startResult.data.userQuestionId
+
+                        // Submit the answer
+                        userRepository.submitAnswer(userQuestionId, answerId)
+                    }
+                    is Result.Error -> {
+                        // Log error but continue with other questions
+                        // Could handle this more explicitly if needed
+                    }
+                }
+            }
+
+            _uiState.update { it.copy(isSavingToBackend = false) }
         }
     }
 

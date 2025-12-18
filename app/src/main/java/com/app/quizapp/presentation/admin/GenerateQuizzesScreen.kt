@@ -55,7 +55,7 @@ fun GenerateQuizzesScreen(
     // Use topics and difficulties from ViewModel
     val difficulties = uiState.difficulty
 
-    // Subtopics and SubSubtopics are hardcoded for now (TODO: implement in ViewModel)
+    var selectedTopics by remember { mutableStateOf(listOf("Math","Geography","Informatics")) }
     var selectedSubTopics by remember { mutableStateOf(listOf("Algebra", "Geometry")) }
     var selectedSubSubTopics by remember { mutableStateOf(listOf("Addition", "Subtraction")) }
 

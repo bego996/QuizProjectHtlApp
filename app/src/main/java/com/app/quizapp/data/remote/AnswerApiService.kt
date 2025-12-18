@@ -7,6 +7,7 @@ import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Path
+import retrofit2.http.Query
 
 /**
  * Retrofit API service for Answer CRUD operations
@@ -24,11 +25,12 @@ interface AnswerApiService {
 
     /**
      * Get all answers by questionId
-     * GET answers
+     * GET answers?questionId={questionId}
+     * @param questionId Question ID
      * @return List of answers
      */
-    @GET("answers?questionId={questionId}")
-    suspend fun getAllAnswersByQuestionId(@Path ("questionId") questionId: Int ): List<AnswerDto>
+    @GET("answers")
+    suspend fun getAllAnswersByQuestionId(@Query("questionId") questionId: Int): List<AnswerDto>
 
     /**
      * Get answer by ID

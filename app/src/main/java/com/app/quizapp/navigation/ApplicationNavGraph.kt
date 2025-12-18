@@ -89,7 +89,7 @@ fun MettingNavHost(                                            // Hauptfunktion 
 
         composable(route = HomeDestination.route) {                        // Home-Screen with ViewModel
             HomeScreen(
-                onDailyQuizClick = { navController.navigate("${QuizDestination.route}/0") },
+                onDailyQuizClick = { navController.navigate("${QuizDestination.route}/${0}") },
                 onCategoryClick = { navController.navigate(CategoryDestination.route) },
                 onSeeAllCategoriesClick = { navController.navigate(CategoryDestination.route) },
                 onSeeAllStatsClick = { navController.navigate(ProfileStatisticsDestination.route) },

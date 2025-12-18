@@ -1,5 +1,6 @@
 package com.app.quizapp.presentation.quiz
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -105,6 +106,7 @@ fun QuizScreen(
     val totalQuestions = uiState.questions.size
     var showResult by remember { mutableStateOf(false) }
     var timeRemaining by remember { mutableStateOf(13) }
+    Log.e("QuizScreen","size of question = $totalQuestions")
 
     // Reset showResult when question changes
     LaunchedEffect(uiState.currentQuestionIndex) {

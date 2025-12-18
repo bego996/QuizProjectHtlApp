@@ -1,5 +1,6 @@
 package com.app.quizapp.data.repository
 
+import android.util.Log
 import com.app.quizapp.data.remote.AnswerApiService
 import com.app.quizapp.data.remote.dto.AnswerDto
 import com.app.quizapp.data.remote.dto.QuestionDto
@@ -34,6 +35,7 @@ class AnswerRepositoryImpl @Inject constructor(
     override suspend fun getAllAnswersByQuestionId(questionId: Int): Result<List<Answer>> {
         return try {
             val response = apiService.getAllAnswersByQuestionId(questionId)
+            //Log.i("AnswerRepository","response size for answers=${response.size}")
             Result.Success(response.map { it.toDomain() })
         } catch (e: Exception) {
             Result.Error(

@@ -22,7 +22,7 @@ interface AnswerRepository {
      * @param questionId Question Id
      * @return List of answers
      */
-    suspend fun getAllAnswersByQuestionId(@Path ("questionId") questionId: Int ): Result<List<Answer>>
+    suspend fun getAllAnswersByQuestionId(questionId: Int): Result<List<Answer>>
 
     /**
      * Get answer by ID

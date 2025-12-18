@@ -48,7 +48,7 @@ class CategoryViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, error = null) }
 
-            when (val result = topicRepository.getAllTopics()) {
+            when (val result = topicRepository.getAllHighestTopics()) {
                 is Result.Success -> {
                     // Filter for root categories (no parent)
                     val rootCategories = result.data.filter { it.parentTopic == null }
