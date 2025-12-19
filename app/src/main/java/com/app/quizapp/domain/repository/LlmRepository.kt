@@ -13,10 +13,25 @@ import com.google.gson.JsonElement
 interface LlmRepository {
 
     /**
-     * Generate quiz question using AI/LLM
+     * Generate quiz question using AI/LLM with random parameters
      * @return Quiz response with generated quiz data
      */
     suspend fun generateQuiz(): Result<QuizResponseDto>
+
+    /**
+     * Generate quiz question using AI/LLM with specific parameters
+     * @param categoryId ID of the selected category (optional)
+     * @param topicId ID of the selected topic (optional)
+     * @param subtopicId ID of the selected subtopic (optional)
+     * @param difficultyId ID of the selected difficulty (optional)
+     * @return Quiz response with generated quiz data
+     */
+    suspend fun generateQuiz(
+        categoryId: Int? = null,
+        topicId: Int? = null,
+        subtopicId: Int? = null,
+        difficultyId: Int? = null
+    ): Result<QuizResponseDto>
 
     /**
      * Add generated quiz to database

@@ -19,11 +19,7 @@ class LlmRepositoryImpl @Inject constructor(
 ) : LlmRepository {
 
     /**
-     * Generate quiz question using AI/LLM
-     * @param model LLM model name
-     * @param prompt Generation prompt
-     * @param stream Whether to stream response
-     * @param format Optional JSON format specification
+     * Generate quiz question using AI/LLM with random parameters
      * @return Quiz response with generated quiz data
      */
     override suspend fun generateQuiz(): Result<QuizResponseDto> {
@@ -32,6 +28,33 @@ class LlmRepositoryImpl @Inject constructor(
             Result.Success(response)
         } catch (e: Exception) {
             Result.Error(e.message ?: "Failed to generate quiz")
+        }
+    }
+
+    /**
+     * Generate quiz question using AI/LLM with specific parameters
+     * @param categoryId ID of the selected category (optional)
+     * @param topicId ID of the selected topic (optional)
+     * @param subtopicId ID of the selected subtopic (optional)
+     * @param difficultyId ID of the selected difficulty (optional)
+     * @return Quiz response with generated quiz data
+     */
+    override suspend fun generateQuiz(
+        categoryId: Int?,
+        topicId: Int?,
+        subtopicId: Int?,
+        difficultyId: Int?
+    ): Result<QuizResponseDto> {
+        return try {
+            val response = apiService.generateQuiz(
+                categoryId = categoryId,
+                topicId = topicId,
+                subtopicId = subtopicId,
+                difficultyId = difficultyId
+            )
+            Result.Success(response)
+        } catch (e: Exception) {
+            Result.Error(e.message ?: "Failed to generate quiz with parameters")
         }
     }
 

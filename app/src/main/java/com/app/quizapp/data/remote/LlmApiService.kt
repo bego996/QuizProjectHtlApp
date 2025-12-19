@@ -5,6 +5,7 @@ import com.app.quizapp.data.remote.dto.QuizDto
 import com.app.quizapp.data.remote.dto.QuizResponseDto
 import retrofit2.http.Body
 import retrofit2.http.POST
+import retrofit2.http.Query
 
 /**
  * Retrofit API service for AI/LLM quiz generation endpoints
@@ -14,14 +15,30 @@ import retrofit2.http.POST
 interface LlmApiService {
 
     /**
-     * Generate quiz question using AI/LLM (Ollama)
+     * Generate quiz question using AI/LLM (Ollama) with random parameters
      * POST /api/llm/quiz/generate
      * Returns reactive Mono response
-     * @param generateRequest LLM generation parameters (model, prompt, stream, format)
      * @return QuizResponseDto with generated quiz data
      */
     @POST("api/llm/quiz/generate")
     suspend fun generateQuiz(): QuizResponseDto
+
+    /**
+     * Generate quiz question using AI/LLM (Ollama) with specific parameters
+     * POST /api/llm/quiz/generate
+     * @param categoryId Category ID (optional)
+     * @param topicId Topic ID (optional)
+     * @param subtopicId Subtopic ID (optional)
+     * @param difficultyId Difficulty ID (optional)
+     * @return QuizResponseDto with generated quiz data
+     */
+    @POST("api/llm/quiz/generate")
+    suspend fun generateQuiz(
+        @Query("categoryId") categoryId: Int? = null,
+        @Query("topicId") topicId: Int? = null,
+        @Query("subtopicId") subtopicId: Int? = null,
+        @Query("difficultyId") difficultyId: Int? = null
+    ): QuizResponseDto
 
     /**
      * Add generated quiz to database

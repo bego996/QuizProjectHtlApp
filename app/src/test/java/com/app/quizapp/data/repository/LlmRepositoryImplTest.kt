@@ -53,7 +53,9 @@ class LlmRepositoryImplTest {
                 "model": "llama2",
                 "created_at": "2024-01-15T10:30:00Z",
                 "quiz": {
-                    "topic": "Mathematics",
+                    "category": "Mathematics",
+                    "topic": "Arithmetic",
+                    "subtopic": "Addition",
                     "question": "What is 2 + 2?",
                     "difficulty": "Easy",
                     "answers": ["3", "4", "5", "6"],
@@ -69,19 +71,16 @@ class LlmRepositoryImplTest {
         )
 
         // When: Repository calls generateQuiz
-        val result = repository.generateQuiz(
-            model = "llama2",
-            prompt = "Generate a math quiz question",
-            stream = false,
-            format = null
-        )
+        val result = repository.generateQuiz()
 
         // Then: Success with quiz response
         assertThat(result).isInstanceOf(Result.Success::class.java)
         val quizResponse = (result as Result.Success).data
         assertThat(quizResponse.model).isEqualTo("llama2")
         assertThat(quizResponse.createdAt).isEqualTo("2024-01-15T10:30:00Z")
-        assertThat(quizResponse.quiz.topic).isEqualTo("Mathematics")
+        assertThat(quizResponse.quiz.category).isEqualTo("Mathematics")
+        assertThat(quizResponse.quiz.topic).isEqualTo("Arithmetic")
+        assertThat(quizResponse.quiz.subtopic).isEqualTo("Addition")
         assertThat(quizResponse.quiz.question).isEqualTo("What is 2 + 2?")
         assertThat(quizResponse.quiz.difficulty).isEqualTo("Easy")
         assertThat(quizResponse.quiz.answers).hasSize(4)
@@ -90,14 +89,16 @@ class LlmRepositoryImplTest {
     }
 
     @Test
-    fun `generateQuiz sends correct request body to API`() = runTest {
+    fun `generateQuiz sends correct request to API endpoint`() = runTest {
         // Given: Mock successful response
         val jsonResponse = """
             {
                 "model": "llama2",
                 "created_at": "2024-01-15T10:30:00Z",
                 "quiz": {
-                    "topic": "Science",
+                    "category": "Science",
+                    "topic": "Nature",
+                    "subtopic": "Animals",
                     "question": "Test question",
                     "difficulty": "Medium",
                     "answers": ["A", "B", "C", "D"],
@@ -112,33 +113,26 @@ class LlmRepositoryImplTest {
                 .setBody(jsonResponse)
         )
 
-        // When: Repository calls generateQuiz with specific parameters
-        repository.generateQuiz(
-            model = "llama2",
-            prompt = "Generate a science quiz",
-            stream = false,
-            format = null
-        )
+        // When: Repository calls generateQuiz (random mode)
+        repository.generateQuiz()
 
-        // Then: Verify correct endpoint and request body
+        // Then: Verify correct endpoint is called
         val request = mockWebServer.takeRequest()
         assertThat(request.path).isEqualTo("/api/llm/quiz/generate")
         assertThat(request.method).isEqualTo("POST")
-        val requestBody = request.body.readUtf8()
-        assertThat(requestBody).contains("\"model\":\"llama2\"")
-        assertThat(requestBody).contains("\"prompt\":\"Generate a science quiz\"")
-        assertThat(requestBody).contains("\"stream\":false")
     }
 
     @Test
-    fun `generateQuiz with stream enabled sends correct parameter`() = runTest {
+    fun `generateQuiz with parameters sends correct query parameters`() = runTest {
         // Given: Mock successful response
         val jsonResponse = """
             {
                 "model": "llama2",
                 "created_at": "2024-01-15T10:30:00Z",
                 "quiz": {
-                    "topic": "History",
+                    "category": "History",
+                    "topic": "World War II",
+                    "subtopic": "Battles",
                     "question": "Test question",
                     "difficulty": "Hard",
                     "answers": ["A", "B", "C", "D"],
@@ -153,29 +147,33 @@ class LlmRepositoryImplTest {
                 .setBody(jsonResponse)
         )
 
-        // When: Repository calls generateQuiz with stream enabled
+        // When: Repository calls generateQuiz with specific parameters
         repository.generateQuiz(
-            model = "llama2",
-            prompt = "Generate a history quiz",
-            stream = true,
-            format = null
+            categoryId = 1,
+            topicId = 2,
+            subtopicId = 3,
+            difficultyId = 4
         )
 
-        // Then: Verify stream parameter is true
+        // Then: Verify query parameters are included
         val request = mockWebServer.takeRequest()
-        val requestBody = request.body.readUtf8()
-        assertThat(requestBody).contains("\"stream\":true")
+        assertThat(request.path).contains("categoryId=1")
+        assertThat(request.path).contains("topicId=2")
+        assertThat(request.path).contains("subtopicId=3")
+        assertThat(request.path).contains("difficultyId=4")
     }
 
     @Test
-    fun `generateQuiz with format sends JSON format to API`() = runTest {
+    fun `generateQuiz with partial parameters sends only provided query params`() = runTest {
         // Given: Mock successful response
         val jsonResponse = """
             {
                 "model": "llama2",
                 "created_at": "2024-01-15T10:30:00Z",
                 "quiz": {
-                    "topic": "Geography",
+                    "category": "Geography",
+                    "topic": "Countries",
+                    "subtopic": "Capitals",
                     "question": "Test question",
                     "difficulty": "Medium",
                     "answers": ["A", "B", "C", "D"],
@@ -190,23 +188,16 @@ class LlmRepositoryImplTest {
                 .setBody(jsonResponse)
         )
 
-        // Create a sample JSON format
-        val format = JsonObject().apply {
-            addProperty("type", "quiz")
-        }
-
-        // When: Repository calls generateQuiz with format
+        // When: Repository calls generateQuiz with only some parameters
         repository.generateQuiz(
-            model = "llama2",
-            prompt = "Generate a geography quiz",
-            stream = false,
-            format = format
+            categoryId = 5,
+            difficultyId = 2
         )
 
-        // Then: Verify format is included in request
+        // Then: Verify only provided parameters are included
         val request = mockWebServer.takeRequest()
-        val requestBody = request.body.readUtf8()
-        assertThat(requestBody).contains("\"format\"")
+        assertThat(request.path).contains("categoryId=5")
+        assertThat(request.path).contains("difficultyId=2")
     }
 
     @Test
@@ -220,10 +211,7 @@ class LlmRepositoryImplTest {
 
         // When: Repository calls generateQuiz
         val result = repository.generateQuiz(
-            model = "llama2",
-            prompt = "Generate quiz",
-            stream = false,
-            format = null
+
         )
 
         // Then: Error result
@@ -243,10 +231,7 @@ class LlmRepositoryImplTest {
 
         // When: Repository calls generateQuiz
         val result = repository.generateQuiz(
-            model = "llama2",
-            prompt = "Generate quiz",
-            stream = false,
-            format = null
+
         )
 
         // Then: Error result
@@ -260,10 +245,7 @@ class LlmRepositoryImplTest {
 
         // When: Repository calls generateQuiz
         val result = repository.generateQuiz(
-            model = "llama2",
-            prompt = "Generate quiz",
-            stream = false,
-            format = null
+
         )
 
         // Then: Error result
@@ -277,7 +259,9 @@ class LlmRepositoryImplTest {
         // Given: Mock successful save response
         val jsonResponse = """
             {
+                "category": "Science",
                 "topic": "Physics",
+                "subtopic": "Light",
                 "question": "What is the speed of light?",
                 "difficulty": "Medium",
                 "answers": ["299,792,458 m/s", "300,000,000 m/s", "299,000,000 m/s", "298,000,000 m/s"],
@@ -293,7 +277,9 @@ class LlmRepositoryImplTest {
 
         // When: Repository calls addQuizToDatabase
         val result = repository.addQuizToDatabase(
+            category = "Science",
             topic = "Physics",
+            subtopic = "Light",
             question = "What is the speed of light?",
             difficulty = "Medium",
             answers = listOf("299,792,458 m/s", "300,000,000 m/s", "299,000,000 m/s", "298,000,000 m/s"),
@@ -316,7 +302,9 @@ class LlmRepositoryImplTest {
         // Given: Mock successful response
         val jsonResponse = """
             {
+                "category": "Science",
                 "topic": "Chemistry",
+                "subtopic": "Molecules",
                 "question": "What is H2O?",
                 "difficulty": "Easy",
                 "answers": ["Water", "Oxygen", "Hydrogen", "Peroxide"],
@@ -332,7 +320,9 @@ class LlmRepositoryImplTest {
 
         // When: Repository calls addQuizToDatabase
         repository.addQuizToDatabase(
+            category = "Science",
             topic = "Chemistry",
+            subtopic = "Molecules",
             question = "What is H2O?",
             difficulty = "Easy",
             answers = listOf("Water", "Oxygen", "Hydrogen", "Peroxide"),
@@ -356,7 +346,9 @@ class LlmRepositoryImplTest {
         // Given: Mock successful response
         val jsonResponse = """
             {
+                "category": "Science",
                 "topic": "Biology",
+                "subtopic": "Cell Biology",
                 "question": "What is the powerhouse of the cell?",
                 "difficulty": "Easy",
                 "answers": ["Nucleus", "Ribosome", "Mitochondria", "Chloroplast"],
@@ -372,7 +364,9 @@ class LlmRepositoryImplTest {
 
         // When: Repository calls addQuizToDatabase with correct answer at index 2
         val result = repository.addQuizToDatabase(
+            category = "Science",
             topic = "Biology",
+            subtopic = "Cell Biology",
             question = "What is the powerhouse of the cell?",
             difficulty = "Easy",
             answers = listOf("Nucleus", "Ribosome", "Mitochondria", "Chloroplast"),
@@ -397,7 +391,9 @@ class LlmRepositoryImplTest {
 
         // When: Repository calls addQuizToDatabase
         val result = repository.addQuizToDatabase(
+            category = "Test",
             topic = "Test",
+            subtopic = "Test",
             question = "Invalid question",
             difficulty = "Easy",
             answers = emptyList(),
@@ -421,7 +417,9 @@ class LlmRepositoryImplTest {
 
         // When: Repository calls addQuizToDatabase
         val result = repository.addQuizToDatabase(
+            category = "Test",
             topic = "Test",
+            subtopic = "Test",
             question = "Test question",
             difficulty = "Easy",
             answers = listOf("A", "B", "C", "D"),
@@ -439,7 +437,9 @@ class LlmRepositoryImplTest {
 
         // When: Repository calls addQuizToDatabase
         val result = repository.addQuizToDatabase(
+            category = "Test",
             topic = "Test",
+            subtopic = "Test",
             question = "Test question",
             difficulty = "Easy",
             answers = listOf("A", "B", "C", "D"),
@@ -455,7 +455,9 @@ class LlmRepositoryImplTest {
         // Given: Mock response with all fields
         val jsonResponse = """
             {
+                "category": "Mathematics",
                 "topic": "Advanced Mathematics",
+                "subtopic": "Calculus",
                 "question": "What is the derivative of x^2?",
                 "difficulty": "Hard",
                 "answers": ["2x", "x", "x^2", "2"],
@@ -471,7 +473,9 @@ class LlmRepositoryImplTest {
 
         // When: Repository calls addQuizToDatabase
         val result = repository.addQuizToDatabase(
+            category = "Mathematics",
             topic = "Advanced Mathematics",
+            subtopic = "Calculus",
             question = "What is the derivative of x^2?",
             difficulty = "Hard",
             answers = listOf("2x", "x", "x^2", "2"),

@@ -242,8 +242,6 @@ fun MettingNavHost(                                            // Hauptfunktion 
         composable(route = GenerateQuizzesDestination.route) {                // Generate Quizzes (Admin)
             GenerateQuizzesScreen(
                 onBackClick = { navController.popBackStack() },
-                onApplyQuizClick = { /* TODO: Handle quiz creation */ },
-                onSeeResultsClick = { navController.navigate(ActiveQuizDestination.route) },
                 onHomeClick = { navController.navigate(HomeDestination.route) },
                 onDiscoverClick = { navController.navigate(CategoryDestination.route) },
                 onProfileClick = { navController.navigate(ProfileOverviewDestination.route) }

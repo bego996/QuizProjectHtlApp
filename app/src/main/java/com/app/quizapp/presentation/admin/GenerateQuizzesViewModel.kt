@@ -2,6 +2,7 @@ package com.app.quizapp.presentation.admin
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.app.quizapp.data.remote.dto.QuizResponseDto
 import com.app.quizapp.domain.model.Difficulty
 import com.app.quizapp.domain.model.Topic
 import com.app.quizapp.domain.repository.DifficultyRepository
@@ -18,34 +19,55 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 /**
+ * Selection level for hierarchical topic selection
+ */
+enum class TopicSelectionLevel {
+    CATEGORY,  // First level
+    TOPIC,     // Second level
+    SUBTOPIC   // Third level
+}
+
+/**
  * UI state for GenerateQuizzesScreen (Admin)
- * @param categories List of available topics for quiz generation
- * @param selectedCategory Selected topic for quiz generation
- * @param difficulty Selected difficulty level
+ * @param allTopics All topics loaded from repository (hierarchical structure)
+ * @param difficulties All available difficulty levels
+ * @param selectedDifficulty Currently selected difficulty
+ * @param selectedCategory Selected category (root topic)
+ * @param selectedTopic Selected topic (second level)
+ * @param selectedSubtopic Selected subtopic (third level)
+ * @param currentSelectionLevel Current level in topic selection flow
+ * @param availableCategories Filtered list of root-level categories
+ * @param availableTopics Filtered list of topics for selected category
+ * @param availableSubtopics Filtered list of subtopics for selected topic
+ * @param generatedQuizResponse Generated quiz from LLM
+ * @param showDifficultyDialog Whether to show difficulty selection dialog
+ * @param showTopicSelectionDialog Whether to show topic selection dialog
  * @param isGenerating Whether quiz is being generated
+ * @param isLoading Whether initial data is loading
  * @param error Error message if operation fails
- * @param generatedQuiz Generated quiz question (null if not generated yet)
- * @param isSaved Whether quiz was successfully saved
  */
 data class GenerateQuizzesUiState(
-    val categories: List<Topic> = emptyList(),
-    val selectedCategory: Topic? = null,
-    val topics: List<Topic> = emptyList(),
-    val selectedTopic: Topic? = null,
-    val subTopics: List<Topic> = emptyList(),
-    val selectedSubtopic: Topic? = null,
-    val difficulty: List<Difficulty> = emptyList(),
+    val allTopics: List<Topic> = emptyList(),
+    val difficulties: List<Difficulty> = emptyList(),
     val selectedDifficulty: Difficulty? = null,
+    val selectedCategory: Topic? = null,
+    val selectedTopic: Topic? = null,
+    val selectedSubtopic: Topic? = null,
+    val currentSelectionLevel: TopicSelectionLevel = TopicSelectionLevel.CATEGORY,
+    val availableCategories: List<Topic> = emptyList(),
+    val availableTopics: List<Topic> = emptyList(),
+    val availableSubtopics: List<Topic> = emptyList(),
+    val generatedQuizResponse: QuizResponseDto? = null,
+    val showDifficultyDialog: Boolean = false,
+    val showTopicSelectionDialog: Boolean = false,
     val isGenerating: Boolean = false,
     val isLoading: Boolean = true,
-    val error: String? = null,
-    val generatedQuiz: String? = null,
-    val isSaved: Boolean = false
+    val error: String? = null
 )
 
 /**
  * ViewModel for Generate Quizzes screen (Admin only)
- * Handles AI quiz generation using LLM and saving to backend
+ * Handles AI quiz generation using LLM with hierarchical topic selection
  */
 @HiltViewModel
 class GenerateQuizzesViewModel @Inject constructor(
@@ -59,24 +81,36 @@ class GenerateQuizzesViewModel @Inject constructor(
     val uiState: StateFlow<GenerateQuizzesUiState> = _uiState.asStateFlow()
 
     init {
-        loadTopics()
-        loadDifficulties()
+        loadInitialData()
     }
 
     /**
-     * Load all topics for quiz generation
+     * Load all topics and difficulties on initialization
      */
-    private fun loadTopics() {
+    private fun loadInitialData() {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, error = null) }
 
-            when (val result = topicRepository.getAllTopics()) {
+            // Load difficulties
+            when (val diffResult = difficultyRepository.getAllDifficulties()) {
                 is Result.Success -> {
+                    _uiState.update { it.copy(difficulties = diffResult.data) }
+                }
+                is Result.Error -> {
+                    _uiState.update { it.copy(error = diffResult.message) }
+                }
+            }
+
+            // Load topics
+            when (val topicResult = topicRepository.getAllTopics()) {
+                is Result.Success -> {
+                    val allTopics = topicResult.data
+                    val categories = filterRootTopics(allTopics)
                     _uiState.update {
                         it.copy(
-                            categories = result.data,
-                            isLoading = false,
-                            error = null
+                            allTopics = allTopics,
+                            availableCategories = categories,
+                            isLoading = false
                         )
                     }
                 }
@@ -84,7 +118,7 @@ class GenerateQuizzesViewModel @Inject constructor(
                     _uiState.update {
                         it.copy(
                             isLoading = false,
-                            error = result.message
+                            error = topicResult.message
                         )
                     }
                 }
@@ -92,93 +126,256 @@ class GenerateQuizzesViewModel @Inject constructor(
         }
     }
 
-    private fun loadDifficulties(){
-        viewModelScope.launch {
-            _uiState.update {it.copy(isLoading = true, error = null)}
+    // ========== Dialog Management ==========
 
-            when (val result = difficultyRepository.getAllDifficulties()) {
-                is Result.Success -> {
-                    _uiState.update {
-                        it.copy(
-                            difficulty = result.data,
-                            isLoading = false,
-                            error = null
-                        )
-                    }
-                }
-                is Result.Error -> {
-                    _uiState.update {
-                        it.copy(
-                            isLoading = false,
-                            error = result.message
-                        )
-                    }
-                }
-            }
+    /**
+     * Show difficulty selection dialog (Image 3)
+     */
+    fun showDifficultyDialog() {
+        _uiState.update { it.copy(showDifficultyDialog = true) }
+    }
+
+    /**
+     * Hide difficulty selection dialog
+     */
+    fun hideDifficultyDialog() {
+        _uiState.update { it.copy(showDifficultyDialog = false) }
+    }
+
+    /**
+     * Show topic selection dialog and reset to category level (Image 4)
+     */
+    fun showTopicSelectionDialog() {
+        _uiState.update {
+            it.copy(
+                showTopicSelectionDialog = true,
+                currentSelectionLevel = TopicSelectionLevel.CATEGORY
+            )
         }
     }
 
     /**
-     * Select topic for quiz generation
-     * If the same topic is selected again, deselect it
+     * Hide topic selection dialog
+     */
+    fun hideTopicSelectionDialog() {
+        _uiState.update { it.copy(showTopicSelectionDialog = false) }
+    }
+
+    // ========== Difficulty Selection ==========
+
+    /**
+     * Select difficulty and close dialog
+     */
+    fun selectDifficulty(difficulty: Difficulty) {
+        _uiState.update {
+            it.copy(
+                selectedDifficulty = difficulty,
+                showDifficultyDialog = false
+            )
+        }
+        // After difficulty selection, show topic selection dialog
+        showTopicSelectionDialog()
+    }
+
+    /**
+     * Select random difficulty and proceed to topic selection
+     */
+    fun selectRandomDifficulty() {
+        val randomDifficulty = _uiState.value.difficulties.randomOrNull()
+        if (randomDifficulty != null) {
+            selectDifficulty(randomDifficulty)
+        }
+    }
+
+    // ========== Topic Hierarchy Filtering ==========
+
+    /**
+     * Filter root-level topics (categories with no parent)
+     */
+    private fun filterRootTopics(allTopics: List<Topic>): List<Topic> {
+        return allTopics.filter { it.parentTopic == null }
+    }
+
+    /**
+     * Filter topics by parent topic
+     */
+    private fun filterTopicsByParent(allTopics: List<Topic>, parent: Topic): List<Topic> {
+        return allTopics.filter { it.parentTopic?.topicId == parent.topicId }
+    }
+
+    // ========== Hierarchical Topic Selection ==========
+
+    /**
+     * Select category (first level) and update available topics
+     */
+    fun selectCategory(category: Topic) {
+        val topics = filterTopicsByParent(_uiState.value.allTopics, category)
+        _uiState.update {
+            it.copy(
+                selectedCategory = category,
+                availableTopics = topics,
+                currentSelectionLevel = TopicSelectionLevel.TOPIC,
+                // Reset lower levels
+                selectedTopic = null,
+                selectedSubtopic = null,
+                availableSubtopics = emptyList()
+            )
+        }
+    }
+
+    /**
+     * Select random category and proceed to topic level
+     */
+    fun selectRandomCategory() {
+        val randomCategory = _uiState.value.availableCategories.randomOrNull()
+        if (randomCategory != null) {
+            selectCategory(randomCategory)
+        }
+    }
+
+    /**
+     * Select topic (second level) and update available subtopics
      */
     fun selectTopic(topic: Topic) {
+        val subtopics = filterTopicsByParent(_uiState.value.allTopics, topic)
         _uiState.update {
-            it.copy(selectedCategory = if (it.selectedCategory == topic) null else topic)
+            it.copy(
+                selectedTopic = topic,
+                availableSubtopics = subtopics,
+                currentSelectionLevel = TopicSelectionLevel.SUBTOPIC,
+                // Reset lower level
+                selectedSubtopic = null
+            )
         }
     }
 
     /**
-     * Set difficulty level
+     * Select random topic and proceed to subtopic level
      */
-    fun setDifficulty(difficulty: Difficulty) {
-        _uiState.update { it.copy(selectedDifficulty = difficulty) }
+    fun selectRandomTopic() {
+        val randomTopic = _uiState.value.availableTopics.randomOrNull()
+        if (randomTopic != null) {
+            selectTopic(randomTopic)
+        }
     }
 
     /**
-     * Generate quiz using AI/LLM
-     * TODO: Implement actual LLM API call when LlmRepository methods are defined
+     * Select subtopic (third level) and trigger quiz generation
      */
-    fun generateQuiz() {
+    fun selectSubtopic(subtopic: Topic) {
+        _uiState.update {
+            it.copy(
+                selectedSubtopic = subtopic,
+                showTopicSelectionDialog = false
+            )
+        }
+        // Automatically generate quiz after full selection
+        generateQuizWithSelection()
+    }
+
+    /**
+     * Select random subtopic and generate quiz
+     */
+    fun selectRandomSubtopic() {
+        val randomSubtopic = _uiState.value.availableSubtopics.randomOrNull()
+        if (randomSubtopic != null) {
+            selectSubtopic(randomSubtopic)
+        }
+    }
+
+    /**
+     * Go back one level in topic selection
+     */
+    fun goBackInSelection() {
+        _uiState.update { state ->
+            when (state.currentSelectionLevel) {
+                TopicSelectionLevel.TOPIC -> {
+                    state.copy(
+                        currentSelectionLevel = TopicSelectionLevel.CATEGORY,
+                        selectedCategory = null,
+                        availableTopics = emptyList()
+                    )
+                }
+                TopicSelectionLevel.SUBTOPIC -> {
+                    state.copy(
+                        currentSelectionLevel = TopicSelectionLevel.TOPIC,
+                        selectedTopic = null,
+                        availableSubtopics = emptyList()
+                    )
+                }
+                else -> state
+            }
+        }
+    }
+
+    // ========== Quiz Generation ==========
+
+    /**
+     * Generate quiz with current selections (difficulty, category, topic, subtopic)
+     */
+    fun generateQuizWithSelection() {
         val currentState = _uiState.value
 
-        if (currentState.selectedCategory == null) {
-            _uiState.update { it.copy(error = "Please select a topic") }
-            return
-        }
-
         viewModelScope.launch {
-            _uiState.update { it.copy(isGenerating = true, error = null, generatedQuiz = null) }
+            _uiState.update { it.copy(isGenerating = true, error = null) }
 
-            // TODO: Implement actual LLM call
-            // For now, show placeholder
-            val generatedText = """
-                Generated Quiz for ${currentState.selectedCategory.topic} (${currentState.selectedDifficulty?.mode ?: "No difficulty"}):
-                Question: Sample AI-generated question
-                A) Answer 1
-                B) Answer 2
-                C) Answer 3
-                D) Answer 4
-                Correct: A
-            """.trimIndent()
+            val result = llmRepository.generateQuiz(
+                categoryId = currentState.selectedCategory?.topicId,
+                topicId = currentState.selectedTopic?.topicId,
+                subtopicId = currentState.selectedSubtopic?.topicId,
+                difficultyId = currentState.selectedDifficulty?.difficultyId
+            )
 
-            _uiState.update {
-                it.copy(
-                    isGenerating = false,
-                    generatedQuiz = generatedText
-                )
+            when (result) {
+                is Result.Success -> {
+                    _uiState.update {
+                        it.copy(
+                            isGenerating = false,
+                            generatedQuizResponse = result.data,
+                            error = null
+                        )
+                    }
+                }
+                is Result.Error -> {
+                    _uiState.update {
+                        it.copy(
+                            isGenerating = false,
+                            error = result.message
+                        )
+                    }
+                }
             }
         }
     }
 
     /**
-     * Save generated quiz to backend
-     * TODO: Parse generated quiz and create Question/Answer entities
+     * Start new quiz generation request
+     * Opens difficulty selection dialog
      */
-    fun saveQuiz() {
-        val currentState = _uiState.value
+    fun startNewRequest() {
+        // Reset selections
+        _uiState.update {
+            it.copy(
+                selectedDifficulty = null,
+                selectedCategory = null,
+                selectedTopic = null,
+                selectedSubtopic = null,
+                currentSelectionLevel = TopicSelectionLevel.CATEGORY,
+                availableTopics = emptyList(),
+                availableSubtopics = emptyList()
+            )
+        }
+        // Show difficulty dialog
+        showDifficultyDialog()
+    }
 
-        if (currentState.generatedQuiz == null) {
+    /**
+     * Apply generated quiz to database
+     */
+    fun applyQuizToDatabase() {
+        val quiz = _uiState.value.generatedQuizResponse?.quiz
+
+        if (quiz == null) {
             _uiState.update { it.copy(error = "No quiz to save") }
             return
         }
@@ -186,23 +383,43 @@ class GenerateQuizzesViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.update { it.copy(isGenerating = true, error = null) }
 
-            // TODO: Parse generatedQuiz and create Question entity
-            // TODO: Call questionRepository.createQuestion()
-            // For now, just mark as saved
-            _uiState.update {
-                it.copy(
-                    isGenerating = false,
-                    isSaved = true,
-                    error = "Quiz save not yet implemented (TODO)"
-                )
+            val result = llmRepository.addQuizToDatabase(
+                category = quiz.category,
+                topic = quiz.topic,
+                subtopic = quiz.subtopic,
+                question = quiz.question,
+                difficulty = quiz.difficulty,
+                answers = quiz.answers,
+                correctAnswer = quiz.correctAnswer
+            )
+
+            when (result) {
+                is Result.Success -> {
+                    _uiState.update {
+                        it.copy(
+                            isGenerating = false,
+                            error = null,
+                            // Clear generated quiz after successful save
+                            generatedQuizResponse = null
+                        )
+                    }
+                }
+                is Result.Error -> {
+                    _uiState.update {
+                        it.copy(
+                            isGenerating = false,
+                            error = result.message
+                        )
+                    }
+                }
             }
         }
     }
 
     /**
-     * Reset save state
+     * Clear error message
      */
-    fun resetSaveState() {
-        _uiState.update { it.copy(isSaved = false, generatedQuiz = null) }
+    fun clearError() {
+        _uiState.update { it.copy(error = null) }
     }
 }
