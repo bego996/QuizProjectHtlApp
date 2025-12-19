@@ -3,6 +3,7 @@ package com.app.quizapp.domain.repository
 import com.app.quizapp.data.remote.dto.QuizDto
 import com.app.quizapp.data.remote.dto.QuizResponseDto
 import com.app.quizapp.domain.util.Result
+import com.app.quizapp.presentation.categories.Subtopic
 import com.google.gson.JsonElement
 
 /**
@@ -13,18 +14,9 @@ interface LlmRepository {
 
     /**
      * Generate quiz question using AI/LLM
-     * @param model LLM model name (e.g., "llama2")
-     * @param prompt Generation prompt
-     * @param stream Whether to stream response
-     * @param format Optional JSON format specification
      * @return Quiz response with generated quiz data
      */
-    suspend fun generateQuiz(
-        model: String,
-        prompt: String,
-        stream: Boolean = false,
-        format: JsonElement? = null
-    ): Result<QuizResponseDto>
+    suspend fun generateQuiz(): Result<QuizResponseDto>
 
     /**
      * Add generated quiz to database
@@ -36,7 +28,9 @@ interface LlmRepository {
      * @return Saved quiz data
      */
     suspend fun addQuizToDatabase(
+        category: String,
         topic: String,
+        subtopic: String,
         question: String,
         difficulty: String,
         answers: List<String>,

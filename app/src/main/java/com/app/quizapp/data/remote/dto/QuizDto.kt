@@ -8,8 +8,14 @@ import com.google.gson.annotations.SerializedName
  * @param correctAnswer Index of the correct answer in the answers list
  */
 data class QuizDto(
+    @SerializedName("category")
+    val category: String,
+
     @SerializedName("topic")
     val topic: String,
+
+    @SerializedName("subtopic")
+    val subtopic: String,
 
     @SerializedName("question")
     val question: String,

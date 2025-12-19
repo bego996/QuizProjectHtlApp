@@ -73,84 +73,16 @@ Compose BOM 2024.10.01, Hilt 2.51.1, Retrofit 2.11.0, OkHttp 4.12.0, Coroutines 
 ## Testing Infrastructure
 - **Location**: `app/src/test/java/com/app/quizapp/`
 - **Pattern**: MockWebServer for Repository tests, Fake implementations for ViewModel tests
-- **Test Structure**:
-  ```
-  app/src/test/java/com/app/quizapp/
-  ├── data/repository/           # Repository integration tests (MockWebServer)
-  │   ├── *RepositoryImplTest.kt # Tests: Answer, Question, Difficulty, Status, UserRole, UserQuestion, Auth, Llm
-  │   └── fake/                  # Fake implementations for ViewModel tests
-  │       ├── Fake*Repository.kt # 9 Fake repos: Answer, Question, Difficulty, Status, Topic, User, UserRole, UserQuestion, Auth
-  ├── domain/security/
-  │   └── FakeTokenManager.kt    # In-memory token storage for tests
-  └── presentation/
-      ├── login/LoginViewModelTest.kt     # ✅ 14 tests passing (Auth, Validation, Errors)
-      ├── register/RegisterViewModelTest.kt # ✅ 15 tests passing (Registration, Validation)
-      └── quiz/QuizViewModelTest.kt       # ✅ 31 tests passing (Quiz workflow, Backend submission, Edge cases)
-  ```
 
 ### Repository Tests (Integration)
 - **Tool**: MockWebServer (mocks HTTP responses)
 - **Pattern**: Retrofit + ApiService + DTO mapping tested together
-- **Coverage**: 88 tests passing - CRUD operations, error handling, endpoint verification
-- **Example**: `AnswerRepositoryImplTest`, `AuthRepositoryImplTest`
 
 ### ViewModel Tests (Unit)
 - **Tools**: Turbine (Flow testing), UnconfinedTestDispatcher (coroutines), Truth (assertions)
 - **Pattern**: Fake repositories provide test data, ViewModel logic tested in isolation
-- **Test Structure**:
-  ```kotlin
-  @OptIn(ExperimentalCoroutinesApi::class)
-  class SomeViewModelTest {
-      private val testDispatcher = UnconfinedTestDispatcher()
 
-      @Before
-      fun setup() {
-          Dispatchers.setMain(testDispatcher)
-          // Initialize fake repositories
-      }
-
-      @Test
-      fun `test with Turbine pattern`() = runTest {
-          viewModel.someAction()
-          viewModel.uiState.test {
-              val state = awaitItem()
-              assertThat(state.property).isEqualTo(expectedValue)
-          }
-      }
-  }
-  ```
-- **Completed**: LoginViewModel (14 tests), RegisterViewModel (15 tests), QuizViewModel (31 tests)
-- **Remaining**: HomeViewModel, ProfileViewModel, EditProfileViewModel, CategoryViewModel, SubtopicViewModel, TopicViewModel, CoverViewModel, SettingsViewModel, ActiveQuizViewModel, UsersScreenViewModel
-- **Note**: Admin ViewModels under `presentation/admin/[entity]/` are NOT tested (old CRUD screens)
-- **Total Coverage**: 60 ViewModel tests passing
-
-### Fake Repositories
-- **Purpose**: Provide test data for ViewModel tests without network calls
-- **Features**: In-memory storage, configurable error responses, test helper methods, async simulation
-- **Available Fakes**: Answer, Question, Difficulty, Status, Topic, User, UserRole, UserQuestion, Auth (9 repositories)
-- **Advanced Features** (FakeUserRepository): `simulateDelay`, `shouldFailStartQuiz`, `shouldFailSubmitAnswer` for complex test scenarios
-- **Pattern**:
-  ```kotlin
-  class FakeSomeRepository : SomeRepository {
-      private val items = mutableListOf<Item>()
-      var shouldReturnError = false
-      var errorMessage = "Test error"
-
-      override suspend fun getAll(): Result<List<Item>> {
-          return if (shouldReturnError) Result.Error(errorMessage)
-          else Result.Success(items.toList())
-      }
-
-      fun addTestItem(item: Item) { items.add(item) }
-      fun clearTestData() { items.clear(); shouldReturnError = false }
-  }
-  ```
-
-### Running Tests
-- Repository tests: `./gradlew testDebugUnitTest --tests "com.app.quizapp.data.repository.*"`
-- ViewModel tests: `./gradlew testDebugUnitTest --tests "com.app.quizapp.presentation.*"`
-- All tests: `./gradlew testDebugUnitTest`
-- **Total**: 148 unit tests (88 repository + 60 ViewModel)
+- **Total**: 234 unit tests (88 repository + 146 ViewModel)
 
 ### Test Configuration
 - **build.gradle.kts**: `testOptions.unitTests.isReturnDefaultValues = true` (mocks Android framework classes like Log)

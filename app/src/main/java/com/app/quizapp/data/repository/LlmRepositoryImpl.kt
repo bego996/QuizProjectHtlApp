@@ -6,6 +6,7 @@ import com.app.quizapp.data.remote.dto.QuizDto
 import com.app.quizapp.data.remote.dto.QuizResponseDto
 import com.app.quizapp.domain.repository.LlmRepository
 import com.app.quizapp.domain.util.Result
+import com.app.quizapp.presentation.categories.Subtopic
 import com.google.gson.JsonElement
 import javax.inject.Inject
 
@@ -25,20 +26,9 @@ class LlmRepositoryImpl @Inject constructor(
      * @param format Optional JSON format specification
      * @return Quiz response with generated quiz data
      */
-    override suspend fun generateQuiz(
-        model: String,
-        prompt: String,
-        stream: Boolean,
-        format: JsonElement?
-    ): Result<QuizResponseDto> {
+    override suspend fun generateQuiz(): Result<QuizResponseDto> {
         return try {
-            val request = GenerateRequestDto(
-                model = model,
-                prompt = prompt,
-                stream = stream,
-                format = format
-            )
-            val response = apiService.generateQuiz(request)
+            val response = apiService.generateQuiz()
             Result.Success(response)
         } catch (e: Exception) {
             Result.Error(e.message ?: "Failed to generate quiz")
@@ -55,7 +45,9 @@ class LlmRepositoryImpl @Inject constructor(
      * @return Saved quiz data
      */
     override suspend fun addQuizToDatabase(
+        category: String,
         topic: String,
+        subtopic: String,
         question: String,
         difficulty: String,
         answers: List<String>,
@@ -63,7 +55,9 @@ class LlmRepositoryImpl @Inject constructor(
     ): Result<QuizDto> {
         return try {
             val quizDto = QuizDto(
+                category = category,
                 topic = topic,
+                subtopic,
                 question = question,
                 difficulty = difficulty,
                 answers = answers,

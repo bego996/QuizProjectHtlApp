@@ -21,7 +21,7 @@ interface LlmApiService {
      * @return QuizResponseDto with generated quiz data
      */
     @POST("api/llm/quiz/generate")
-    suspend fun generateQuiz(@Body generateRequest: GenerateRequestDto): QuizResponseDto
+    suspend fun generateQuiz(): QuizResponseDto
 
     /**
      * Add generated quiz to database
