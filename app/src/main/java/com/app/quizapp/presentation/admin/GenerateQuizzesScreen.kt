@@ -456,6 +456,34 @@ private fun GeneratedQuizCard(
                     )
                 }
 
+
+                Surface(
+                    shape = RoundedCornerShape(12.dp),
+                    color = Color(0xFF26A69A)
+                ) {
+                    Text(
+                        text = quiz.topic,
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.Medium,
+                        color = Color.White,
+                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp)
+                    )
+                }
+
+
+                Surface(
+                    shape = RoundedCornerShape(12.dp),
+                    color = Color(0xFF26A69A)
+                ) {
+                    Text(
+                        text = quiz.subtopic,
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.Medium,
+                        color = Color.White,
+                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp)
+                    )
+                }
+
                 // Difficulty chip
                 Surface(
                     shape = RoundedCornerShape(12.dp),
