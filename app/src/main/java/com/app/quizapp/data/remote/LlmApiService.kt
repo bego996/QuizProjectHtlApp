@@ -20,7 +20,7 @@ interface LlmApiService {
      * Returns reactive Mono response
      * @return QuizResponseDto with generated quiz data
      */
-    @POST("api/llm/quiz/generate")
+    @POST("api/llm/openai/quiz/generate")
     suspend fun generateQuiz(): QuizResponseDto
 
     /**
@@ -32,7 +32,7 @@ interface LlmApiService {
      * @param difficultyId Difficulty ID (optional)
      * @return QuizResponseDto with generated quiz data
      */
-    @POST("api/llm/quiz/generate")
+    @POST("api/llm/openai/quiz/generate")
     suspend fun generateQuiz(
         @Query("categoryId") categoryId: Int? = null,
         @Query("topicId") topicId: Int? = null,
@@ -47,6 +47,6 @@ interface LlmApiService {
      * @param quiz Quiz data (topic, question, difficulty, answers, correct_answer)
      * @return Saved QuizDto
      */
-    @POST("api/llm/quiz/add")
+    @POST("api/llm/openai/quiz/add")
     suspend fun addQuizToDatabase(@Body quiz: QuizDto): QuizDto
 }

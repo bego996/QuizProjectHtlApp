@@ -80,7 +80,7 @@ object NetworkModule {
             .addInterceptor(authInterceptor)    // Fügt JWT-Token zu Requests hinzu
             .addInterceptor(loggingInterceptor) // Fügt Logging hinzu
             .connectTimeout(30, TimeUnit.SECONDS) // Timeout für Verbindungsaufbau
-            .readTimeout(30, TimeUnit.SECONDS)    // Timeout für Daten empfangen
+            .readTimeout(60, TimeUnit.SECONDS)    // Timeout für Daten empfangen
             .writeTimeout(30, TimeUnit.SECONDS)   // Timeout für Daten senden
             .build()
     }
