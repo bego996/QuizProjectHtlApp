@@ -49,7 +49,8 @@ object NetworkModule {
      *
      * TODO: Passe den Port an dein Spring Boot Backend an
      */
-    private const val BASE_URL = "http://10.0.2.2:8080/"
+    private const val BASE_URL_EMULATOR_TO_PC = "http://10.0.2.2:8080/"
+    private const val BASE_URL_PHYSICAL_TO_PC = "http://192.168.0.87:8080/"
 
     /**
      * Stellt den OkHttpClient bereit
@@ -97,7 +98,7 @@ object NetworkModule {
     @Singleton
     fun provideRetrofit(okHttpClient: OkHttpClient): Retrofit {
         return Retrofit.Builder()
-            .baseUrl(BASE_URL) // Basis-URL des Backends
+            .baseUrl(BASE_URL_EMULATOR_TO_PC) // Basis-URL des Backends
             .client(okHttpClient) // Nutzt unseren konfigurierten OkHttpClient
             .addConverterFactory(GsonConverterFactory.create()) // JSON zu Kotlin-Objekten konvertieren
             .build()
