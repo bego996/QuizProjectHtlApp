@@ -120,10 +120,26 @@ fun UserItemCard(
     user: User,
     onUserDeleteClick: () -> Unit
 ) {
+    var showDeleteDialog by remember { mutableStateOf(false) }
+
     val roleColor = when (user.userRole.userRole) {
         "user" -> Color(0xFF2E7D32)
         "admin" -> Color(0xFFFF8F00)
         else -> {}
+    }
+
+    // Delete confirmation dialog
+    if (showDeleteDialog) {
+        UserDeleteConfirmationDialog(
+            userName = "${user.firstname} ${user.surname}",
+            onConfirm = {
+                showDeleteDialog = false
+                onUserDeleteClick()
+            },
+            onDismiss = {
+                showDeleteDialog = false
+            }
+        )
     }
 
     Card(
@@ -200,12 +216,16 @@ fun UserItemCard(
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 Button(
-                    onClick = onUserDeleteClick
+                    onClick = { showDeleteDialog = true },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(0xFFD32F2F)
+                    ),
+                    shape = RoundedCornerShape(8.dp)
                 ) {
                     Icon(
                         imageVector = Icons.Filled.Person,
-                        contentDescription = "User status",
-                        tint = Color(0xFFD32F2F),
+                        contentDescription = "Delete user",
+                        tint = Color.White,
                         modifier = Modifier.size(24.dp),
                     )
                 }
@@ -219,4 +239,72 @@ fun UserItemCard(
             }
         }
     }
+}
+
+/**
+ * Delete confirmation dialog for users with dark cyan theme
+ * @param userName Name of the user to delete
+ * @param onConfirm Callback when user confirms deletion
+ * @param onDismiss Callback when user dismisses dialog
+ */
+@Composable
+fun UserDeleteConfirmationDialog(
+    userName: String,
+    onConfirm: () -> Unit,
+    onDismiss: () -> Unit
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = {
+            Text(
+                text = "Benutzer löschen",
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color.White
+            )
+        },
+        text = {
+            Text(
+                text = "Möchtest du den Benutzer \"$userName\" wirklich löschen?",
+                fontSize = 14.sp,
+                color = Color.White.copy(alpha = 0.9f)
+            )
+        },
+        confirmButton = {
+            Button(
+                onClick = onConfirm,
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(0xFFD32F2F)
+                ),
+                shape = RoundedCornerShape(20.dp),
+                modifier = Modifier.height(45.dp)
+            ) {
+                Text(
+                    text = "Ja, löschen",
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    color = Color.White
+                )
+            }
+        },
+        dismissButton = {
+            Button(
+                onClick = onDismiss,
+                shape = RoundedCornerShape(20.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(0xFF00838F)
+                ),
+                modifier = Modifier.height(45.dp)
+            ) {
+                Text(
+                    text = "Abbrechen",
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    color = Color.White
+                )
+            }
+        },
+        containerColor = Color(0xFF006064),
+        shape = RoundedCornerShape(16.dp)
+    )
 }

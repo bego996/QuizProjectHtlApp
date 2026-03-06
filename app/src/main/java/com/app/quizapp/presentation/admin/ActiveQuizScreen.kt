@@ -126,9 +126,26 @@ fun QuizItemCard(
     onDetailsClick: () -> Unit,
     onDeleteClick: () -> Unit
 ) {
+    var showDeleteDialog by remember { mutableStateOf(false) }
+
     val statusColor = when (quiz.status) {
         QuizStatus.ACTIVE -> Color(0xFF2E7D32)
         QuizStatus.INACTIVE -> Color(0xFFFF8F00)
+    }
+
+    // Delete confirmation dialog
+    if (showDeleteDialog) {
+        DeleteConfirmationDialog(
+            title = "Quiz löschen",
+            message = "Möchtest du diese Frage wirklich löschen?\n\n\"${quiz.question}\"",
+            onConfirm = {
+                showDeleteDialog = false
+                onDeleteClick()
+            },
+            onDismiss = {
+                showDeleteDialog = false
+            }
+        )
     }
 
     Card(
@@ -256,7 +273,7 @@ fun QuizItemCard(
                     }
                 }
                 Button(
-                    onClick = onDeleteClick,
+                    onClick = { showDeleteDialog = true },
                     modifier = Modifier
                         .weight(1f)
                         .height(40.dp),
@@ -357,4 +374,74 @@ fun AnswersSection(
             )
         }
     }
+}
+
+/**
+ * Reusable delete confirmation dialog with dark cyan theme
+ * @param title Dialog title
+ * @param message Dialog message
+ * @param onConfirm Callback when user confirms deletion
+ * @param onDismiss Callback when user dismisses dialog
+ */
+@Composable
+fun DeleteConfirmationDialog(
+    title: String,
+    message: String,
+    onConfirm: () -> Unit,
+    onDismiss: () -> Unit
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = {
+            Text(
+                text = title,
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color.White
+            )
+        },
+        text = {
+            Text(
+                text = message,
+                fontSize = 14.sp,
+                color = Color.White.copy(alpha = 0.9f)
+            )
+        },
+        confirmButton = {
+            Button(
+                onClick = onConfirm,
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(0xFFD32F2F)
+                ),
+                shape = RoundedCornerShape(20.dp),
+                modifier = Modifier.height(45.dp)
+            ) {
+                Text(
+                    text = "Ja, löschen",
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    color = Color.White
+                )
+            }
+        },
+        dismissButton = {
+            Button(
+                onClick = onDismiss,
+                shape = RoundedCornerShape(20.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(0xFF00838F)
+                ),
+                modifier = Modifier.height(45.dp)
+            ) {
+                Text(
+                    text = "Abbrechen",
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    color = Color.White
+                )
+            }
+        },
+        containerColor = Color(0xFF006064),
+        shape = RoundedCornerShape(16.dp)
+    )
 }
