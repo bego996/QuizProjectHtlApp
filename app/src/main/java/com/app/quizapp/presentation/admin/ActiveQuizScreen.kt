@@ -63,8 +63,8 @@ fun ActiveQuizScreen(
             id = "#${question.questionId}",
             topic = question.topic.topic,
             question = question.questionText,
-            reviewedBy = if (question.reviewedBy > 0) "Admin ${question.reviewedBy}" else null,
-            createdDate = "N/A", // TODO: Add creation date to Question model if needed
+            reviewedBy = question.reviewedBy?.let { if (it > 0) "${question.reviewedBy}" else null },
+            createdDate = question.createdAt,
             status = if (question.status.text == "active") QuizStatus.ACTIVE else QuizStatus.INACTIVE
         )
     }
@@ -210,11 +210,6 @@ fun QuizItemCard(
             ) {
                 Text(
                     text = "ID: ${quiz.id}",
-                    fontSize = 12.sp,
-                    color = Color.White.copy(alpha = 0.9f)
-                )
-                Text(
-                    text = "⋮ Mihir",
                     fontSize = 12.sp,
                     color = Color.White.copy(alpha = 0.9f)
                 )

@@ -3,7 +3,10 @@ package com.app.quizapp.data.repository
 import android.util.Log
 import com.app.quizapp.data.remote.AnswerApiService
 import com.app.quizapp.data.remote.dto.AnswerDto
+import com.app.quizapp.data.remote.dto.DifficultyDto
 import com.app.quizapp.data.remote.dto.QuestionDto
+import com.app.quizapp.data.remote.dto.StatusDto
+import com.app.quizapp.data.remote.dto.TopicDto
 import com.app.quizapp.data.remote.dto.toDomain
 import com.app.quizapp.domain.model.Answer
 import com.app.quizapp.domain.repository.AnswerRepository
@@ -106,18 +109,19 @@ class AnswerRepositoryImpl @Inject constructor(
                 questionId = question.questionId,
                 questionText = question.questionText,
                 reviewedBy = question.reviewedBy,
-                topic = com.app.quizapp.data.remote.dto.TopicDto(
+                topic = TopicDto(
                     topicId = question.topic.topicId,
                     topic = question.topic.topic
                 ),
-                status = com.app.quizapp.data.remote.dto.StatusDto(
+                status = StatusDto(
                     statusId = question.status.statusId,
                     text = question.status.text
                 ),
-                difficulty = com.app.quizapp.data.remote.dto.DifficultyDto(
+                difficulty = DifficultyDto(
                     difficultyId = question.difficulty.difficultyId,
                     mode = question.difficulty.mode
-                )
+                ),
+                createdAt = question.createdAt
             )
         )
     }

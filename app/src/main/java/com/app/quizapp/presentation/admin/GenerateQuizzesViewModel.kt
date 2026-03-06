@@ -9,6 +9,7 @@ import com.app.quizapp.domain.repository.DifficultyRepository
 import com.app.quizapp.domain.repository.LlmRepository
 import com.app.quizapp.domain.repository.QuestionRepository
 import com.app.quizapp.domain.repository.TopicRepository
+import com.app.quizapp.domain.repository.UserRepository
 import com.app.quizapp.domain.util.Result
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -44,6 +45,7 @@ enum class TopicSelectionLevel {
  * @param showTopicSelectionDialog Whether to show topic selection dialog
  * @param isGenerating Whether quiz is being generated
  * @param isLoading Whether initial data is loading
+ * @param currentUserId ID of the currently logged in admin
  * @param error Error message if operation fails
  */
 data class GenerateQuizzesUiState(
@@ -62,6 +64,7 @@ data class GenerateQuizzesUiState(
     val showTopicSelectionDialog: Boolean = false,
     val isGenerating: Boolean = false,
     val isLoading: Boolean = true,
+    val currentUserId: Int? = null,
     val error: String? = null
 )
 
@@ -74,7 +77,8 @@ class GenerateQuizzesViewModel @Inject constructor(
     private val topicRepository: TopicRepository,
     private val difficultyRepository: DifficultyRepository,
     private val llmRepository: LlmRepository,
-    private val questionRepository: QuestionRepository
+    private val questionRepository: QuestionRepository,
+    private val userRepository: UserRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(GenerateQuizzesUiState())
@@ -85,11 +89,21 @@ class GenerateQuizzesViewModel @Inject constructor(
     }
 
     /**
-     * Load all topics and difficulties on initialization
+     * Load all topics, difficulties and current user on initialization
      */
     private fun loadInitialData() {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, error = null) }
+
+            // Load current user (admin) ID
+            when (val userResult = userRepository.getCurrentUser()) {
+                is Result.Success -> {
+                    _uiState.update { it.copy(currentUserId = userResult.data.userId) }
+                }
+                is Result.Error -> {
+                    _uiState.update { it.copy(error = userResult.message) }
+                }
+            }
 
             // Load difficulties
             when (val diffResult = difficultyRepository.getAllDifficulties()) {
@@ -370,10 +384,11 @@ class GenerateQuizzesViewModel @Inject constructor(
     }
 
     /**
-     * Apply generated quiz to database
+     * Apply generated quiz to database with admin's user ID as reviewedBy
      */
     fun applyQuizToDatabase() {
         val quiz = _uiState.value.generatedQuizResponse?.quiz
+        val currentUserId = _uiState.value.currentUserId
 
         if (quiz == null) {
             _uiState.update { it.copy(error = "No quiz to save") }
@@ -390,7 +405,8 @@ class GenerateQuizzesViewModel @Inject constructor(
                 question = quiz.question,
                 difficulty = quiz.difficulty,
                 answers = quiz.answers,
-                correctAnswer = quiz.correctAnswer
+                correctAnswer = quiz.correctAnswer,
+                reviewedBy = currentUserId
             )
 
             when (result) {

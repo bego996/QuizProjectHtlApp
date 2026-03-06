@@ -101,7 +101,8 @@ class UserQuestionRepositoryImpl @Inject constructor(
                 difficulty = DifficultyDto(
                     difficultyId = question.difficulty.difficultyId,
                     mode = question.difficulty.mode
-                )
+                ),
+                createdAt = question.createdAt,
             ),
             score = score
         )

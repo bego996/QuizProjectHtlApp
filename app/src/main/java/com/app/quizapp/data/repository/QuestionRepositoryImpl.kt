@@ -87,7 +87,8 @@ class QuestionRepositoryImpl @Inject constructor(
             difficulty = DifficultyDto(
                 difficultyId = difficulty.difficultyId,
                 mode = difficulty.mode
-            )
+            ),
+            createdAt = createdAt
         )
     }
 }
