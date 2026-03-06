@@ -50,7 +50,7 @@ object NetworkModule {
      * TODO: Passe den Port an dein Spring Boot Backend an
      */
     private const val BASE_URL_EMULATOR_TO_PC = "http://10.0.2.2:8080/"
-    private const val BASE_URL_PHYSICAL_TO_PC = "http://192.168.0.87:8080/"
+    private const val BASE_URL_PHYSICAL_TO_PC = "http://192.168.0.242:8080/"
 
     /**
      * Stellt den OkHttpClient bereit

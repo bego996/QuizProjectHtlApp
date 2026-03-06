@@ -251,7 +251,6 @@ fun MettingNavHost(                                            // Hauptfunktion 
         composable(route = ActiveQuizDestination.route) {                     // Active Quiz (Admin)
             ActiveQuizScreen(
                 onBackClick = { navController.popBackStack() },
-                onDetailsClick = { quizId -> /* TODO: Navigate to quiz details */ },
                 onHomeClick = { navController.navigate(HomeDestination.route) },
                 onDiscoverClick = { navController.navigate(CategoryDestination.route) },
                 onProfileClick = { navController.navigate(ProfileOverviewDestination.route) }

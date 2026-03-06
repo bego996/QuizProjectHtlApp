@@ -18,6 +18,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.app.quizapp.BottomNavigationBar
 import com.app.quizapp.QuizTopAppBar
 import com.app.quizapp.R
+import com.app.quizapp.domain.model.Answer
 import com.app.quizapp.navigation.NavigationDestination
 
 object ActiveQuizDestination : NavigationDestination {
@@ -48,7 +49,6 @@ data class QuizItem(
 @Composable
 fun ActiveQuizScreen(
     onBackClick: () -> Unit = {},
-    onDetailsClick: (String) -> Unit = {},
     onHomeClick: () -> Unit = {},
     onDiscoverClick: () -> Unit = {},
     onProfileClick: () -> Unit = {},
@@ -68,6 +68,9 @@ fun ActiveQuizScreen(
             status = if (question.status.text == "active") QuizStatus.ACTIVE else QuizStatus.INACTIVE
         )
     }
+
+    val expandedQuizIds = uiState.expandedQuizIds
+    val answersMap = uiState.answersMap
 
     Scaffold(
         topBar = {
@@ -97,7 +100,9 @@ fun ActiveQuizScreen(
             items(quizzes) { quiz ->
                 QuizItemCard(
                     quiz = quiz,
-                    onDetailsClick = { onDetailsClick(quiz.id) },
+                    isExpanded = expandedQuizIds.contains(quiz.questionId),
+                    answers = answersMap[quiz.questionId] ?: emptyList(),
+                    onDetailsClick = { viewModel.toggleQuizExpansion(quiz.questionId) },
                     onDeleteClick = { viewModel.deleteQuiz(quiz.questionId) }
                 )
             }
@@ -107,10 +112,17 @@ fun ActiveQuizScreen(
 
 /**
  * Individual quiz item card with status badge and action buttons
+ * @param quiz Quiz item data
+ * @param isExpanded Whether the answers section is expanded
+ * @param answers List of answers for this question
+ * @param onDetailsClick Callback when details/collapse button is clicked
+ * @param onDeleteClick Callback when delete button is clicked
  */
 @Composable
 fun QuizItemCard(
     quiz: QuizItem,
+    isExpanded: Boolean,
+    answers: List<Answer>,
     onDetailsClick: () -> Unit,
     onDeleteClick: () -> Unit
 ) {
@@ -208,6 +220,15 @@ fun QuizItemCard(
                 color = Color.White.copy(alpha = 0.9f)
             )
 
+            // Expandable answers section
+            if (isExpanded) {
+                Spacer(modifier = Modifier.height(12.dp))
+                AnswersSection(
+                    answers = answers,
+                    onCollapseClick = onDetailsClick
+                )
+            }
+
             Spacer(modifier = Modifier.height(12.dp))
 
             // Action buttons
@@ -215,22 +236,24 @@ fun QuizItemCard(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                Button(
-                    onClick = onDetailsClick,
-                    modifier = Modifier
-                        .weight(1f)
-                        .height(40.dp),
-                    shape = RoundedCornerShape(20.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xFF2E7D32)
-                    )
-                ) {
-                    Text(
-                        text = "Details ansehen",
-                        fontSize = 13.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        color = Color.White
-                    )
+                if (!isExpanded) {
+                    Button(
+                        onClick = onDetailsClick,
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(40.dp),
+                        shape = RoundedCornerShape(20.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color(0xFF2E7D32)
+                        )
+                    ) {
+                        Text(
+                            text = "Details ansehen",
+                            fontSize = 13.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            color = Color.White
+                        )
+                    }
                 }
                 Button(
                     onClick = onDeleteClick,
@@ -243,13 +266,95 @@ fun QuizItemCard(
                     )
                 ) {
                     Text(
-                        text = "Delete anyway",
+                        text = "Delete",
                         fontSize = 13.sp,
                         fontWeight = FontWeight.SemiBold,
                         color = Color.White
                     )
                 }
             }
+        }
+    }
+}
+
+/**
+ * Expandable answers section showing all answers with correct/incorrect indicators
+ * @param answers List of answers to display
+ * @param onCollapseClick Callback when "Weniger anzeigen" button is clicked
+ */
+@Composable
+fun AnswersSection(
+    answers: List<Answer>,
+    onCollapseClick: () -> Unit
+) {
+    Column(
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        // Answers header
+        Surface(
+            shape = RoundedCornerShape(8.dp),
+            color = Color(0xFF00838F)
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(12.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "Answers",
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White
+                )
+            }
+        }
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        // List of answers with correct/incorrect indicators
+        answers.forEachIndexed { index, answer ->
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 4.dp),
+                verticalAlignment = Alignment.Top
+            ) {
+                Text(
+                    text = if (answer.correct) "✓" else "✗",
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = if (answer.correct) Color(0xFF4CAF50) else Color(0xFFFF5252),
+                    modifier = Modifier.padding(end = 8.dp)
+                )
+                Text(
+                    text = "${index + 1}. ${answer.text}",
+                    fontSize = 13.sp,
+                    color = Color.White,
+                    modifier = Modifier.weight(1f)
+                )
+            }
+        }
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        // "Weniger anzeigen" button
+        Button(
+            onClick = onCollapseClick,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(36.dp),
+            shape = RoundedCornerShape(20.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color(0xFF00838F)
+            )
+        ) {
+            Text(
+                text = "Weniger anzeigen",
+                fontSize = 12.sp,
+                fontWeight = FontWeight.SemiBold,
+                color = Color.White
+            )
         }
     }
 }
