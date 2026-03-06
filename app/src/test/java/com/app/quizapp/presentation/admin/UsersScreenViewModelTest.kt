@@ -1,6 +1,7 @@
 package com.app.quizapp.presentation.admin
 
 import app.cash.turbine.test
+import com.app.quizapp.data.repository.fake.FakeUserQuestionRepository
 import com.app.quizapp.data.repository.fake.FakeUserRepository
 import com.app.quizapp.domain.model.User
 import com.app.quizapp.domain.model.UserRole
@@ -24,6 +25,7 @@ import org.junit.Test
 class UsersScreenViewModelTest {
 
     private lateinit var userRepository: FakeUserRepository
+    private lateinit var userQuestionRepository: FakeUserQuestionRepository
     private lateinit var viewModel: UsersScreenViewModel
 
     private val testDispatcher = StandardTestDispatcher()
@@ -54,6 +56,7 @@ class UsersScreenViewModelTest {
     fun setup() {
         Dispatchers.setMain(testDispatcher)
         userRepository = FakeUserRepository()
+        userQuestionRepository = FakeUserQuestionRepository()
     }
 
     @After
@@ -71,7 +74,7 @@ class UsersScreenViewModelTest {
         userRepository.addTestUser(user2)
 
         // When: ViewModel is created
-        viewModel = UsersScreenViewModel(userRepository)
+        viewModel = UsersScreenViewModel(userRepository, userQuestionRepository)
         advanceUntilIdle()
 
         // Then: Should load all users
@@ -90,7 +93,7 @@ class UsersScreenViewModelTest {
         // Given: No users exist
 
         // When: ViewModel is created
-        viewModel = UsersScreenViewModel(userRepository)
+        viewModel = UsersScreenViewModel(userRepository, userQuestionRepository)
         advanceUntilIdle()
 
         // Then: Should return empty list
@@ -108,7 +111,7 @@ class UsersScreenViewModelTest {
         userRepository.errorMessage = "Unauthorized"
 
         // When: ViewModel is created
-        viewModel = UsersScreenViewModel(userRepository)
+        viewModel = UsersScreenViewModel(userRepository, userQuestionRepository)
         advanceUntilIdle()
 
         // Then: Should set error
@@ -127,7 +130,7 @@ class UsersScreenViewModelTest {
         // Given: Users loaded
         userRepository.addTestUser(user1)
         userRepository.addTestUser(user2)
-        viewModel = UsersScreenViewModel(userRepository)
+        viewModel = UsersScreenViewModel(userRepository, userQuestionRepository)
         advanceUntilIdle()
 
         // When: User is deleted
@@ -148,7 +151,7 @@ class UsersScreenViewModelTest {
     fun `deleteUser with invalid id shows error`() = runTest {
         // Given: Users loaded
         userRepository.addTestUser(user1)
-        viewModel = UsersScreenViewModel(userRepository)
+        viewModel = UsersScreenViewModel(userRepository, userQuestionRepository)
         advanceUntilIdle()
 
         // When: Delete with invalid ID
@@ -169,7 +172,7 @@ class UsersScreenViewModelTest {
     fun `refresh reloads users`() = runTest {
         // Given: Initial users loaded
         userRepository.addTestUser(user1)
-        viewModel = UsersScreenViewModel(userRepository)
+        viewModel = UsersScreenViewModel(userRepository, userQuestionRepository)
         advanceUntilIdle()
 
         // When: New user added and refresh is called
@@ -189,7 +192,7 @@ class UsersScreenViewModelTest {
         // Given: Initial load with error
         userRepository.shouldReturnError = true
         userRepository.errorMessage = "Network error"
-        viewModel = UsersScreenViewModel(userRepository)
+        viewModel = UsersScreenViewModel(userRepository, userQuestionRepository)
         advanceUntilIdle()
 
         // When: Error is fixed and refresh is called

@@ -1,7 +1,9 @@
 package com.app.quizapp.presentation.admin
 
 import app.cash.turbine.test
+import com.app.quizapp.data.repository.fake.FakeAnswerRepository
 import com.app.quizapp.data.repository.fake.FakeQuestionRepository
+import com.app.quizapp.data.repository.fake.FakeUserRepository
 import com.app.quizapp.domain.model.Difficulty
 import com.app.quizapp.domain.model.Question
 import com.app.quizapp.domain.model.Status
@@ -26,6 +28,8 @@ import org.junit.Test
 class ActiveQuizViewModelTest {
 
     private lateinit var questionRepository: FakeQuestionRepository
+    private lateinit var answerRepository: FakeAnswerRepository
+    private lateinit var userRepository: FakeUserRepository
     private lateinit var viewModel: ActiveQuizViewModel
 
     private val testDispatcher = StandardTestDispatcher()
@@ -38,6 +42,7 @@ class ActiveQuizViewModelTest {
         questionId = 1,
         questionText = "What is 2+2?",
         reviewedBy = 0,
+        createdAt = "2024-01-01T10:00:00",
         topic = testTopic,
         status = testStatus,
         difficulty = testDifficulty
@@ -47,6 +52,7 @@ class ActiveQuizViewModelTest {
         questionId = 2,
         questionText = "What is 5*5?",
         reviewedBy = 0,
+        createdAt = "2024-01-02T10:00:00",
         topic = testTopic,
         status = testStatus,
         difficulty = testDifficulty
@@ -56,6 +62,8 @@ class ActiveQuizViewModelTest {
     fun setup() {
         Dispatchers.setMain(testDispatcher)
         questionRepository = FakeQuestionRepository()
+        answerRepository = FakeAnswerRepository()
+        userRepository = FakeUserRepository()
     }
 
     @After
@@ -73,7 +81,7 @@ class ActiveQuizViewModelTest {
         questionRepository.addTestQuestion(question2)
 
         // When: ViewModel is created
-        viewModel = ActiveQuizViewModel(questionRepository)
+        viewModel = ActiveQuizViewModel(questionRepository, answerRepository, userRepository)
         advanceUntilIdle()
 
         // Then: Should load all quizzes
@@ -92,7 +100,7 @@ class ActiveQuizViewModelTest {
         // Given: No quizzes exist
 
         // When: ViewModel is created
-        viewModel = ActiveQuizViewModel(questionRepository)
+        viewModel = ActiveQuizViewModel(questionRepository, answerRepository, userRepository)
         advanceUntilIdle()
 
         // Then: Should return empty list
@@ -110,7 +118,7 @@ class ActiveQuizViewModelTest {
         questionRepository.errorMessage = "Network error"
 
         // When: ViewModel is created
-        viewModel = ActiveQuizViewModel(questionRepository)
+        viewModel = ActiveQuizViewModel(questionRepository, answerRepository, userRepository)
         advanceUntilIdle()
 
         // Then: Should set error
@@ -129,7 +137,7 @@ class ActiveQuizViewModelTest {
         // Given: Quizzes loaded
         questionRepository.addTestQuestion(question1)
         questionRepository.addTestQuestion(question2)
-        viewModel = ActiveQuizViewModel(questionRepository)
+        viewModel = ActiveQuizViewModel(questionRepository, answerRepository, userRepository)
         advanceUntilIdle()
 
         // When: Quiz is deleted
@@ -150,7 +158,7 @@ class ActiveQuizViewModelTest {
     fun `deleteQuiz with invalid id shows error`() = runTest {
         // Given: Quizzes loaded
         questionRepository.addTestQuestion(question1)
-        viewModel = ActiveQuizViewModel(questionRepository)
+        viewModel = ActiveQuizViewModel(questionRepository, answerRepository, userRepository)
         advanceUntilIdle()
 
         // When: Delete with invalid ID
@@ -171,7 +179,7 @@ class ActiveQuizViewModelTest {
     fun `refresh reloads quizzes`() = runTest {
         // Given: Initial quizzes loaded
         questionRepository.addTestQuestion(question1)
-        viewModel = ActiveQuizViewModel(questionRepository)
+        viewModel = ActiveQuizViewModel(questionRepository, answerRepository, userRepository)
         advanceUntilIdle()
 
         // When: New quiz added and refresh is called
@@ -191,7 +199,7 @@ class ActiveQuizViewModelTest {
         // Given: Initial load with error
         questionRepository.shouldReturnError = true
         questionRepository.errorMessage = "Network error"
-        viewModel = ActiveQuizViewModel(questionRepository)
+        viewModel = ActiveQuizViewModel(questionRepository, answerRepository, userRepository)
         advanceUntilIdle()
 
         // When: Error is fixed and refresh is called

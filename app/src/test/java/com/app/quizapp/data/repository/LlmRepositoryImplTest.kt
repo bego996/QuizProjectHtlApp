@@ -118,7 +118,7 @@ class LlmRepositoryImplTest {
 
         // Then: Verify correct endpoint is called
         val request = mockWebServer.takeRequest()
-        assertThat(request.path).isEqualTo("/api/llm/quiz/generate")
+        assertThat(request.path).isEqualTo("/api/llm/openai/quiz/generate")
         assertThat(request.method).isEqualTo("POST")
     }
 
@@ -331,7 +331,7 @@ class LlmRepositoryImplTest {
 
         // Then: Verify correct endpoint and request body
         val request = mockWebServer.takeRequest()
-        assertThat(request.path).isEqualTo("/api/llm/quiz/add")
+        assertThat(request.path).isEqualTo("/api/llm/openai/quiz/add")
         assertThat(request.method).isEqualTo("POST")
         val requestBody = request.body.readUtf8()
         assertThat(requestBody).contains("\"topic\":\"Chemistry\"")

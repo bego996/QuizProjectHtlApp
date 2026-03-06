@@ -1,6 +1,11 @@
 package com.app.quizapp.data.repository
 
 import com.app.quizapp.data.remote.AnswerApiService
+import com.app.quizapp.domain.model.Answer
+import com.app.quizapp.domain.model.Difficulty
+import com.app.quizapp.domain.model.Question
+import com.app.quizapp.domain.model.Status
+import com.app.quizapp.domain.model.Topic
 import com.app.quizapp.domain.util.Result
 import com.google.common.truth.Truth.assertThat
 import com.google.gson.GsonBuilder
@@ -57,6 +62,7 @@ class AnswerRepositoryImplTest {
                         "questionId": 1,
                         "questionText": "What is the capital of Germany?",
                         "reviewedBy": null,
+                        "createdAt": "2024-01-01T10:00:00",
                         "topic": {"topicId": 1, "topic": "Geography"},
                         "status": {"statusId": 1, "text": "Active"},
                         "difficulty": {"difficultyId": 1, "mode": "Easy"}
@@ -70,6 +76,7 @@ class AnswerRepositoryImplTest {
                         "questionId": 1,
                         "questionText": "What is the capital of Germany?",
                         "reviewedBy": null,
+                        "createdAt": "2024-01-01T10:00:00",
                         "topic": {"topicId": 1, "topic": "Geography"},
                         "status": {"statusId": 1, "text": "Active"},
                         "difficulty": {"difficultyId": 1, "mode": "Easy"}
@@ -148,6 +155,7 @@ class AnswerRepositoryImplTest {
                         "questionId": 5,
                         "questionText": "What is the capital of France?",
                         "reviewedBy": null,
+                        "createdAt": "2024-01-01T10:00:00",
                         "topic": {"topicId": 1, "topic": "Geography"},
                         "status": {"statusId": 1, "text": "Active"},
                         "difficulty": {"difficultyId": 1, "mode": "Easy"}
@@ -161,6 +169,7 @@ class AnswerRepositoryImplTest {
                         "questionId": 5,
                         "questionText": "What is the capital of France?",
                         "reviewedBy": null,
+                        "createdAt": "2024-01-01T10:00:00",
                         "topic": {"topicId": 1, "topic": "Geography"},
                         "status": {"statusId": 1, "text": "Active"},
                         "difficulty": {"difficultyId": 1, "mode": "Easy"}
@@ -200,6 +209,7 @@ class AnswerRepositoryImplTest {
                         "questionId": 42,
                         "questionText": "Test?",
                         "reviewedBy": null,
+                        "createdAt": "2024-01-01T10:00:00",
                         "topic": {"topicId": 1, "topic": "Test"},
                         "status": {"statusId": 1, "text": "Active"},
                         "difficulty": {"difficultyId": 1, "mode": "Easy"}
@@ -237,6 +247,7 @@ class AnswerRepositoryImplTest {
                     "questionId": 10,
                     "questionText": "What is the capital of Italy?",
                     "reviewedBy": null,
+                        "createdAt": "2024-01-01T10:00:00",
                     "topic": {"topicId": 1, "topic": "Geography"},
                     "status": {"statusId": 1, "text": "Active"},
                     "difficulty": {"difficultyId": 2, "mode": "Medium"}
@@ -294,6 +305,7 @@ class AnswerRepositoryImplTest {
                     "questionId": 15,
                     "questionText": "What is the capital of Spain?",
                     "reviewedBy": null,
+                        "createdAt": "2024-01-01T10:00:00",
                     "topic": {"topicId": 1, "topic": "Geography"},
                     "status": {"statusId": 1, "text": "Active"},
                     "difficulty": {"difficultyId": 1, "mode": "Easy"}
@@ -338,6 +350,7 @@ class AnswerRepositoryImplTest {
                     "questionId": 1,
                     "questionText": "Test?",
                     "reviewedBy": null,
+                        "createdAt": "2024-01-01T10:00:00",
                     "topic": {"topicId": 1, "topic": "Test"},
                     "status": {"statusId": 1, "text": "Active"},
                     "difficulty": {"difficultyId": 1, "mode": "Easy"}
@@ -383,6 +396,7 @@ class AnswerRepositoryImplTest {
                     "questionId": 20,
                     "questionText": "Sample question?",
                     "reviewedBy": null,
+                        "createdAt": "2024-01-01T10:00:00",
                     "topic": {"topicId": 2, "topic": "Science"},
                     "status": {"statusId": 1, "text": "Active"},
                     "difficulty": {"difficultyId": 2, "mode": "Medium"}
@@ -451,6 +465,7 @@ class AnswerRepositoryImplTest {
                     "questionId": 30,
                     "questionText": "Question to delete?",
                     "reviewedBy": null,
+                        "createdAt": "2024-01-01T10:00:00",
                     "topic": {"topicId": 3, "topic": "History"},
                     "status": {"statusId": 2, "text": "Inactive"},
                     "difficulty": {"difficultyId": 3, "mode": "Hard"}
@@ -486,6 +501,7 @@ class AnswerRepositoryImplTest {
                     "questionId": 1,
                     "questionText": "Test?",
                     "reviewedBy": null,
+                        "createdAt": "2024-01-01T10:00:00",
                     "topic": {"topicId": 1, "topic": "Test"},
                     "status": {"statusId": 1, "text": "Active"},
                     "difficulty": {"difficultyId": 1, "mode": "Easy"}
@@ -534,24 +550,25 @@ class AnswerRepositoryImplTest {
         text: String,
         correct: Boolean,
         questionId: Int
-    ): com.app.quizapp.domain.model.Answer {
-        return com.app.quizapp.domain.model.Answer(
+    ): Answer {
+        return Answer(
             answerId = answerId,
             text = text,
             correct = correct,
-            question = com.app.quizapp.domain.model.Question(
+            question = Question(
                 questionId = questionId,
                 questionText = "Sample question?",
                 reviewedBy = 0,
-                topic = com.app.quizapp.domain.model.Topic(
+                createdAt = "2024-01-01T10:00:00",
+                topic = Topic(
                     topicId = 1,
                     topic = "Test Topic"
                 ),
-                status = com.app.quizapp.domain.model.Status(
+                status = Status(
                     statusId = 1,
                     text = "Active"
                 ),
-                difficulty = com.app.quizapp.domain.model.Difficulty(
+                difficulty = Difficulty(
                     difficultyId = 1,
                     mode = "Easy"
                 )
