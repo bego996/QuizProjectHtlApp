@@ -5,6 +5,8 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+llllimport androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -56,6 +58,7 @@ fun ActiveQuizScreen(
     viewModel: ActiveQuizViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    var searchQuery by remember { mutableStateOf("") }
 
     // Map domain Question to UI QuizItem
     val quizzes = uiState.quizzes.map { question ->
@@ -68,6 +71,19 @@ fun ActiveQuizScreen(
             createdDate = question.createdAt,
             status = if (question.status.text == "active") QuizStatus.ACTIVE else QuizStatus.INACTIVE
         )
+    }
+
+    // Filter by topic and sort by created date descending
+    val filteredAndSortedQuizzes = remember(quizzes, searchQuery) {
+        quizzes
+            .filter { quiz ->
+                if (searchQuery.isBlank()) {
+                    true
+                } else {
+                    quiz.topic.lowercase().contains(searchQuery.lowercase())
+                }
+            }
+            .sortedByDescending { it.createdDate }
     }
 
     val expandedQuizIds = uiState.expandedQuizIds
@@ -98,7 +114,38 @@ fun ActiveQuizScreen(
             contentPadding = PaddingValues(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            items(quizzes) { quiz ->
+            item {
+                // Search bar
+                OutlinedTextField(
+                    value = searchQuery,
+                    onValueChange = { searchQuery = it },
+                    placeholder = {
+                        Text(
+                            text = "Search",
+                            color = Color(0xFFB0A090)
+                        )
+                    },
+                    leadingIcon = {
+                        Icon(
+                            imageVector = Icons.Filled.Search,
+                            contentDescription = "Search",
+                            tint = Color(0xFF654321)
+                        )
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    shape = RoundedCornerShape(28.dp),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        unfocusedContainerColor = Color.White,
+                        focusedContainerColor = Color.White,
+                        unfocusedBorderColor = Color.Transparent,
+                        focusedBorderColor = Color(0xFF654321)
+                    ),
+                    singleLine = true
+                )
+            }
+
+            items(filteredAndSortedQuizzes) { quiz ->
                 QuizItemCard(
                     quiz = quiz,
                     isExpanded = expandedQuizIds.contains(quiz.questionId),

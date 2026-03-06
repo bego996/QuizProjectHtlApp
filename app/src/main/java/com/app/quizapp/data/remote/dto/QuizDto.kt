@@ -27,9 +27,9 @@ data class QuizDto(
     @SerializedName("answers")
     val answers: List<String>,
 
-    @SerializedName("correctAnswer")
+    @SerializedName("correct_answer")
     val correctAnswer: Int,
 
-    @SerializedName("reviewedBy")
+    @SerializedName("reviewed_by")
     val reviewedBy: Int? = null
 )
