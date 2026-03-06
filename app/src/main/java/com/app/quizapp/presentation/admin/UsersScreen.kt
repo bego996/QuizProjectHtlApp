@@ -62,20 +62,23 @@ fun UsersScreen(
     viewModel: UsersScreenViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    var searchQuery by remember { mutableStateOf("") }
 
-
-
-    // Map domain User to UI UserItem
-//    val users = uiState.users.map { user ->
-//        UserItem(
-//            userId = user.userId,
-//            name = "${user.firstname} ${user.surname}",
-//            birthDate = user.birthdate,
-//            email = user.email,
-//            role = if (user.userRole.userRole == "admin") UserRole.ADMIN else UserRole.USER,
-//            isActive = true // TODO: Add active status to User model if needed
-//        )
-//    }
+    // Filter and sort users based on search query
+    val filteredAndSortedUsers = remember(uiState.users, searchQuery) {
+        uiState.users
+            .filter { user ->
+                if (searchQuery.isBlank()) {
+                    true
+                } else {
+                    val query = searchQuery.lowercase()
+                    val fullName = "${user.firstname} ${user.surname}".lowercase()
+                    val role = user.userRole.userRole.lowercase()
+                    fullName.contains(query) || role.contains(query)
+                }
+            }
+            .sortedBy { "${it.firstname} ${it.surname}".lowercase() }
+    }
 
     Scaffold(
         topBar = {
@@ -102,7 +105,38 @@ fun UsersScreen(
             contentPadding = PaddingValues(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            items(uiState.users) { user ->
+            item {
+                // Search bar
+                OutlinedTextField(
+                    value = searchQuery,
+                    onValueChange = { searchQuery = it },
+                    placeholder = {
+                        Text(
+                            text = "Search",
+                            color = Color(0xFFB0A090)
+                        )
+                    },
+                    leadingIcon = {
+                        Icon(
+                            imageVector = Icons.Filled.Search,
+                            contentDescription = "Search",
+                            tint = Color(0xFF654321)
+                        )
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    shape = RoundedCornerShape(28.dp),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        unfocusedContainerColor = Color.White,
+                        focusedContainerColor = Color.White,
+                        unfocusedBorderColor = Color.Transparent,
+                        focusedBorderColor = Color(0xFF654321)
+                    ),
+                    singleLine = true
+                )
+            }
+
+            items(filteredAndSortedUsers) { user ->
                 UserItemCard(
                     user = user,
                     onUserDeleteClick = { viewModel.deleteUser(user.userId) }
