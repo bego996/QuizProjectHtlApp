@@ -19,6 +19,7 @@ import com.app.quizapp.BottomNavigationBar
 import com.app.quizapp.QuizTopAppBar
 import com.app.quizapp.R
 import com.app.quizapp.domain.model.Answer
+import com.app.quizapp.domain.model.Topic
 import com.app.quizapp.navigation.NavigationDestination
 
 object ActiveQuizDestination : NavigationDestination {
@@ -61,7 +62,7 @@ fun ActiveQuizScreen(
         QuizItem(
             questionId = question.questionId,
             id = "#${question.questionId}",
-            topic = question.topic.topic,
+            topic = buildTopicHierarchy(question.topic),
             question = question.questionText,
             reviewedBy = question.reviewedBy?.let { if (it > 0) "${question.reviewedBy}" else null },
             createdDate = question.createdAt,
@@ -178,6 +179,13 @@ fun QuizItemCard(
                         modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp)
                     )
                 }
+            }
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
                 Surface(
                     shape = RoundedCornerShape(12.dp),
                     color = statusColor
@@ -214,8 +222,6 @@ fun QuizItemCard(
                     color = Color.White.copy(alpha = 0.9f)
                 )
             }
-
-            Spacer(modifier = Modifier.height(8.dp))
 
             // Reviewed by
             Text(
@@ -439,4 +445,24 @@ fun DeleteConfirmationDialog(
         containerColor = Color(0xFF006064),
         shape = RoundedCornerShape(16.dp)
     )
+}
+
+/**
+ * Builds a hierarchical topic string from a Topic object
+ * Traverses from bottom (subtopic) to top (category) and formats as "Category > Topic > Subtopic"
+ * @param topic The topic object (usually the subtopic)
+ * @return Formatted string showing the full hierarchy
+ */
+private fun buildTopicHierarchy(topic: Topic): String {
+    val hierarchy = mutableListOf<String>()
+    var currentTopic: Topic? = topic
+
+    // Traverse up the hierarchy and collect all topic names
+    while (currentTopic != null) {
+        hierarchy.add(0, currentTopic.topic) // Add at beginning to maintain order
+        currentTopic = currentTopic.parentTopic
+    }
+
+    // Join with " > " separator
+    return hierarchy.joinToString(" > ")
 }
