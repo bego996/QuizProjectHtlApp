@@ -62,6 +62,14 @@ class QuizViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(QuizUiState())
     val uiState: StateFlow<QuizUiState> = _uiState.asStateFlow()
 
+    companion object {
+        // Store review questions for QuizReviewScreen
+        // This is a simple solution to share quiz results between screens
+        private var cachedReviewQuestions: List<ReviewQuestion> = emptyList()
+
+        fun getCachedReviewQuestions(): List<ReviewQuestion> = cachedReviewQuestions
+    }
+
     init {
         loadDailyQuiz(savedStateHandle["subTopicId"])
     }
@@ -217,6 +225,8 @@ class QuizViewModel @Inject constructor(
                     userAnswers = updatedUserAnswers
                 )
             }
+            // Cache review questions for QuizReviewScreen
+            getReviewQuestions()
             // Submit all answers to backend
             completeQuiz()
         } else {
@@ -288,5 +298,37 @@ class QuizViewModel @Inject constructor(
      */
     fun resetQuizComplete() {
         _uiState.update { it.copy(isQuizComplete = false) }
+    }
+
+    /**
+     * Get review questions for QuizReviewScreen
+     * Converts user answers into ReviewQuestion format and caches them
+     */
+    fun getReviewQuestions(): List<ReviewQuestion> {
+        val currentState = _uiState.value
+        val reviewQuestions = currentState.questions.mapIndexed { index, question ->
+            val userAnswerData = currentState.userAnswers[question.questionId]
+            val answers = currentState.answers[question.questionId] ?: emptyList()
+
+            val userAnswer = userAnswerData?.let { (answerId, _) ->
+                answers.find { it.answerId == answerId }?.text
+            }
+
+            val correctAnswer = answers.find { it.correct }?.text ?: "Unknown"
+            val isCorrect = userAnswerData?.second ?: false
+
+            ReviewQuestion(
+                questionNumber = index + 1,
+                questionText = question.questionText,
+                topic = question.topic.topic,
+                userAnswer = userAnswer,
+                correctAnswer = correctAnswer,
+                isCorrect = isCorrect
+            )
+        }
+
+        // Cache for QuizReviewScreen
+        cachedReviewQuestions = reviewQuestions
+        return reviewQuestions
     }
 }

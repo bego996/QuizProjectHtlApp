@@ -233,9 +233,14 @@ fun MettingNavHost(                                            // Hauptfunktion 
             )
         }
 
-        composable(route = "${QuizReviewDestination.route}/{score}/{totalQuestions}") { backStackEntry ->
+        composable(route = "${QuizReviewDestination.route}/{score}/{totalQuestions}") { _ ->
             QuizReviewScreen(
-                onBackClick = { navController.popBackStack() }
+                onBackClick = {
+                    navController.navigate(HomeDestination.route) {
+                        // Clear quiz-related screens from backstack
+                        popUpTo(HomeDestination.route) { inclusive = false }
+                    }
+                }
             )
         }
 
