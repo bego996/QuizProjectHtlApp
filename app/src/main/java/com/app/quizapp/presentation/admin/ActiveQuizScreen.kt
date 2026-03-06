@@ -5,7 +5,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-llllimport androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -40,6 +40,7 @@ data class QuizItem(
     val topic: String,
     val question: String,
     val reviewedBy: String?,
+    val reviewedByName: String?,
     val createdDate: String,
     val status: QuizStatus
 )
@@ -68,6 +69,9 @@ fun ActiveQuizScreen(
             topic = buildTopicHierarchy(question.topic),
             question = question.questionText,
             reviewedBy = question.reviewedBy?.let { if (it > 0) "${question.reviewedBy}" else null },
+            reviewedByName = question.reviewedBy?.let { userId ->
+                if (userId > 0) uiState.userNamesMap[userId] else null
+            },
             createdDate = question.createdAt,
             status = if (question.status.text == "active") QuizStatus.ACTIVE else QuizStatus.INACTIVE
         )
@@ -272,7 +276,15 @@ fun QuizItemCard(
 
             // Reviewed by
             Text(
-                text = "Reviewed by: ${quiz.reviewedBy ?: "None"}",
+                text = "Reviewed by: ${
+                    if (quiz.reviewedBy != null && quiz.reviewedByName != null) {
+                        "${quiz.reviewedBy} (${quiz.reviewedByName})"
+                    } else if (quiz.reviewedBy != null) {
+                        quiz.reviewedBy
+                    } else {
+                        "None"
+                    }
+                }",
                 fontSize = 12.sp,
                 color = Color.White.copy(alpha = 0.9f),
                 modifier = Modifier.padding(bottom = 4.dp)
