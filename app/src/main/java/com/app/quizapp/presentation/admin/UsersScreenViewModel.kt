@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.app.quizapp.domain.model.User
 import com.app.quizapp.domain.repository.UserRepository
+import com.app.quizapp.domain.repository.UserQuestionRepository
 import com.app.quizapp.domain.util.Result
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -27,11 +28,12 @@ data class UsersUiState(
 
 /**
  * ViewModel for Users screen (Admin only)
- * Loads all users and handles user deletion
+ * Loads all users and handles user deletion and quiz reset
  */
 @HiltViewModel
 class UsersScreenViewModel @Inject constructor(
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
+    private val userQuestionRepository: UserQuestionRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(UsersUiState())
@@ -87,6 +89,30 @@ class UsersScreenViewModel @Inject constructor(
                         it.copy(
                             isLoading = false,
                             error = "Failed to delete user"
+                        )
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Reset all quiz attempts for a specific user (admin only)
+     * Deletes all UserQuestions associated with the user
+     */
+    fun resetUserQuizzes(userId: Int) {
+        viewModelScope.launch {
+            _uiState.update { it.copy(isLoading = true, error = null) }
+
+            when (userQuestionRepository.deleteUserQuestionsByUserId(userId)) {
+                is Result.Success -> {
+                    _uiState.update { it.copy(isLoading = false, error = null) }
+                }
+                is Result.Error -> {
+                    _uiState.update {
+                        it.copy(
+                            isLoading = false,
+                            error = "Failed to reset user quizzes"
                         )
                     }
                 }

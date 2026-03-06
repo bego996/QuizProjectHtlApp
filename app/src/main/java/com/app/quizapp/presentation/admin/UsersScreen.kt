@@ -11,6 +11,7 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -139,7 +140,8 @@ fun UsersScreen(
             items(filteredAndSortedUsers) { user ->
                 UserItemCard(
                     user = user,
-                    onUserDeleteClick = { viewModel.deleteUser(user.userId) }
+                    onUserDeleteClick = { viewModel.deleteUser(user.userId) },
+                    onResetQuizzesClick = { viewModel.resetUserQuizzes(user.userId) }
                 )
             }
         }
@@ -152,9 +154,11 @@ fun UsersScreen(
 @Composable
 fun UserItemCard(
     user: User,
-    onUserDeleteClick: () -> Unit
+    onUserDeleteClick: () -> Unit,
+    onResetQuizzesClick: () -> Unit
 ) {
     var showDeleteDialog by remember { mutableStateOf(false) }
+    var showResetDialog by remember { mutableStateOf(false) }
 
     val roleColor = when (user.userRole.userRole) {
         "user" -> Color(0xFF2E7D32)
@@ -172,6 +176,20 @@ fun UserItemCard(
             },
             onDismiss = {
                 showDeleteDialog = false
+            }
+        )
+    }
+
+    // Reset quizzes confirmation dialog
+    if (showResetDialog) {
+        ResetQuizzesConfirmationDialog(
+            userName = "${user.firstname} ${user.surname}",
+            onConfirm = {
+                showResetDialog = false
+                onResetQuizzesClick()
+            },
+            onDismiss = {
+                showResetDialog = false
             }
         )
     }
@@ -264,6 +282,20 @@ fun UserItemCard(
                     )
                 }
                 Button(
+                    onClick = { showResetDialog = true },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(0xFFFF8F00)
+                    ),
+                    shape = RoundedCornerShape(8.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.Refresh,
+                        contentDescription = "Reset quizzes",
+                        tint = Color.White,
+                        modifier = Modifier.size(24.dp)
+                    )
+                }
+                Button(
                     onClick = {"//TODO "},
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Color(0xFF076E72)
@@ -323,6 +355,74 @@ fun UserDeleteConfirmationDialog(
             ) {
                 Text(
                     text = "Ja, löschen",
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    color = Color.White
+                )
+            }
+        },
+        dismissButton = {
+            Button(
+                onClick = onDismiss,
+                shape = RoundedCornerShape(20.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(0xFF00838F)
+                ),
+                modifier = Modifier.height(45.dp)
+            ) {
+                Text(
+                    text = "Abbrechen",
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    color = Color.White
+                )
+            }
+        },
+        containerColor = Color(0xFF006064),
+        shape = RoundedCornerShape(16.dp)
+    )
+}
+
+/**
+ * Reset quizzes confirmation dialog with dark cyan theme
+ * @param userName Name of the user whose quizzes will be reset
+ * @param onConfirm Callback when user confirms reset
+ * @param onDismiss Callback when user dismisses dialog
+ */
+@Composable
+fun ResetQuizzesConfirmationDialog(
+    userName: String,
+    onConfirm: () -> Unit,
+    onDismiss: () -> Unit
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = {
+            Text(
+                text = "Quizzes zurücksetzen",
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color.White
+            )
+        },
+        text = {
+            Text(
+                text = "Möchtest du alle gelösten Quizzes von \"$userName\" wirklich zurücksetzen? Alle UserQuestions werden aus der Datenbank gelöscht.",
+                fontSize = 14.sp,
+                color = Color.White.copy(alpha = 0.9f)
+            )
+        },
+        confirmButton = {
+            Button(
+                onClick = onConfirm,
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(0xFFFF8F00)
+                ),
+                shape = RoundedCornerShape(20.dp),
+                modifier = Modifier.height(45.dp)
+            ) {
+                Text(
+                    text = "Ja, zurücksetzen",
                     fontSize = 14.sp,
                     fontWeight = FontWeight.SemiBold,
                     color = Color.White
