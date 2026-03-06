@@ -229,13 +229,21 @@ fun UserItemCard(
                         modifier = Modifier.size(24.dp),
                     )
                 }
+                Button(
+                    onClick = {"//TODO "},
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(0xFF076E72)
+                    ),
+                    shape = RoundedCornerShape(8.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.Email,
+                        contentDescription = "Message",
+                        tint = Color(0xFF2E7D32),
+                        modifier = Modifier.size(24.dp)
+                    )
+                }
 
-                Icon(
-                    imageVector = Icons.Filled.Email,
-                    contentDescription = "Message",
-                    tint = Color(0xFF2E7D32),
-                    modifier = Modifier.size(24.dp)
-                )
             }
         }
     }
