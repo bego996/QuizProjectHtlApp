@@ -1,7 +1,12 @@
 package com.app.quizapp
 
 import android.annotation.SuppressLint
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
@@ -14,9 +19,9 @@ import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
@@ -91,11 +96,18 @@ fun BottomNavigationBar(
     onDiscoverClick: () -> Unit,
     onProfileClick: () -> Unit
 ) {
-    NavigationBar(
-        containerColor = Color(0xFF00ACC1),
-        contentColor = Color.White,
-        modifier = Modifier.height(80.dp)
+    Surface(
+        color = Color(0xFF00ACC1),
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(80.dp)
+            .navigationBarsPadding()
     ) {
+        Row(
+            modifier = Modifier.fillMaxSize(),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
         NavigationBarItem(
             icon = {
                 Icon(
@@ -155,5 +167,6 @@ fun BottomNavigationBar(
                 indicatorColor = Color(0xFF00796B)
             )
         )
+        }
     }
 }
