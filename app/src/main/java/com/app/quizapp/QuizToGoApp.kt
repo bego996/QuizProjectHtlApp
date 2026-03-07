@@ -101,7 +101,6 @@ fun BottomNavigationBar(
         modifier = Modifier
             .fillMaxWidth()
             .height(80.dp)
-            .navigationBarsPadding()
     ) {
         Row(
             modifier = Modifier.fillMaxSize(),
