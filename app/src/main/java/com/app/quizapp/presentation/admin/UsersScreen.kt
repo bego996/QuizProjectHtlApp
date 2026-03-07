@@ -92,6 +92,7 @@ fun UsersScreen(
         },
         bottomBar = {
             BottomNavigationBar(
+                currentRoute = UsersDestination.route,
                 onHomeClick = onHomeClick,
                 onDiscoverClick = onDiscoverClick,
                 onProfileClick = onProfileClick

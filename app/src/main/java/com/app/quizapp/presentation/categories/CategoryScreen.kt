@@ -120,6 +120,7 @@ fun CategoryScreen(
         },
         bottomBar = {
             BottomNavigationBar(
+                currentRoute = CategoryDestination.route,
                 onHomeClick = onHomeClick,
                 onDiscoverClick = onDiscoverClick,
                 onProfileClick = onProfileClick

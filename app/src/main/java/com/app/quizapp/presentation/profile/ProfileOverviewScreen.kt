@@ -89,6 +89,7 @@ fun ProfileOverviewScreen(
         },
         bottomBar = {
             BottomNavigationBar(
+                currentRoute = ProfileOverviewDestination.route,
                 onHomeClick = onHomeClick,
                 onDiscoverClick = onDiscoverClick,
                 onProfileClick = onProfileClick

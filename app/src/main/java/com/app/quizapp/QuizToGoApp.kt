@@ -76,11 +76,17 @@ fun QuizTopAppBar(
     )
 }
 
+private val homeRoutes    = setOf("home")
+private val discoverRoutes = setOf("categories", "topics", "subtopics")
+private val profileRoutes  = setOf("profile_overview", "profile_statistics", "edit_profile", "settings")
+
 /**
- * Bottom navigation bar with Home, Discover, and Profile tabs
+ * Bottom navigation bar with Home, Discover, and Profile tabs.
+ * @param currentRoute the active route string to highlight the correct tab
  */
 @Composable
 fun BottomNavigationBar(
+    currentRoute: String? = null,
     onHomeClick: () -> Unit,
     onDiscoverClick: () -> Unit,
     onProfileClick: () -> Unit
@@ -95,18 +101,18 @@ fun BottomNavigationBar(
                 Icon(
                     imageVector = Icons.Filled.Home,
                     contentDescription = "Home",
-                    modifier = Modifier.size(28.dp)
+                    modifier = Modifier.size(25.dp)
                 )
             },
             label = { Text("Home", fontSize = 12.sp) },
-            selected = false,
+            selected = currentRoute in homeRoutes,
             onClick = onHomeClick,
             colors = NavigationBarItemDefaults.colors(
                 selectedIconColor = Color.White,
                 unselectedIconColor = Color(0xFF0D434B),
                 selectedTextColor = Color.White,
                 unselectedTextColor = Color(0xFF004D56),
-                indicatorColor = Color.Transparent
+                indicatorColor = Color(0xFF00796B)
             )
         )
 
@@ -115,11 +121,11 @@ fun BottomNavigationBar(
                 Icon(
                     imageVector = Icons.Outlined.Search,
                     contentDescription = "Discover",
-                    modifier = Modifier.size(28.dp)
+                    modifier = Modifier.size(25.dp)
                 )
             },
             label = { Text("Discover", fontSize = 12.sp) },
-            selected = true,
+            selected = currentRoute in discoverRoutes,
             onClick = onDiscoverClick,
             colors = NavigationBarItemDefaults.colors(
                 selectedIconColor = Color.White,
@@ -135,18 +141,18 @@ fun BottomNavigationBar(
                 Icon(
                     imageVector = Icons.Filled.Person,
                     contentDescription = "Profile",
-                    modifier = Modifier.size(28.dp)
+                    modifier = Modifier.size(25.dp)
                 )
             },
             label = { Text("Profile", fontSize = 12.sp) },
-            selected = false,
+            selected = currentRoute in profileRoutes,
             onClick = onProfileClick,
             colors = NavigationBarItemDefaults.colors(
                 selectedIconColor = Color.White,
                 unselectedIconColor = Color(0xFF004D56),
                 selectedTextColor = Color.White,
                 unselectedTextColor = Color(0xFF004D56),
-                indicatorColor = Color.Transparent
+                indicatorColor = Color(0xFF00796B)
             )
         )
     }

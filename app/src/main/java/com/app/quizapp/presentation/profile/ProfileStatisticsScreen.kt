@@ -84,6 +84,7 @@ fun ProfileStatisticsScreen(
         },
         bottomBar = {
             BottomNavigationBar(
+                currentRoute = ProfileStatisticsDestination.route,
                 onHomeClick = onHomeClick,
                 onDiscoverClick = onDiscoverClick,
                 onProfileClick = onProfileClick

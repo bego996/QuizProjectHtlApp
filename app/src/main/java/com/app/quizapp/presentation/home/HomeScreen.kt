@@ -58,6 +58,7 @@ fun HomeScreen(
     Scaffold(
         bottomBar = {
             BottomNavigationBar(
+                currentRoute = HomeDestination.route,
                 onHomeClick = onHomeClick,
                 onDiscoverClick = onDiscoverClick,
                 onProfileClick = onProfileClick

@@ -104,6 +104,7 @@ fun ActiveQuizScreen(
         },
         bottomBar = {
             BottomNavigationBar(
+                currentRoute = ActiveQuizDestination.route,
                 onHomeClick = onHomeClick,
                 onDiscoverClick = onDiscoverClick,
                 onProfileClick = onProfileClick

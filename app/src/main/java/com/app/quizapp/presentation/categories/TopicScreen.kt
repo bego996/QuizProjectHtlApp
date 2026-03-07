@@ -79,6 +79,7 @@ fun TopicScreen(
         },
         bottomBar = {
             BottomNavigationBar(
+                currentRoute = TopicDestination.route,
                 onHomeClick = onHomeClick,
                 onDiscoverClick = onDiscoverClick,
                 onProfileClick = onProfileClick

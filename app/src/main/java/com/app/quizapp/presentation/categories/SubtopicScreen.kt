@@ -81,6 +81,7 @@ fun SubtopicScreen(
         },
         bottomBar = {
             BottomNavigationBar(
+                currentRoute = SubtopicDestination.route,
                 onHomeClick = onHomeClick,
                 onDiscoverClick = onDiscoverClick,
                 onProfileClick = onProfileClick

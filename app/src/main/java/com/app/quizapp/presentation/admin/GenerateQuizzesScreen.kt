@@ -65,6 +65,7 @@ fun GenerateQuizzesScreen(
         },
         bottomBar = {
             BottomNavigationBar(
+                currentRoute = GenerateQuizzesDestination.route,
                 onHomeClick = onHomeClick,
                 onDiscoverClick = onDiscoverClick,
                 onProfileClick = onProfileClick
