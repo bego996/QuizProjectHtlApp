@@ -52,8 +52,6 @@ fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    var searchQuery by remember { mutableStateOf("") }
-
     val userName = uiState.userName
     val isAdmin = uiState.isAdmin
 
@@ -114,44 +112,12 @@ fun HomeScreen(
             }
 
             item {
-                // Search bar
-                OutlinedTextField(
-                    value = searchQuery,
-                    onValueChange = { searchQuery = it },
-                    placeholder = {
-                        Text(
-                            text = "Search",
-                            color = Color(0xFFB0A090)
-                        )
-                    },
-                    leadingIcon = {
-                        Icon(
-                            imageVector = Icons.Filled.Search,
-                            contentDescription = "Search",
-                            tint = Color(0xFF654321)
-                        )
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 16.dp),
-                    shape = RoundedCornerShape(28.dp),
-                    colors = OutlinedTextFieldDefaults.colors(
-                        unfocusedContainerColor = Color.White,
-                        focusedContainerColor = Color.White,
-                        unfocusedBorderColor = Color.Transparent,
-                        focusedBorderColor = Color(0xFF654321)
-                    ),
-                    singleLine = true
-                )
-            }
-
-            item {
                 // Daily Quiz Card
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(120.dp)
-                        .padding(bottom = 24.dp)
+                        .padding(bottom = 12.dp)
                         .clickable { onDailyQuizClick() },
                     shape = RoundedCornerShape(16.dp),
                     colors = CardDefaults.cardColors(

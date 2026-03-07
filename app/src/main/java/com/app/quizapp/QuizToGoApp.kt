@@ -103,7 +103,7 @@ fun BottomNavigationBar(
             onClick = onHomeClick,
             colors = NavigationBarItemDefaults.colors(
                 selectedIconColor = Color.White,
-                unselectedIconColor = Color(0xFF004D56),
+                unselectedIconColor = Color(0xFF0D434B),
                 selectedTextColor = Color.White,
                 unselectedTextColor = Color(0xFF004D56),
                 indicatorColor = Color.Transparent
