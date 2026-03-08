@@ -36,7 +36,8 @@ object SubtopicDestination : NavigationDestination {
 data class Subtopic(
     val id: String,
     val name: String,
-    val color: Color
+    val color: Color,
+    val unsolvedCount: Int = 0
 )
 
 /**
@@ -47,7 +48,7 @@ data class Subtopic(
 @Composable
 fun SubtopicScreen(
     onBackClick: () -> Unit = {},
-    onSubtopicClick: (Subtopic) -> Unit = {},
+    onSubtopicClick: (Subtopic, Int) -> Unit = { _, _ -> },
     onHomeClick: () -> Unit = {},
     onDiscoverClick: () -> Unit = {},
     onProfileClick: () -> Unit = {},
@@ -55,20 +56,12 @@ fun SubtopicScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
-    // Map domain Topic to UI Subtopic with colors
+    // Color palette – index comes from SubtopicDisplayItem.colorIndex
     val subtopicColors = listOf(
         Color(0xFF2D1B1B), Color(0xFFD4A418), Color(0xFFB71C1C), Color(0xFF0D2968),
         Color(0xFF1A1410), Color(0xFF4A5490), Color(0xFF1976D2), Color(0xFF2E7D32),
         Color(0xFF6A1B5A), Color(0xFF4DB6AC)
     )
-
-    val subtopics = uiState.subtopics.mapIndexed { index, domainSubtopic ->
-        Subtopic(
-            id = domainSubtopic.topicId.toString(),
-            name = domainSubtopic.topic,
-            color = subtopicColors[index % subtopicColors.size]
-        )
-    }
 
     Scaffold(
         topBar = {
@@ -97,10 +90,16 @@ fun SubtopicScreen(
             verticalArrangement = Arrangement.spacedBy(16.dp),
             contentPadding = PaddingValues(vertical = 16.dp)
         ) {
-            items(subtopics) { subtopic ->
+            items(uiState.displayItems, key = { it.topicId }) { item ->
+                val subtopic = Subtopic(
+                    id = item.topicId.toString(),
+                    name = item.name,
+                    color = subtopicColors[item.colorIndex % subtopicColors.size],
+                    unsolvedCount = item.unsolvedCount
+                )
                 SubtopicCard(
                     subtopic = subtopic,
-                    onClick = { onSubtopicClick(subtopic) }
+                    onClick = { onSubtopicClick(subtopic, uiState.difficultyId) }
                 )
             }
         }
@@ -140,9 +139,9 @@ fun SubtopicCard(
                 )
                 .padding(20.dp)
         ) {
-            // Subtopic name
+            // Subtopic name with unsolved question count
             Text(
-                text = subtopic.name,
+                text = "${subtopic.name} (${subtopic.unsolvedCount})",
                 fontSize = 24.sp,
                 fontWeight = FontWeight.SemiBold,
                 color = Color.White,

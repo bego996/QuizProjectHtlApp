@@ -2,6 +2,7 @@ package com.app.quizapp.presentation.categories
 
 import androidx.lifecycle.SavedStateHandle
 import app.cash.turbine.test
+import com.app.quizapp.data.repository.fake.FakeDifficultyRepository
 import com.app.quizapp.data.repository.fake.FakeTopicRepository
 import com.app.quizapp.domain.model.Topic
 import com.google.common.truth.Truth.assertThat
@@ -24,6 +25,7 @@ import org.junit.Test
 class TopicViewModelTest {
 
     private lateinit var topicRepository: FakeTopicRepository
+    private lateinit var difficultyRepository: FakeDifficultyRepository
     private lateinit var viewModel: TopicViewModel
 
     private val testDispatcher = StandardTestDispatcher()
@@ -56,12 +58,14 @@ class TopicViewModelTest {
     fun setup() {
         Dispatchers.setMain(testDispatcher)
         topicRepository = FakeTopicRepository()
+        difficultyRepository = FakeDifficultyRepository()
     }
 
     @After
     fun tearDown() {
         Dispatchers.resetMain()
         topicRepository.clearTestData()
+        difficultyRepository.clearTestData()
     }
 
     // ========== Init Tests with Parent ID ==========
@@ -76,7 +80,7 @@ class TopicViewModelTest {
 
         // When: ViewModel is created with parentTopicId
         val savedStateHandle = SavedStateHandle(mapOf("parentTopicId" to 1))
-        viewModel = TopicViewModel(topicRepository, savedStateHandle)
+        viewModel = TopicViewModel(topicRepository, difficultyRepository, savedStateHandle)
         advanceUntilIdle()
 
         // Then: Should load only topics for that parent
@@ -100,7 +104,7 @@ class TopicViewModelTest {
 
         // When: ViewModel is created without parentTopicId
         val savedStateHandle = SavedStateHandle()
-        viewModel = TopicViewModel(topicRepository, savedStateHandle)
+        viewModel = TopicViewModel(topicRepository, difficultyRepository, savedStateHandle)
         advanceUntilIdle()
 
         // Then: Should show all topics that have a parent
@@ -119,7 +123,7 @@ class TopicViewModelTest {
 
         // When: ViewModel is created
         val savedStateHandle = SavedStateHandle(mapOf("parentTopicId" to 1))
-        viewModel = TopicViewModel(topicRepository, savedStateHandle)
+        viewModel = TopicViewModel(topicRepository, difficultyRepository, savedStateHandle)
         advanceUntilIdle()
 
         // Then: Should set error
@@ -138,7 +142,7 @@ class TopicViewModelTest {
         // Given: Topics exist and ViewModel initialized
         topicRepository.addTestTopic(topic1)
         val savedStateHandle = SavedStateHandle()
-        viewModel = TopicViewModel(topicRepository, savedStateHandle)
+        viewModel = TopicViewModel(topicRepository, difficultyRepository, savedStateHandle)
         advanceUntilIdle()
 
         // When: loadTopics is called with specific parentId

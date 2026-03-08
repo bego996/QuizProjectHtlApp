@@ -71,7 +71,7 @@ class QuizViewModel @Inject constructor(
     }
 
     init {
-        loadDailyQuiz(savedStateHandle["subTopicId"])
+        loadDailyQuiz(savedStateHandle["subTopicId"], savedStateHandle["difficultyId"] ?: 0)
     }
 
     /**
@@ -83,17 +83,18 @@ class QuizViewModel @Inject constructor(
      * 5. Randomly select 5
      * 6. Start quiz with first question
      */
-    private fun loadDailyQuiz(topicId: Int? = null) {
+    private fun loadDailyQuiz(topicId: Int? = null, difficultyId: Int = 0) {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, error = null) }
 
-            val questionsResult: Result<List<Question>>;
+            val questionsResult: Result<List<Question>>
 
-            // Load all questions if no param for topicId passed then load all question to pick randoms.
-            if (topicId == null || topicId == 0){
-                questionsResult = questionRepository.getAllQuestions()
-            }else{
-                questionsResult = questionRepository.getAllQuestions(topicId = topicId)
+            // Load questions filtered by topicId and optionally difficultyId (0 = Mixed = no filter)
+            val filterDifficulty: Int? = if (difficultyId != 0) difficultyId else null
+            questionsResult = if (topicId == null || topicId == 0) {
+                questionRepository.getAllQuestions(difficultyId = filterDifficulty)
+            } else {
+                questionRepository.getAllQuestions(topicId = topicId, difficultyId = filterDifficulty)
             }
 
             if (questionsResult is Result.Error) {

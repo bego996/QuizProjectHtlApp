@@ -73,6 +73,8 @@ private val categoryStyleMap: Map<String, CategoryStyle> = mapOf(
 /**
  * Main Categories screen showing all available quiz categories
  * Integrates with CategoryViewModel to load real categories
+ * Shows a difficulty selection dialog before navigating
+ * @param onCategoryClick Called when a category is selected
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
