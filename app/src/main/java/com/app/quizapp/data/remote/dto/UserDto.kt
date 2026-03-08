@@ -17,7 +17,7 @@ data class UserDto(
     val birthdate: String,
 
     @SerializedName("nickname")
-    val nickname: String,
+    val nickname: String?,
 
     @SerializedName("email")
     val email: String,

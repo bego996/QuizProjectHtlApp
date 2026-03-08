@@ -23,6 +23,11 @@ misc.xml
 deploymentTargetDropDown.xml
 render.experimental.xml
 
+# LocalFiles
+CLAUDE.md
+.claudeignore
+.claude
+
 # Keystore files
 *.jks
 *.keystore

@@ -1,14 +1,17 @@
 package com.app.quizapp.di
 
-//import com.app.quizapp.data.remote.QuizApiService
 import com.app.quizapp.data.remote.AnswerApiService
-import com.app.quizapp.data.remote.UserRoleApiService
+import com.app.quizapp.data.remote.AuthApiService
 import com.app.quizapp.data.remote.DifficultyApiService
+import com.app.quizapp.data.remote.LlmApiService
+import com.app.quizapp.data.remote.QuestionApiService
 import com.app.quizapp.data.remote.StatusApiService
 import com.app.quizapp.data.remote.TopicApiService
-import com.app.quizapp.data.remote.QuestionApiService
 import com.app.quizapp.data.remote.UserApiService
 import com.app.quizapp.data.remote.UserQuestionApiService
+import com.app.quizapp.data.remote.UserRoleApiService
+import com.app.quizapp.data.security.AuthInterceptor
+import com.app.quizapp.domain.security.TokenManager
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -46,7 +49,8 @@ object NetworkModule {
      *
      * TODO: Passe den Port an dein Spring Boot Backend an
      */
-    private const val BASE_URL = "http://10.0.2.2:8080/"
+    private const val BASE_URL_EMULATOR_TO_PC = "http://10.0.2.2:8080/"
+    private const val BASE_URL_PHYSICAL_TO_PC = "http://192.168.0.242:8080/"
 
     /**
      * Stellt den OkHttpClient bereit
@@ -57,12 +61,16 @@ object NetworkModule {
      * - Timeouts
      * - Connection Pooling
      *
+     * @param tokenManager Verwaltet JWT-Token für Authentication
      * @Provides sagt Hilt, dass diese Methode eine Dependency bereitstellt
      * @Singleton sorgt dafür, dass nur eine Instanz erstellt wird
      */
     @Provides
     @Singleton
-    fun provideOkHttpClient(): OkHttpClient {
+    fun provideOkHttpClient(tokenManager: TokenManager): OkHttpClient {
+        // Auth Interceptor für automatisches Hinzufügen von JWT-Token
+        val authInterceptor = AuthInterceptor(tokenManager)
+
         // Logging Interceptor für Debug-Zwecke
         // Zeigt alle HTTP-Requests und Responses in den Logs an
         val loggingInterceptor = HttpLoggingInterceptor().apply {
@@ -70,9 +78,10 @@ object NetworkModule {
         }
 
         return OkHttpClient.Builder()
+            .addInterceptor(authInterceptor)    // Fügt JWT-Token zu Requests hinzu
             .addInterceptor(loggingInterceptor) // Fügt Logging hinzu
             .connectTimeout(30, TimeUnit.SECONDS) // Timeout für Verbindungsaufbau
-            .readTimeout(30, TimeUnit.SECONDS)    // Timeout für Daten empfangen
+            .readTimeout(60, TimeUnit.SECONDS)    // Timeout für Daten empfangen
             .writeTimeout(30, TimeUnit.SECONDS)   // Timeout für Daten senden
             .build()
     }
@@ -89,7 +98,7 @@ object NetworkModule {
     @Singleton
     fun provideRetrofit(okHttpClient: OkHttpClient): Retrofit {
         return Retrofit.Builder()
-            .baseUrl(BASE_URL) // Basis-URL des Backends
+            .baseUrl(BASE_URL_PHYSICAL_TO_PC) // Basis-URL des Backends
             .client(okHttpClient) // Nutzt unseren konfigurierten OkHttpClient
             .addConverterFactory(GsonConverterFactory.create()) // JSON zu Kotlin-Objekten konvertieren
             .build()
@@ -149,5 +158,25 @@ object NetworkModule {
     @Singleton
     fun provideUserQuestionApiService(retrofit: Retrofit): UserQuestionApiService {
         return retrofit.create(UserQuestionApiService::class.java)
+    }
+
+    /**
+     * Stellt das AuthApiService Interface bereit
+     * Für Login und Registrierung (öffentliche Endpoints)
+     */
+    @Provides
+    @Singleton
+    fun provideAuthApiService(retrofit: Retrofit): AuthApiService {
+        return retrofit.create(AuthApiService::class.java)
+    }
+
+    /**
+     * Stellt das LlmApiService Interface bereit
+     * Für AI/LLM Quiz-Generierung (Admin)
+     */
+    @Provides
+    @Singleton
+    fun provideLlmApiService(retrofit: Retrofit): LlmApiService {
+        return retrofit.create(LlmApiService::class.java)
     }
 }

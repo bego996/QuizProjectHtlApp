@@ -1,22 +1,25 @@
 package com.app.quizapp.di
 
 import com.app.quizapp.data.repository.AnswerRepositoryImpl
-import com.app.quizapp.data.repository.UserRoleRepositoryImpl
+import com.app.quizapp.data.repository.AuthRepositoryImpl
 import com.app.quizapp.data.repository.DifficultyRepositoryImpl
+import com.app.quizapp.data.repository.LlmRepositoryImpl
+import com.app.quizapp.data.repository.QuestionRepositoryImpl
 import com.app.quizapp.data.repository.StatusRepositoryImpl
 import com.app.quizapp.data.repository.TopicRepositoryImpl
-import com.app.quizapp.data.repository.QuestionRepositoryImpl
-import com.app.quizapp.data.repository.UserRepositoryImpl
 import com.app.quizapp.data.repository.UserQuestionRepositoryImpl
-//import com.app.quizapp.data.repository.QuizRepositoryImpl
+import com.app.quizapp.data.repository.UserRepositoryImpl
+import com.app.quizapp.data.repository.UserRoleRepositoryImpl
 import com.app.quizapp.domain.repository.AnswerRepository
-import com.app.quizapp.domain.repository.UserRoleRepository
+import com.app.quizapp.domain.repository.AuthRepository
 import com.app.quizapp.domain.repository.DifficultyRepository
+import com.app.quizapp.domain.repository.LlmRepository
+import com.app.quizapp.domain.repository.QuestionRepository
 import com.app.quizapp.domain.repository.StatusRepository
 import com.app.quizapp.domain.repository.TopicRepository
-import com.app.quizapp.domain.repository.QuestionRepository
-import com.app.quizapp.domain.repository.UserRepository
 import com.app.quizapp.domain.repository.UserQuestionRepository
+import com.app.quizapp.domain.repository.UserRepository
+import com.app.quizapp.domain.repository.UserRoleRepository
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -88,4 +91,24 @@ abstract class RepositoryModule {
     abstract fun bindUserQuestionRepository(
         userQuestionRepositoryImpl: UserQuestionRepositoryImpl
     ): UserQuestionRepository
+
+    /**
+     * Bindet AuthRepositoryImpl an AuthRepository Interface
+     * Für Login und Registrierung
+     */
+    @Binds
+    @Singleton
+    abstract fun bindAuthRepository(
+        authRepositoryImpl: AuthRepositoryImpl
+    ): AuthRepository
+
+    /**
+     * Bindet LlmRepositoryImpl an LlmRepository Interface
+     * Für AI/LLM Quiz-Generierung
+     */
+    @Binds
+    @Singleton
+    abstract fun bindLlmRepository(
+        llmRepositoryImpl: LlmRepositoryImpl
+    ): LlmRepository
 }

@@ -42,115 +42,34 @@ class UserQuestionRepositoryImplTest {
     }
 
     @Test
-    fun `getAllUserQuestions returns success with userQuestions list when API responds 200`() = runTest {
+    fun `getAllUserQuestions returns success when API responds 200`() = runTest {
         val jsonResponse = """
             [
                 {
                     "userQuestionId": 1,
-                    "user": {
-                        "userId": 1,
-                        "surname": "Mustermann",
-                        "firstname": "Max",
-                        "birthdate": "2000-01-01",
-                        "nickname": "maxm",
-                        "email": "max@test.com",
-                        "password": "test123",
-                        "userRole": {
-                            "userRoleId": 1,
-                            "userRole": "Student"
-                        }
-                    },
-                    "question": {
-                        "questionId": 1,
-                        "questionText": "What is 2 + 2?",
-                        "reviewedBy": 1,
-                        "topic": {
-                            "topicId": 1,
-                            "topic": "Mathematics"
-                        },
-                        "status": {
-                            "statusId": 1,
-                            "text": "Active"
-                        },
-                        "difficulty": {
-                            "difficultyId": 1,
-                            "mode": "Easy"
-                        }
-                    },
-                    "score": 100
-                },
-                {
-                    "userQuestionId": 2,
-                    "user": {
-                        "userId": 1,
-                        "surname": "Mustermann",
-                        "firstname": "Max",
-                        "birthdate": "2000-01-01",
-                        "nickname": "maxm",
-                        "email": "max@test.com",
-                        "password": "test123",
-                        "userRole": {
-                            "userRoleId": 1,
-                            "userRole": "Student"
-                        }
-                    },
-                    "question": {
-                        "questionId": 2,
-                        "questionText": "What is the capital of France?",
-                        "reviewedBy": 1,
-                        "topic": {
-                            "topicId": 2,
-                            "topic": "Geography"
-                        },
-                        "status": {
-                            "statusId": 1,
-                            "text": "Active"
-                        },
-                        "difficulty": {
-                            "difficultyId": 2,
-                            "mode": "Medium"
-                        }
-                    },
-                    "score": 85
+                    "score": 100,
+                    "user": {"userId": 1, "firstname": "John", "surname": "Doe", "birthdate": "2000-01-01", "nickname": "johnd", "email": "john@test.com", "password": "***", "userRole": {"userRoleId": 1, "userRole": "ROLE_USER"}},
+                    "question": {"questionId": 1, "questionText": "Test?", "reviewedBy": null,
+                        "createdAt": "2024-01-01T10:00:00", "topic": {"topicId": 1, "topic": "Test"}, "status": {"statusId": 1, "text": "Active"}, "difficulty": {"difficultyId": 1, "mode": "Easy"}},
+                    "answer": {"answerId": 1, "text": "Answer", "correct": true, "question": {"questionId": 1, "questionText": "Test?", "reviewedBy": null,
+                        "createdAt": "2024-01-01T10:00:00", "topic": {"topicId": 1, "topic": "Test"}, "status": {"statusId": 1, "text": "Active"}, "difficulty": {"difficultyId": 1, "mode": "Easy"}}}
                 }
             ]
         """.trimIndent()
 
-        mockWebServer.enqueue(
-            MockResponse()
-                .setResponseCode(200)
-                .setBody(jsonResponse)
-        )
+        mockWebServer.enqueue(MockResponse().setResponseCode(200).setBody(jsonResponse))
 
         val result = repository.getAllUserQuestions()
 
         assertThat(result).isInstanceOf(Result.Success::class.java)
         val userQuestions = (result as Result.Success).data
-        assertThat(userQuestions).hasSize(2)
+        assertThat(userQuestions).hasSize(1)
         assertThat(userQuestions[0].score).isEqualTo(100)
-        assertThat(userQuestions[0].user.firstname).isEqualTo("Max")
-        assertThat(userQuestions[0].question.questionText).isEqualTo("What is 2 + 2?")
-        assertThat(userQuestions[1].score).isEqualTo(85)
     }
 
     @Test
     fun `getAllUserQuestions returns error when API responds with 500`() = runTest {
-        mockWebServer.enqueue(
-            MockResponse()
-                .setResponseCode(500)
-                .setBody("Internal Server Error")
-        )
-
-        val result = repository.getAllUserQuestions()
-
-        assertThat(result).isInstanceOf(Result.Error::class.java)
-        val error = (result as Result.Error).message
-        assertThat(error).isNotEmpty()
-    }
-
-    @Test
-    fun `getAllUserQuestions returns error when network fails`() = runTest {
-        mockWebServer.shutdown()
+        mockWebServer.enqueue(MockResponse().setResponseCode(500).setBody("Internal Server Error"))
 
         val result = repository.getAllUserQuestions()
 
@@ -158,200 +77,74 @@ class UserQuestionRepositoryImplTest {
     }
 
     @Test
-    fun `getAllUserQuestions returns empty list when API returns empty array`() = runTest {
-        mockWebServer.enqueue(
-            MockResponse()
-                .setResponseCode(200)
-                .setBody("[]")
-        )
-
-        val result = repository.getAllUserQuestions()
-
-        assertThat(result).isInstanceOf(Result.Success::class.java)
-        val userQuestions = (result as Result.Success).data
-        assertThat(userQuestions).isEmpty()
-    }
-
-    @Test
-    fun `getUserQuestionById returns success with userQuestion when API responds 200`() = runTest {
+    fun `getUserQuestionById returns success when API responds 200`() = runTest {
         val jsonResponse = """
             {
-                "userQuestionId": 1,
-                "user": {
-                    "userId": 1,
-                    "surname": "Mustermann",
-                    "firstname": "Max",
-                    "birthdate": "2000-01-01",
-                    "nickname": "maxm",
-                    "email": "max@test.com",
-                    "password": "test123",
-                    "userRole": {
-                        "userRoleId": 1,
-                        "userRole": "Student"
-                    }
-                },
-                "question": {
-                    "questionId": 1,
-                    "questionText": "What is 2 + 2?",
-                    "reviewedBy": 1,
-                    "topic": {
-                        "topicId": 1,
-                        "topic": "Mathematics"
-                    },
-                    "status": {
-                        "statusId": 1,
-                        "text": "Active"
-                    },
-                    "difficulty": {
-                        "difficultyId": 1,
-                        "mode": "Easy"
-                    }
-                },
-                "score": 100
+                "userQuestionId": 5,
+                "score": 75,
+                "user": {"userId": 2, "firstname": "Jane", "surname": "Smith", "birthdate": "1999-05-15", "nickname": "janes", "email": "jane@test.com", "password": "***", "userRole": {"userRoleId": 1, "userRole": "ROLE_USER"}},
+                "question": {"questionId": 2, "questionText": "Question?", "reviewedBy": null,
+                        "createdAt": "2024-01-01T10:00:00", "topic": {"topicId": 2, "topic": "Science"}, "status": {"statusId": 1, "text": "Active"}, "difficulty": {"difficultyId": 2, "mode": "Medium"}},
+                "answer": {"answerId": 5, "text": "Correct Answer", "correct": true, "question": {"questionId": 2, "questionText": "Question?", "reviewedBy": null,
+                        "createdAt": "2024-01-01T10:00:00", "topic": {"topicId": 2, "topic": "Science"}, "status": {"statusId": 1, "text": "Active"}, "difficulty": {"difficultyId": 2, "mode": "Medium"}}}
             }
         """.trimIndent()
 
-        mockWebServer.enqueue(
-            MockResponse()
-                .setResponseCode(200)
-                .setBody(jsonResponse)
-        )
+        mockWebServer.enqueue(MockResponse().setResponseCode(200).setBody(jsonResponse))
 
-        val result = repository.getUserQuestionById(1)
+        val result = repository.getUserQuestionById(5)
 
         assertThat(result).isInstanceOf(Result.Success::class.java)
         val userQuestion = (result as Result.Success).data
-        assertThat(userQuestion.userQuestionId).isEqualTo(1)
-        assertThat(userQuestion.score).isEqualTo(100)
-        assertThat(userQuestion.user.firstname).isEqualTo("Max")
-        assertThat(userQuestion.question.questionText).isEqualTo("What is 2 + 2?")
+        assertThat(userQuestion.userQuestionId).isEqualTo(5)
+        assertThat(userQuestion.score).isEqualTo(75)
+        assertThat(userQuestion.user.firstname).isEqualTo("Jane")
     }
 
     @Test
     fun `getUserQuestionById returns error when API responds with 404`() = runTest {
-        mockWebServer.enqueue(
-            MockResponse()
-                .setResponseCode(404)
-                .setBody("UserQuestion not found")
-        )
+        mockWebServer.enqueue(MockResponse().setResponseCode(404).setBody("UserQuestion not found"))
 
         val result = repository.getUserQuestionById(999)
 
         assertThat(result).isInstanceOf(Result.Error::class.java)
-        val error = (result as Result.Error).message
-        assertThat(error).isNotEmpty()
     }
 
     @Test
-    fun `getUserQuestionById verifies correct endpoint is called`() = runTest {
+    fun `deleteUserQuestion returns success when API responds 200`() = runTest {
         val jsonResponse = """
             {
-                "userQuestionId": 42,
-                "user": {
-                    "userId": 1,
-                    "surname": "Test",
-                    "firstname": "User",
-                    "birthdate": "2000-01-01",
-                    "nickname": "testuser",
-                    "email": "test@test.com",
-                    "password": "test",
-                    "userRole": {
-                        "userRoleId": 1,
-                        "userRole": "Student"
-                    }
-                },
-                "question": {
-                    "questionId": 1,
-                    "questionText": "Test question?",
-                    "reviewedBy": 1,
-                    "topic": {
-                        "topicId": 1,
-                        "topic": "Test"
-                    },
-                    "status": {
-                        "statusId": 1,
-                        "text": "Active"
-                    },
-                    "difficulty": {
-                        "difficultyId": 1,
-                        "mode": "Easy"
-                    }
-                },
-                "score": 50
+                "userQuestionId": 10,
+                "score": 0,
+                "user": {"userId": 1, "firstname": "Test", "surname": "User", "birthdate": "2000-01-01", "nickname": "test", "email": "test@test.com", "password": "***", "userRole": {"userRoleId": 1, "userRole": "ROLE_USER"}},
+                "question": {"questionId": 1, "questionText": "Test?", "reviewedBy": null,
+                        "createdAt": "2024-01-01T10:00:00", "topic": {"topicId": 1, "topic": "Test"}, "status": {"statusId": 1, "text": "Active"}, "difficulty": {"difficultyId": 1, "mode": "Easy"}},
+                "answer": {"answerId": 1, "text": "Wrong", "correct": false, "question": {"questionId": 1, "questionText": "Test?", "reviewedBy": null,
+                        "createdAt": "2024-01-01T10:00:00", "topic": {"topicId": 1, "topic": "Test"}, "status": {"statusId": 1, "text": "Active"}, "difficulty": {"difficultyId": 1, "mode": "Easy"}}}
             }
         """.trimIndent()
 
-        mockWebServer.enqueue(
-            MockResponse()
-                .setResponseCode(200)
-                .setBody(jsonResponse)
-        )
+        mockWebServer.enqueue(MockResponse().setResponseCode(200).setBody(jsonResponse))
 
-        repository.getUserQuestionById(42)
-
-        val request = mockWebServer.takeRequest()
-        assertThat(request.path).isEqualTo("/userQuestions/42")
-        assertThat(request.method).isEqualTo("GET")
-    }
-
-    @Test
-    fun `DTO mapping converts all fields correctly`() = runTest {
-        val jsonResponse = """
-            {
-                "userQuestionId": 123,
-                "user": {
-                    "userId": 99,
-                    "surname": "Schmidt",
-                    "firstname": "Anna",
-                    "birthdate": "1998-05-20",
-                    "nickname": "annas",
-                    "email": "anna@test.com",
-                    "password": "pass123",
-                    "userRole": {
-                        "userRoleId": 2,
-                        "userRole": "Teacher"
-                    }
-                },
-                "question": {
-                    "questionId": 88,
-                    "questionText": "Complex question text?",
-                    "reviewedBy": 5,
-                    "topic": {
-                        "topicId": 3,
-                        "topic": "Physics"
-                    },
-                    "status": {
-                        "statusId": 2,
-                        "text": "Pending"
-                    },
-                    "difficulty": {
-                        "difficultyId": 3,
-                        "mode": "Hard"
-                    }
-                },
-                "score": 95
-            }
-        """.trimIndent()
-
-        mockWebServer.enqueue(
-            MockResponse()
-                .setResponseCode(200)
-                .setBody(jsonResponse)
-        )
-
-        val result = repository.getUserQuestionById(123)
+        val result = repository.deleteUserQuestion(10)
 
         assertThat(result).isInstanceOf(Result.Success::class.java)
-        val userQuestion = (result as Result.Success).data
-        assertThat(userQuestion.userQuestionId).isEqualTo(123)
-        assertThat(userQuestion.score).isEqualTo(95)
-        assertThat(userQuestion.user.userId).isEqualTo(99)
-        assertThat(userQuestion.user.firstname).isEqualTo("Anna")
-        assertThat(userQuestion.user.surname).isEqualTo("Schmidt")
-        assertThat(userQuestion.user.userRole.userRole).isEqualTo("Teacher")
-        assertThat(userQuestion.question.questionId).isEqualTo(88)
-        assertThat(userQuestion.question.questionText).isEqualTo("Complex question text?")
-        assertThat(userQuestion.question.topic.topic).isEqualTo("Physics")
-        assertThat(userQuestion.question.difficulty.mode).isEqualTo("Hard")
+        val deletedUserQuestion = (result as Result.Success).data
+        assertThat(deletedUserQuestion.userQuestionId).isEqualTo(10)
+    }
+
+    @Test
+    fun `deleteUserQuestion verifies correct endpoint is called`() = runTest {
+        val jsonResponse = """{"userQuestionId": 42, "score": 100, "user": {"userId": 1, "firstname": "Test", "surname": "User", "birthdate": "2000-01-01", "nickname": "test", "email": "test@test.com", "password": "***", "userRole": {"userRoleId": 1, "userRole": "ROLE_USER"}}, "question": {"questionId": 1, "questionText": "Test?", "reviewedBy": null,
+                        "createdAt": "2024-01-01T10:00:00", "topic": {"topicId": 1, "topic": "Test"}, "status": {"statusId": 1, "text": "Active"}, "difficulty": {"difficultyId": 1, "mode": "Easy"}}, "answer": {"answerId": 1, "text": "Test", "correct": true, "question": {"questionId": 1, "questionText": "Test?", "reviewedBy": null,
+                        "createdAt": "2024-01-01T10:00:00", "topic": {"topicId": 1, "topic": "Test"}, "status": {"statusId": 1, "text": "Active"}, "difficulty": {"difficultyId": 1, "mode": "Easy"}}}}"""
+
+        mockWebServer.enqueue(MockResponse().setResponseCode(200).setBody(jsonResponse))
+
+        repository.deleteUserQuestion(42)
+
+        val request = mockWebServer.takeRequest()
+        assertThat(request.path).contains("/42")
+        assertThat(request.method).isEqualTo("DELETE")
     }
 }

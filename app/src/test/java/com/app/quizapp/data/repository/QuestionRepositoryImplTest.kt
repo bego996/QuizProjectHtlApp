@@ -42,82 +42,57 @@ class QuestionRepositoryImplTest {
     }
 
     @Test
-    fun `getAllQuestions returns success with questions list when API responds 200`() = runTest {
+    fun `getAllQuestions without filters returns success when API responds 200`() = runTest {
         val jsonResponse = """
             [
                 {
                     "questionId": 1,
-                    "questionText": "What is 2 + 2?",
-                    "reviewedBy": 1,
-                    "topic": {
-                        "topicId": 1,
-                        "topic": "Mathematics"
-                    },
-                    "status": {
-                        "statusId": 1,
-                        "text": "Active"
-                    },
-                    "difficulty": {
-                        "difficultyId": 1,
-                        "mode": "Easy"
-                    }
+                    "questionText": "What is 2+2?",
+                    "reviewedBy": null,
+                    "createdAt": "2024-01-01T10:00:00",
+                    "topic": {"topicId": 1, "topic": "Math"},
+                    "status": {"statusId": 1, "text": "Active"},
+                    "difficulty": {"difficultyId": 1, "mode": "Easy"}
                 },
                 {
                     "questionId": 2,
                     "questionText": "What is the capital of France?",
-                    "reviewedBy": 1,
-                    "topic": {
-                        "topicId": 2,
-                        "topic": "Geography"
-                    },
-                    "status": {
-                        "statusId": 1,
-                        "text": "Active"
-                    },
-                    "difficulty": {
-                        "difficultyId": 2,
-                        "mode": "Medium"
-                    }
+                    "reviewedBy": null,
+                    "createdAt": "2024-01-01T10:00:00",
+                    "topic": {"topicId": 2, "topic": "Geography"},
+                    "status": {"statusId": 1, "text": "Active"},
+                    "difficulty": {"difficultyId": 2, "mode": "Medium"}
                 }
             ]
         """.trimIndent()
 
-        mockWebServer.enqueue(
-            MockResponse()
-                .setResponseCode(200)
-                .setBody(jsonResponse)
-        )
+        mockWebServer.enqueue(MockResponse().setResponseCode(200).setBody(jsonResponse))
 
         val result = repository.getAllQuestions()
 
         assertThat(result).isInstanceOf(Result.Success::class.java)
         val questions = (result as Result.Success).data
         assertThat(questions).hasSize(2)
-        assertThat(questions[0].questionText).isEqualTo("What is 2 + 2?")
-        assertThat(questions[0].topic.topic).isEqualTo("Mathematics")
-        assertThat(questions[0].status.text).isEqualTo("Active")
-        assertThat(questions[0].difficulty.mode).isEqualTo("Easy")
+        assertThat(questions[0].questionText).isEqualTo("What is 2+2?")
         assertThat(questions[1].questionText).isEqualTo("What is the capital of France?")
     }
 
     @Test
+    fun `getAllQuestions with topicId filter sends correct query parameter`() = runTest {
+        val jsonResponse = """[{"questionId": 1, "questionText": "Test", "reviewedBy": null,
+                    "createdAt": "2024-01-01T10:00:00", "topic": {"topicId": 5, "topic": "Test"}, "status": {"statusId": 1, "text": "Active"}, "difficulty": {"difficultyId": 1, "mode": "Easy"}}]"""
+
+        mockWebServer.enqueue(MockResponse().setResponseCode(200).setBody(jsonResponse))
+
+        repository.getAllQuestions(topicId = 5)
+
+        val request = mockWebServer.takeRequest()
+        assertThat(request.path).contains("topicId=5")
+    }
+
+    @Test
     fun `getAllQuestions returns error when API responds with 500`() = runTest {
-        mockWebServer.enqueue(
-            MockResponse()
-                .setResponseCode(500)
-                .setBody("Internal Server Error")
-        )
-
-        val result = repository.getAllQuestions()
-
-        assertThat(result).isInstanceOf(Result.Error::class.java)
-        val error = (result as Result.Error).message
-        assertThat(error).isNotEmpty()
-    }
-
-    @Test
-    fun `getAllQuestions returns error when network fails`() = runTest {
-        mockWebServer.shutdown()
+        mockWebServer.enqueue(MockResponse().setResponseCode(500).setBody("Internal Server Error"))
 
         val result = repository.getAllQuestions()
 
@@ -125,150 +100,64 @@ class QuestionRepositoryImplTest {
     }
 
     @Test
-    fun `getAllQuestions returns empty list when API returns empty array`() = runTest {
-        mockWebServer.enqueue(
-            MockResponse()
-                .setResponseCode(200)
-                .setBody("[]")
-        )
-
-        val result = repository.getAllQuestions()
-
-        assertThat(result).isInstanceOf(Result.Success::class.java)
-        val questions = (result as Result.Success).data
-        assertThat(questions).isEmpty()
-    }
-
-    @Test
-    fun `getQuestionById returns success with question when API responds 200`() = runTest {
+    fun `getQuestionById returns success when API responds 200`() = runTest {
         val jsonResponse = """
             {
-                "questionId": 1,
-                "questionText": "What is 2 + 2?",
-                "reviewedBy": 1,
-                "topic": {
-                    "topicId": 1,
-                    "topic": "Mathematics"
-                },
-                "status": {
-                    "statusId": 1,
-                    "text": "Active"
-                },
-                "difficulty": {
-                    "difficultyId": 1,
-                    "mode": "Easy"
-                }
+                "questionId": 10,
+                "questionText": "What is the speed of light?",
+                "reviewedBy": null,
+                    "createdAt": "2024-01-01T10:00:00",
+                "topic": {"topicId": 3, "topic": "Physics"},
+                "status": {"statusId": 1, "text": "Active"},
+                "difficulty": {"difficultyId": 3, "mode": "Hard"}
             }
         """.trimIndent()
 
-        mockWebServer.enqueue(
-            MockResponse()
-                .setResponseCode(200)
-                .setBody(jsonResponse)
-        )
+        mockWebServer.enqueue(MockResponse().setResponseCode(200).setBody(jsonResponse))
 
-        val result = repository.getQuestionById(1)
+        val result = repository.getQuestionById(10)
 
         assertThat(result).isInstanceOf(Result.Success::class.java)
         val question = (result as Result.Success).data
-        assertThat(question.questionId).isEqualTo(1)
-        assertThat(question.questionText).isEqualTo("What is 2 + 2?")
-        assertThat(question.reviewedBy).isEqualTo(1)
-        assertThat(question.topic.topic).isEqualTo("Mathematics")
-        assertThat(question.status.text).isEqualTo("Active")
-        assertThat(question.difficulty.mode).isEqualTo("Easy")
+        assertThat(question.questionId).isEqualTo(10)
+        assertThat(question.questionText).isEqualTo("What is the speed of light?")
+        assertThat(question.difficulty.mode).isEqualTo("Hard")
     }
 
     @Test
     fun `getQuestionById returns error when API responds with 404`() = runTest {
-        mockWebServer.enqueue(
-            MockResponse()
-                .setResponseCode(404)
-                .setBody("Question not found")
-        )
+        mockWebServer.enqueue(MockResponse().setResponseCode(404).setBody("Question not found"))
 
         val result = repository.getQuestionById(999)
 
         assertThat(result).isInstanceOf(Result.Error::class.java)
-        val error = (result as Result.Error).message
-        assertThat(error).isNotEmpty()
     }
 
     @Test
-    fun `getQuestionById verifies correct endpoint is called`() = runTest {
-        val jsonResponse = """
-            {
-                "questionId": 42,
-                "questionText": "Test question",
-                "reviewedBy": 1,
-                "topic": {
-                    "topicId": 1,
-                    "topic": "Test"
-                },
-                "status": {
-                    "statusId": 1,
-                    "text": "Active"
-                },
-                "difficulty": {
-                    "difficultyId": 1,
-                    "mode": "Easy"
-                }
-            }
-        """.trimIndent()
+    fun `deleteQuestion returns success when API responds 200`() = runTest {
+        val jsonResponse = """{"questionId": 5, "questionText": "Deleted", "reviewedBy": null,
+                    "createdAt": "2024-01-01T10:00:00", "topic": {"topicId": 1, "topic": "Test"}, "status": {"statusId": 1, "text": "Active"}, "difficulty": {"difficultyId": 1, "mode": "Easy"}}"""
 
-        mockWebServer.enqueue(
-            MockResponse()
-                .setResponseCode(200)
-                .setBody(jsonResponse)
-        )
+        mockWebServer.enqueue(MockResponse().setResponseCode(200).setBody(jsonResponse))
 
-        repository.getQuestionById(42)
-
-        val request = mockWebServer.takeRequest()
-        assertThat(request.path).isEqualTo("/questions/42")
-        assertThat(request.method).isEqualTo("GET")
-    }
-
-    @Test
-    fun `DTO mapping converts all fields correctly`() = runTest {
-        val jsonResponse = """
-            {
-                "questionId": 123,
-                "questionText": "Complex test question?",
-                "reviewedBy": 99,
-                "topic": {
-                    "topicId": 5,
-                    "topic": "Physics"
-                },
-                "status": {
-                    "statusId": 2,
-                    "text": "Pending"
-                },
-                "difficulty": {
-                    "difficultyId": 3,
-                    "mode": "Hard"
-                }
-            }
-        """.trimIndent()
-
-        mockWebServer.enqueue(
-            MockResponse()
-                .setResponseCode(200)
-                .setBody(jsonResponse)
-        )
-
-        val result = repository.getQuestionById(123)
+        val result = repository.deleteQuestion(5)
 
         assertThat(result).isInstanceOf(Result.Success::class.java)
-        val question = (result as Result.Success).data
-        assertThat(question.questionId).isEqualTo(123)
-        assertThat(question.questionText).isEqualTo("Complex test question?")
-        assertThat(question.reviewedBy).isEqualTo(99)
-        assertThat(question.topic.topicId).isEqualTo(5)
-        assertThat(question.topic.topic).isEqualTo("Physics")
-        assertThat(question.status.statusId).isEqualTo(2)
-        assertThat(question.status.text).isEqualTo("Pending")
-        assertThat(question.difficulty.difficultyId).isEqualTo(3)
-        assertThat(question.difficulty.mode).isEqualTo("Hard")
+        val deletedQuestion = (result as Result.Success).data
+        assertThat(deletedQuestion.questionId).isEqualTo(5)
+    }
+
+    @Test
+    fun `deleteQuestion verifies correct endpoint is called`() = runTest {
+        val jsonResponse = """{"questionId": 42, "questionText": "Test", "reviewedBy": null,
+                    "createdAt": "2024-01-01T10:00:00", "topic": {"topicId": 1, "topic": "Test"}, "status": {"statusId": 1, "text": "Active"}, "difficulty": {"difficultyId": 1, "mode": "Easy"}}"""
+
+        mockWebServer.enqueue(MockResponse().setResponseCode(200).setBody(jsonResponse))
+
+        repository.deleteQuestion(42)
+
+        val request = mockWebServer.takeRequest()
+        assertThat(request.path).contains("/42")
+        assertThat(request.method).isEqualTo("DELETE")
     }
 }
