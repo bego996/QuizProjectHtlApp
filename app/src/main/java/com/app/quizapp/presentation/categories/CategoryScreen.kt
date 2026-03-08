@@ -96,8 +96,7 @@ fun CategoryScreen(
     val categories = uiState.categories.mapIndexed { index, topic ->
         // Style (Bild + Farben) anhand des Kategorienamens (case-insensitive) suchen
         val style = categoryStyleMap.entries
-            .firstOrNull { topic.topic.lowercase().contains(it.key) }
-            ?.value
+            .firstOrNull { topic.topic.lowercase().contains(it.key) }?.value
         Category(
             id = topic.topicId.toString(),
             name = topic.topic,
@@ -191,7 +190,7 @@ fun CategoryCard(
                     .background(
                         brush = Brush.horizontalGradient(
                             colorStops = arrayOf(
-                                0.0f to category.leftColor,
+                                0.40f to category.leftColor,
                                 0.45f to category.leftColor,
                                 0.60f to category.leftColor.copy(alpha = 0f),
                                 1.0f to category.tintColor

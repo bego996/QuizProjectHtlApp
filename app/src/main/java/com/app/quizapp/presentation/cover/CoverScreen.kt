@@ -1,21 +1,15 @@
 package com.app.quizapp.presentation.cover
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.app.quizapp.R
 import com.app.quizapp.navigation.NavigationDestination
@@ -53,40 +47,15 @@ fun CoverScreen(
     }
 
     Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color(0xFFB0E5E0)),
+        modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-            // App logo (placeholder - replace with actual drawable)
-            Box(
-                modifier = Modifier
-                    .size(120.dp)
-                    .background(Color.White),
-                contentAlignment = Alignment.Center
-            ) {
-                // TODO: Replace with actual logo drawable
-                Text(
-                    text = "Q",
-                    fontSize = 64.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color(0xFF00ACC1)
-                )
-            }
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            // App name
-            Text(
-                text = "QuizToGo",
-                fontSize = 32.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color(0xFF1A1A1A)
-            )
-        }
+        // Background image fills the entire screen
+        Image(
+            painter = painterResource(id = R.drawable.cover_screen),
+            contentDescription = null,
+            modifier = Modifier.fillMaxSize(),
+            contentScale = ContentScale.Crop
+        )
     }
 }
