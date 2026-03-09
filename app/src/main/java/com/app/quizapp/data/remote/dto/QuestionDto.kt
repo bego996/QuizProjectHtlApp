@@ -11,7 +11,10 @@ data class QuestionDto(
     val questionText: String,
 
     @SerializedName("reviewedBy")
-    val reviewedBy: Int,
+    val reviewedBy: Int? = null,
+
+    @SerializedName("createdAt")
+    val createdAt: String,
 
     @SerializedName("topic")
     val topic: TopicDto,
@@ -28,6 +31,7 @@ fun QuestionDto.toDomain(): Question {
         questionId = questionId,
         questionText = questionText,
         reviewedBy = reviewedBy,
+        createdAt = createdAt,
         topic = topic.toDomain(),
         status = status.toDomain(),
         difficulty = difficulty.toDomain()

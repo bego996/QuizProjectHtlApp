@@ -42,4 +42,12 @@ interface UserQuestionRepository {
      * @return Deleted user question
      */
     suspend fun deleteUserQuestion(userQuestionId: Int): Result<UserQuestion>
+
+    /**
+     * Delete all user questions for a specific user (admin only)
+     * Resets all quiz attempts/progress for the user
+     * @param userId User ID whose quiz attempts should be deleted
+     * @return Success/Error result
+     */
+    suspend fun deleteUserQuestionsByUserId(userId: Int): Result<Unit>
 }

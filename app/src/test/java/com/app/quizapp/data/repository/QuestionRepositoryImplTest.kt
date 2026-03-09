@@ -49,6 +49,7 @@ class QuestionRepositoryImplTest {
                     "questionId": 1,
                     "questionText": "What is 2+2?",
                     "reviewedBy": null,
+                    "createdAt": "2024-01-01T10:00:00",
                     "topic": {"topicId": 1, "topic": "Math"},
                     "status": {"statusId": 1, "text": "Active"},
                     "difficulty": {"difficultyId": 1, "mode": "Easy"}
@@ -57,6 +58,7 @@ class QuestionRepositoryImplTest {
                     "questionId": 2,
                     "questionText": "What is the capital of France?",
                     "reviewedBy": null,
+                    "createdAt": "2024-01-01T10:00:00",
                     "topic": {"topicId": 2, "topic": "Geography"},
                     "status": {"statusId": 1, "text": "Active"},
                     "difficulty": {"difficultyId": 2, "mode": "Medium"}
@@ -77,7 +79,8 @@ class QuestionRepositoryImplTest {
 
     @Test
     fun `getAllQuestions with topicId filter sends correct query parameter`() = runTest {
-        val jsonResponse = """[{"questionId": 1, "questionText": "Test", "reviewedBy": null, "topic": {"topicId": 5, "topic": "Test"}, "status": {"statusId": 1, "text": "Active"}, "difficulty": {"difficultyId": 1, "mode": "Easy"}}]"""
+        val jsonResponse = """[{"questionId": 1, "questionText": "Test", "reviewedBy": null,
+                    "createdAt": "2024-01-01T10:00:00", "topic": {"topicId": 5, "topic": "Test"}, "status": {"statusId": 1, "text": "Active"}, "difficulty": {"difficultyId": 1, "mode": "Easy"}}]"""
 
         mockWebServer.enqueue(MockResponse().setResponseCode(200).setBody(jsonResponse))
 
@@ -103,6 +106,7 @@ class QuestionRepositoryImplTest {
                 "questionId": 10,
                 "questionText": "What is the speed of light?",
                 "reviewedBy": null,
+                    "createdAt": "2024-01-01T10:00:00",
                 "topic": {"topicId": 3, "topic": "Physics"},
                 "status": {"statusId": 1, "text": "Active"},
                 "difficulty": {"difficultyId": 3, "mode": "Hard"}
@@ -131,7 +135,8 @@ class QuestionRepositoryImplTest {
 
     @Test
     fun `deleteQuestion returns success when API responds 200`() = runTest {
-        val jsonResponse = """{"questionId": 5, "questionText": "Deleted", "reviewedBy": null, "topic": {"topicId": 1, "topic": "Test"}, "status": {"statusId": 1, "text": "Active"}, "difficulty": {"difficultyId": 1, "mode": "Easy"}}"""
+        val jsonResponse = """{"questionId": 5, "questionText": "Deleted", "reviewedBy": null,
+                    "createdAt": "2024-01-01T10:00:00", "topic": {"topicId": 1, "topic": "Test"}, "status": {"statusId": 1, "text": "Active"}, "difficulty": {"difficultyId": 1, "mode": "Easy"}}"""
 
         mockWebServer.enqueue(MockResponse().setResponseCode(200).setBody(jsonResponse))
 
@@ -144,7 +149,8 @@ class QuestionRepositoryImplTest {
 
     @Test
     fun `deleteQuestion verifies correct endpoint is called`() = runTest {
-        val jsonResponse = """{"questionId": 42, "questionText": "Test", "reviewedBy": null, "topic": {"topicId": 1, "topic": "Test"}, "status": {"statusId": 1, "text": "Active"}, "difficulty": {"difficultyId": 1, "mode": "Easy"}}"""
+        val jsonResponse = """{"questionId": 42, "questionText": "Test", "reviewedBy": null,
+                    "createdAt": "2024-01-01T10:00:00", "topic": {"topicId": 1, "topic": "Test"}, "status": {"statusId": 1, "text": "Active"}, "difficulty": {"difficultyId": 1, "mode": "Easy"}}"""
 
         mockWebServer.enqueue(MockResponse().setResponseCode(200).setBody(jsonResponse))
 

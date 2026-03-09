@@ -5,6 +5,8 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -18,6 +20,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.app.quizapp.BottomNavigationBar
 import com.app.quizapp.QuizTopAppBar
 import com.app.quizapp.R
+import com.app.quizapp.domain.model.Answer
+import com.app.quizapp.domain.model.Topic
 import com.app.quizapp.navigation.NavigationDestination
 
 object ActiveQuizDestination : NavigationDestination {
@@ -36,6 +40,7 @@ data class QuizItem(
     val topic: String,
     val question: String,
     val reviewedBy: String?,
+    val reviewedByName: String?,
     val createdDate: String,
     val status: QuizStatus
 )
@@ -48,26 +53,45 @@ data class QuizItem(
 @Composable
 fun ActiveQuizScreen(
     onBackClick: () -> Unit = {},
-    onDetailsClick: (String) -> Unit = {},
     onHomeClick: () -> Unit = {},
     onDiscoverClick: () -> Unit = {},
     onProfileClick: () -> Unit = {},
     viewModel: ActiveQuizViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    var searchQuery by remember { mutableStateOf("") }
 
     // Map domain Question to UI QuizItem
     val quizzes = uiState.quizzes.map { question ->
         QuizItem(
             questionId = question.questionId,
             id = "#${question.questionId}",
-            topic = question.topic.topic,
+            topic = buildTopicHierarchy(question.topic),
             question = question.questionText,
-            reviewedBy = if (question.reviewedBy > 0) "Admin ${question.reviewedBy}" else null,
-            createdDate = "N/A", // TODO: Add creation date to Question model if needed
+            reviewedBy = question.reviewedBy?.let { if (it > 0) "${question.reviewedBy}" else null },
+            reviewedByName = question.reviewedBy?.let { userId ->
+                if (userId > 0) uiState.userNamesMap[userId] else null
+            },
+            createdDate = question.createdAt,
             status = if (question.status.text == "active") QuizStatus.ACTIVE else QuizStatus.INACTIVE
         )
     }
+
+    // Filter by topic and sort by created date descending
+    val filteredAndSortedQuizzes = remember(quizzes, searchQuery) {
+        quizzes
+            .filter { quiz ->
+                if (searchQuery.isBlank()) {
+                    true
+                } else {
+                    quiz.topic.lowercase().contains(searchQuery.lowercase())
+                }
+            }
+            .sortedByDescending { it.createdDate }
+    }
+
+    val expandedQuizIds = uiState.expandedQuizIds
+    val answersMap = uiState.answersMap
 
     Scaffold(
         topBar = {
@@ -80,6 +104,7 @@ fun ActiveQuizScreen(
         },
         bottomBar = {
             BottomNavigationBar(
+                currentRoute = ActiveQuizDestination.route,
                 onHomeClick = onHomeClick,
                 onDiscoverClick = onDiscoverClick,
                 onProfileClick = onProfileClick
@@ -94,10 +119,43 @@ fun ActiveQuizScreen(
             contentPadding = PaddingValues(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            items(quizzes) { quiz ->
+            item {
+                // Search bar
+                OutlinedTextField(
+                    value = searchQuery,
+                    onValueChange = { searchQuery = it },
+                    placeholder = {
+                        Text(
+                            text = "Search",
+                            color = Color(0xFFB0A090)
+                        )
+                    },
+                    leadingIcon = {
+                        Icon(
+                            imageVector = Icons.Filled.Search,
+                            contentDescription = "Search",
+                            tint = Color(0xFF654321)
+                        )
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    shape = RoundedCornerShape(28.dp),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        unfocusedContainerColor = Color.White,
+                        focusedContainerColor = Color.White,
+                        unfocusedBorderColor = Color.Transparent,
+                        focusedBorderColor = Color(0xFF654321)
+                    ),
+                    singleLine = true
+                )
+            }
+
+            items(filteredAndSortedQuizzes) { quiz ->
                 QuizItemCard(
                     quiz = quiz,
-                    onDetailsClick = { onDetailsClick(quiz.id) },
+                    isExpanded = expandedQuizIds.contains(quiz.questionId),
+                    answers = answersMap[quiz.questionId] ?: emptyList(),
+                    onDetailsClick = { viewModel.toggleQuizExpansion(quiz.questionId) },
                     onDeleteClick = { viewModel.deleteQuiz(quiz.questionId) }
                 )
             }
@@ -107,16 +165,40 @@ fun ActiveQuizScreen(
 
 /**
  * Individual quiz item card with status badge and action buttons
+ * @param quiz Quiz item data
+ * @param isExpanded Whether the answers section is expanded
+ * @param answers List of answers for this question
+ * @param onDetailsClick Callback when details/collapse button is clicked
+ * @param onDeleteClick Callback when delete button is clicked
  */
 @Composable
 fun QuizItemCard(
     quiz: QuizItem,
+    isExpanded: Boolean,
+    answers: List<Answer>,
     onDetailsClick: () -> Unit,
     onDeleteClick: () -> Unit
 ) {
+    var showDeleteDialog by remember { mutableStateOf(false) }
+
     val statusColor = when (quiz.status) {
         QuizStatus.ACTIVE -> Color(0xFF2E7D32)
         QuizStatus.INACTIVE -> Color(0xFFFF8F00)
+    }
+
+    // Delete confirmation dialog
+    if (showDeleteDialog) {
+        DeleteConfirmationDialog(
+            title = "Quiz löschen",
+            message = "Möchtest du diese Frage wirklich löschen?\n\n\"${quiz.question}\"",
+            onConfirm = {
+                showDeleteDialog = false
+                onDeleteClick()
+            },
+            onDismiss = {
+                showDeleteDialog = false
+            }
+        )
     }
 
     Card(
@@ -149,6 +231,13 @@ fun QuizItemCard(
                         modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp)
                     )
                 }
+            }
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
                 Surface(
                     shape = RoundedCornerShape(12.dp),
                     color = statusColor
@@ -184,18 +273,19 @@ fun QuizItemCard(
                     fontSize = 12.sp,
                     color = Color.White.copy(alpha = 0.9f)
                 )
-                Text(
-                    text = "⋮ Mihir",
-                    fontSize = 12.sp,
-                    color = Color.White.copy(alpha = 0.9f)
-                )
             }
-
-            Spacer(modifier = Modifier.height(8.dp))
 
             // Reviewed by
             Text(
-                text = "Reviewed by: ${quiz.reviewedBy ?: "None"}",
+                text = "Reviewed by: ${
+                    if (quiz.reviewedBy != null && quiz.reviewedByName != null) {
+                        "${quiz.reviewedBy} (${quiz.reviewedByName})"
+                    } else if (quiz.reviewedBy != null) {
+                        quiz.reviewedBy
+                    } else {
+                        "None"
+                    }
+                }",
                 fontSize = 12.sp,
                 color = Color.White.copy(alpha = 0.9f),
                 modifier = Modifier.padding(bottom = 4.dp)
@@ -208,6 +298,15 @@ fun QuizItemCard(
                 color = Color.White.copy(alpha = 0.9f)
             )
 
+            // Expandable answers section
+            if (isExpanded) {
+                Spacer(modifier = Modifier.height(12.dp))
+                AnswersSection(
+                    answers = answers,
+                    onCollapseClick = onDetailsClick
+                )
+            }
+
             Spacer(modifier = Modifier.height(12.dp))
 
             // Action buttons
@@ -215,25 +314,27 @@ fun QuizItemCard(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                Button(
-                    onClick = onDetailsClick,
-                    modifier = Modifier
-                        .weight(1f)
-                        .height(40.dp),
-                    shape = RoundedCornerShape(20.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xFF2E7D32)
-                    )
-                ) {
-                    Text(
-                        text = "Details ansehen",
-                        fontSize = 13.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        color = Color.White
-                    )
+                if (!isExpanded) {
+                    Button(
+                        onClick = onDetailsClick,
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(40.dp),
+                        shape = RoundedCornerShape(20.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color(0xFF2E7D32)
+                        )
+                    ) {
+                        Text(
+                            text = "Details ansehen",
+                            fontSize = 13.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            color = Color.White
+                        )
+                    }
                 }
                 Button(
-                    onClick = onDeleteClick,
+                    onClick = { showDeleteDialog = true },
                     modifier = Modifier
                         .weight(1f)
                         .height(40.dp),
@@ -243,7 +344,7 @@ fun QuizItemCard(
                     )
                 ) {
                     Text(
-                        text = "Delete anyway",
+                        text = "Delete",
                         fontSize = 13.sp,
                         fontWeight = FontWeight.SemiBold,
                         color = Color.White
@@ -252,4 +353,176 @@ fun QuizItemCard(
             }
         }
     }
+}
+
+/**
+ * Expandable answers section showing all answers with correct/incorrect indicators
+ * @param answers List of answers to display
+ * @param onCollapseClick Callback when "Weniger anzeigen" button is clicked
+ */
+@Composable
+fun AnswersSection(
+    answers: List<Answer>,
+    onCollapseClick: () -> Unit
+) {
+    Column(
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        // Answers header
+        Surface(
+            shape = RoundedCornerShape(8.dp),
+            color = Color(0xFF00838F)
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(12.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "Answers",
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White
+                )
+            }
+        }
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        // List of answers with correct/incorrect indicators
+        answers.forEachIndexed { index, answer ->
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 4.dp),
+                verticalAlignment = Alignment.Top
+            ) {
+                Text(
+                    text = if (answer.correct) "✓" else "✗",
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = if (answer.correct) Color(0xFF4CAF50) else Color(0xFFFF5252),
+                    modifier = Modifier.padding(end = 8.dp)
+                )
+                Text(
+                    text = "${index + 1}. ${answer.text}",
+                    fontSize = 13.sp,
+                    color = Color.White,
+                    modifier = Modifier.weight(1f)
+                )
+            }
+        }
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        // "Weniger anzeigen" button
+        Button(
+            onClick = onCollapseClick,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(36.dp),
+            shape = RoundedCornerShape(20.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color(0xFF00838F)
+            )
+        ) {
+            Text(
+                text = "Weniger anzeigen",
+                fontSize = 12.sp,
+                fontWeight = FontWeight.SemiBold,
+                color = Color.White
+            )
+        }
+    }
+}
+
+/**
+ * Reusable delete confirmation dialog with dark cyan theme
+ * @param title Dialog title
+ * @param message Dialog message
+ * @param onConfirm Callback when user confirms deletion
+ * @param onDismiss Callback when user dismisses dialog
+ */
+@Composable
+fun DeleteConfirmationDialog(
+    title: String,
+    message: String,
+    onConfirm: () -> Unit,
+    onDismiss: () -> Unit
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = {
+            Text(
+                text = title,
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color.White
+            )
+        },
+        text = {
+            Text(
+                text = message,
+                fontSize = 14.sp,
+                color = Color.White.copy(alpha = 0.9f)
+            )
+        },
+        confirmButton = {
+            Button(
+                onClick = onConfirm,
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(0xFFD32F2F)
+                ),
+                shape = RoundedCornerShape(20.dp),
+                modifier = Modifier.height(45.dp)
+            ) {
+                Text(
+                    text = "Ja, löschen",
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    color = Color.White
+                )
+            }
+        },
+        dismissButton = {
+            Button(
+                onClick = onDismiss,
+                shape = RoundedCornerShape(20.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(0xFF00838F)
+                ),
+                modifier = Modifier.height(45.dp)
+            ) {
+                Text(
+                    text = "Abbrechen",
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    color = Color.White
+                )
+            }
+        },
+        containerColor = Color(0xFF006064),
+        shape = RoundedCornerShape(16.dp)
+    )
+}
+
+/**
+ * Builds a hierarchical topic string from a Topic object
+ * Traverses from bottom (subtopic) to top (category) and formats as "Category > Topic > Subtopic"
+ * @param topic The topic object (usually the subtopic)
+ * @return Formatted string showing the full hierarchy
+ */
+private fun buildTopicHierarchy(topic: Topic): String {
+    val hierarchy = mutableListOf<String>()
+    var currentTopic: Topic? = topic
+
+    // Traverse up the hierarchy and collect all topic names
+    while (currentTopic != null) {
+        hierarchy.add(0, currentTopic.topic) // Add at beginning to maintain order
+        currentTopic = currentTopic.parentTopic
+    }
+
+    // Join with " > " separator
+    return hierarchy.joinToString(" > ")
 }

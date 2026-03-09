@@ -48,6 +48,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             QuizToGoTheme {
                 QuizToGoApp()
+                //AppNavigation()
             }
         }
     }

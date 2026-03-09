@@ -16,6 +16,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.app.quizapp.QuizTopAppBar
 import com.app.quizapp.R
 import com.app.quizapp.navigation.NavigationDestination
@@ -36,56 +37,16 @@ data class ReviewQuestion(
 
 /**
  * Quiz review screen showing all questions with correct/incorrect answers
+ * Displays user's answers, correct answers, and question details
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun QuizReviewScreen(
     onBackClick: () -> Unit = {}
 ) {
-    // Sample review data - will be replaced with ViewModel data
+    // Get cached review data from QuizViewModel
     val reviewQuestions = remember {
-        listOf(
-            ReviewQuestion(
-                questionNumber = 1,
-                questionText = "Which festival in Ghana celebrates the harvest season and involves the sprinkling of mashed yams by the paramount chief?",
-                topic = "Geographie",
-                userAnswer = "Odwira",
-                correctAnswer = "Odwira",
-                isCorrect = true
-            ),
-            ReviewQuestion(
-                questionNumber = 2,
-                questionText = "Which Ghanaian tribe celebrates the annual Kundum Festival, known for its colorful masquerade performances and drumming competitions?",
-                topic = "Geographie",
-                userAnswer = "Nzema",
-                correctAnswer = "Nzema",
-                isCorrect = true
-            ),
-            ReviewQuestion(
-                questionNumber = 3,
-                questionText = "In traditional Ghanaian marriages, what is the significance of the \"knocking ceremony\"?",
-                topic = "Geographie",
-                userAnswer = "It symbolizes the formal engagement between families",
-                correctAnswer = "It symbolizes the formal engagement between families",
-                isCorrect = true
-            ),
-            ReviewQuestion(
-                questionNumber = 4,
-                questionText = "What is the name of the traditional festival celebrated by the people of the Ga ethnic group?",
-                topic = "Geographie",
-                userAnswer = "Odwira",
-                correctAnswer = "Homowo",
-                isCorrect = false
-            ),
-            ReviewQuestion(
-                questionNumber = 5,
-                questionText = "What is the name of the traditional festival celebrated by the people of the Ga ethnic group?",
-                topic = "Geographie",
-                userAnswer = "Homowo",
-                correctAnswer = "Homowo",
-                isCorrect = true
-            )
-        )
+        QuizViewModel.getCachedReviewQuestions()
     }
 
     Scaffold(

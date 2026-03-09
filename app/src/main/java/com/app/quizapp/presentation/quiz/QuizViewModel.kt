@@ -62,8 +62,16 @@ class QuizViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(QuizUiState())
     val uiState: StateFlow<QuizUiState> = _uiState.asStateFlow()
 
+    companion object {
+        // Store review questions for QuizReviewScreen
+        // This is a simple solution to share quiz results between screens
+        private var cachedReviewQuestions: List<ReviewQuestion> = emptyList()
+
+        fun getCachedReviewQuestions(): List<ReviewQuestion> = cachedReviewQuestions
+    }
+
     init {
-        loadDailyQuiz(savedStateHandle["subTopicId"])
+        loadDailyQuiz(savedStateHandle["subTopicId"], savedStateHandle["difficultyId"] ?: 0)
     }
 
     /**
@@ -75,17 +83,18 @@ class QuizViewModel @Inject constructor(
      * 5. Randomly select 5
      * 6. Start quiz with first question
      */
-    private fun loadDailyQuiz(topicId: Int? = null) {
+    private fun loadDailyQuiz(topicId: Int? = null, difficultyId: Int = 0) {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, error = null) }
 
-            val questionsResult: Result<List<Question>>;
+            val questionsResult: Result<List<Question>>
 
-            // Load all questions if no param for topicId passed then load all question to pick randoms.
-            if (topicId == null || topicId == 0){
-                questionsResult = questionRepository.getAllQuestions()
-            }else{
-                questionsResult = questionRepository.getAllQuestions(topicId = topicId)
+            // Load questions filtered by topicId and optionally difficultyId (0 = Mixed = no filter)
+            val filterDifficulty: Int? = if (difficultyId != 0) difficultyId else null
+            questionsResult = if (topicId == null || topicId == 0) {
+                questionRepository.getAllQuestions(difficultyId = filterDifficulty)
+            } else {
+                questionRepository.getAllQuestions(topicId = topicId, difficultyId = filterDifficulty)
             }
 
             if (questionsResult is Result.Error) {
@@ -217,6 +226,8 @@ class QuizViewModel @Inject constructor(
                     userAnswers = updatedUserAnswers
                 )
             }
+            // Cache review questions for QuizReviewScreen
+            getReviewQuestions()
             // Submit all answers to backend
             completeQuiz()
         } else {
@@ -288,5 +299,37 @@ class QuizViewModel @Inject constructor(
      */
     fun resetQuizComplete() {
         _uiState.update { it.copy(isQuizComplete = false) }
+    }
+
+    /**
+     * Get review questions for QuizReviewScreen
+     * Converts user answers into ReviewQuestion format and caches them
+     */
+    fun getReviewQuestions(): List<ReviewQuestion> {
+        val currentState = _uiState.value
+        val reviewQuestions = currentState.questions.mapIndexed { index, question ->
+            val userAnswerData = currentState.userAnswers[question.questionId]
+            val answers = currentState.answers[question.questionId] ?: emptyList()
+
+            val userAnswer = userAnswerData?.let { (answerId, _) ->
+                answers.find { it.answerId == answerId }?.text
+            }
+
+            val correctAnswer = answers.find { it.correct }?.text ?: "Unknown"
+            val isCorrect = userAnswerData?.second ?: false
+
+            ReviewQuestion(
+                questionNumber = index + 1,
+                questionText = question.questionText,
+                topic = question.topic.topic,
+                userAnswer = userAnswer,
+                correctAnswer = correctAnswer,
+                isCorrect = isCorrect
+            )
+        }
+
+        // Cache for QuizReviewScreen
+        cachedReviewQuestions = reviewQuestions
+        return reviewQuestions
     }
 }

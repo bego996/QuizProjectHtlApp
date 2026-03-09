@@ -128,7 +128,7 @@ class HomeViewModelTest {
     }
 
     @Test
-    fun `loadUserInfo success without nickname shows email as userName`() = runTest {
+    fun `loadUserInfo success without nickname shows first and surname as userName`() = runTest {
         // Given: User without nickname
         userRepository.currentUser = userWithoutNickname
 
@@ -136,10 +136,10 @@ class HomeViewModelTest {
         viewModel = HomeViewModel(userRepository)
         advanceUntilIdle()
 
-        // Then: Should show email as userName
+        // Then: Should show firstname + surname as userName
         viewModel.uiState.test {
             val state = awaitItem()
-            assertThat(state.userName).isEqualTo("nonick@test.com")
+            assertThat(state.userName).isEqualTo("Test NoNick")
             assertThat(state.isAdmin).isFalse()
             assertThat(state.isLoading).isFalse()
             assertThat(state.error).isNull()
@@ -147,7 +147,7 @@ class HomeViewModelTest {
     }
 
     @Test
-    fun `loadUserInfo success with empty nickname shows email as userName`() = runTest {
+    fun `loadUserInfo success with empty nickname shows first and surname as userName`() = runTest {
         // Given: User with empty nickname
         userRepository.currentUser = userWithEmptyNickname
 
@@ -155,10 +155,10 @@ class HomeViewModelTest {
         viewModel = HomeViewModel(userRepository)
         advanceUntilIdle()
 
-        // Then: Should show email as userName
+        // Then: Should show firstname + surname as userName
         viewModel.uiState.test {
             val state = awaitItem()
-            assertThat(state.userName).isEqualTo("empty@test.com")
+            assertThat(state.userName).isEqualTo("Test Empty")
             assertThat(state.isAdmin).isFalse()
             assertThat(state.isLoading).isFalse()
             assertThat(state.error).isNull()
@@ -314,7 +314,7 @@ class HomeViewModelTest {
     // ========== Edge Cases ==========
 
     @Test
-    fun `user with blank nickname uses email`() = runTest {
+    fun `user with blank nickname uses firstname and surname`() = runTest {
         // Given: User with blank (whitespace) nickname
         val userWithBlankNickname = regularUser.copy(nickname = "   ")
         userRepository.currentUser = userWithBlankNickname
@@ -323,10 +323,10 @@ class HomeViewModelTest {
         viewModel = HomeViewModel(userRepository)
         advanceUntilIdle()
 
-        // Then: Should use email instead of blank nickname
+        // Then: Should use firstname + surname instead of blank nickname
         viewModel.uiState.test {
             val state = awaitItem()
-            assertThat(state.userName).isEqualTo("user@test.com")
+            assertThat(state.userName).isEqualTo("Test User")
         }
     }
 

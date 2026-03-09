@@ -769,6 +769,7 @@ class QuizViewModelTest {
             questionId = questionId,
             questionText = "Question $questionId?",
             reviewedBy = 0,
+            createdAt = "2024-01-01T10:00:00",
             topic = Topic(topicId = topicId, topic = "Topic $topicId"),
             status = Status(statusId = 1, text = "Active"),
             difficulty = Difficulty(difficultyId = 1, mode = "Easy")

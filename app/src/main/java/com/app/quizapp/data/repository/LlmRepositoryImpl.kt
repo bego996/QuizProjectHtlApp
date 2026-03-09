@@ -65,6 +65,7 @@ class LlmRepositoryImpl @Inject constructor(
      * @param difficulty Difficulty level
      * @param answers List of answer options
      * @param correctAnswer Index of correct answer
+     * @param reviewedBy ID of the admin who reviewed the quiz (optional)
      * @return Saved quiz data
      */
     override suspend fun addQuizToDatabase(
@@ -74,7 +75,8 @@ class LlmRepositoryImpl @Inject constructor(
         question: String,
         difficulty: String,
         answers: List<String>,
-        correctAnswer: Int
+        correctAnswer: Int,
+        reviewedBy: Int?
     ): Result<QuizDto> {
         return try {
             val quizDto = QuizDto(
@@ -84,7 +86,8 @@ class LlmRepositoryImpl @Inject constructor(
                 question = question,
                 difficulty = difficulty,
                 answers = answers,
-                correctAnswer = correctAnswer
+                correctAnswer = correctAnswer,
+                reviewedBy = reviewedBy
             )
             val response = apiService.addQuizToDatabase(quizDto)
             Result.Success(response)

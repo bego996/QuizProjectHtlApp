@@ -79,6 +79,15 @@ class FakeUserQuestionRepository : UserQuestionRepository {
         }
     }
 
+    override suspend fun deleteUserQuestionsByUserId(userId: Int): Result<Unit> {
+        return if (shouldReturnError) {
+            Result.Error(errorMessage)
+        } else {
+            userQuestions.removeAll { it.user.userId == userId }
+            Result.Success(Unit)
+        }
+    }
+
     // ========== Test Helper Functions ==========
 
     /**

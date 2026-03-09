@@ -40,6 +40,7 @@ interface LlmRepository {
      * @param difficulty Difficulty level
      * @param answers List of answer options
      * @param correctAnswer Index of correct answer
+     * @param reviewedBy ID of the admin who reviewed the quiz (optional)
      * @return Saved quiz data
      */
     suspend fun addQuizToDatabase(
@@ -49,6 +50,7 @@ interface LlmRepository {
         question: String,
         difficulty: String,
         answers: List<String>,
-        correctAnswer: Int
+        correctAnswer: Int,
+        reviewedBy: Int? = null
     ): Result<QuizDto>
 }

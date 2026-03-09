@@ -1,7 +1,12 @@
 package com.app.quizapp
 
 import android.annotation.SuppressLint
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
@@ -14,9 +19,9 @@ import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
@@ -76,37 +81,49 @@ fun QuizTopAppBar(
     )
 }
 
+private val homeRoutes    = setOf("home")
+private val discoverRoutes = setOf("categories", "topics", "subtopics")
+private val profileRoutes  = setOf("profile_overview", "profile_statistics", "edit_profile", "settings")
+
 /**
- * Bottom navigation bar with Home, Discover, and Profile tabs
+ * Bottom navigation bar with Home, Discover, and Profile tabs.
+ * @param currentRoute the active route string to highlight the correct tab
  */
 @Composable
 fun BottomNavigationBar(
+    currentRoute: String? = null,
     onHomeClick: () -> Unit,
     onDiscoverClick: () -> Unit,
     onProfileClick: () -> Unit
 ) {
-    NavigationBar(
-        containerColor = Color(0xFF00ACC1),
-        contentColor = Color.White,
-        modifier = Modifier.height(80.dp)
+    Surface(
+        color = Color(0xFF00ACC1),
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(80.dp)
     ) {
+        Row(
+            modifier = Modifier.fillMaxSize(),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
         NavigationBarItem(
             icon = {
                 Icon(
                     imageVector = Icons.Filled.Home,
                     contentDescription = "Home",
-                    modifier = Modifier.size(28.dp)
+                    modifier = Modifier.size(25.dp)
                 )
             },
             label = { Text("Home", fontSize = 12.sp) },
-            selected = false,
+            selected = currentRoute in homeRoutes,
             onClick = onHomeClick,
             colors = NavigationBarItemDefaults.colors(
                 selectedIconColor = Color.White,
-                unselectedIconColor = Color(0xFF004D56),
+                unselectedIconColor = Color(0xFF0D434B),
                 selectedTextColor = Color.White,
                 unselectedTextColor = Color(0xFF004D56),
-                indicatorColor = Color.Transparent
+                indicatorColor = Color(0xFF00796B)
             )
         )
 
@@ -115,11 +132,11 @@ fun BottomNavigationBar(
                 Icon(
                     imageVector = Icons.Outlined.Search,
                     contentDescription = "Discover",
-                    modifier = Modifier.size(28.dp)
+                    modifier = Modifier.size(25.dp)
                 )
             },
             label = { Text("Discover", fontSize = 12.sp) },
-            selected = true,
+            selected = currentRoute in discoverRoutes,
             onClick = onDiscoverClick,
             colors = NavigationBarItemDefaults.colors(
                 selectedIconColor = Color.White,
@@ -135,19 +152,20 @@ fun BottomNavigationBar(
                 Icon(
                     imageVector = Icons.Filled.Person,
                     contentDescription = "Profile",
-                    modifier = Modifier.size(28.dp)
+                    modifier = Modifier.size(25.dp)
                 )
             },
             label = { Text("Profile", fontSize = 12.sp) },
-            selected = false,
+            selected = currentRoute in profileRoutes,
             onClick = onProfileClick,
             colors = NavigationBarItemDefaults.colors(
                 selectedIconColor = Color.White,
                 unselectedIconColor = Color(0xFF004D56),
                 selectedTextColor = Color.White,
                 unselectedTextColor = Color(0xFF004D56),
-                indicatorColor = Color.Transparent
+                indicatorColor = Color(0xFF00796B)
             )
         )
+        }
     }
 }

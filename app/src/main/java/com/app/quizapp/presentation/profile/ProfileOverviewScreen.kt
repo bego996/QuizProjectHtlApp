@@ -53,7 +53,6 @@ fun ProfileOverviewScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
-    val userName = viewModel.getDisplayName()
     val isAdmin = viewModel.isAdmin()
     val achievements = listOf(
         Achievement("Bolt", "Completed quiz in less than 2 minutes."),
@@ -90,6 +89,7 @@ fun ProfileOverviewScreen(
         },
         bottomBar = {
             BottomNavigationBar(
+                currentRoute = ProfileOverviewDestination.route,
                 onHomeClick = onHomeClick,
                 onDiscoverClick = onDiscoverClick,
                 onProfileClick = onProfileClick
@@ -130,7 +130,7 @@ fun ProfileOverviewScreen(
                     Spacer(modifier = Modifier.height(12.dp))
 
                     Text(
-                        text = "$userName${if (isAdmin) "(Admin)" else ""}",
+                        text = "${uiState.user?.firstname} ${uiState.user?.surname}${if (isAdmin) "(Admin)" else ""}",
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
                         color = Color(0xFF654321)

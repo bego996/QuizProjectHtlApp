@@ -69,6 +69,15 @@ class UserQuestionRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun deleteUserQuestionsByUserId(userId: Int): Result<Unit> {
+        return try {
+            apiService.deleteUserQuestionsByUserId(userId)
+            Result.Success(Unit)
+        } catch (e: Exception) {
+            Result.Error(e.message ?: "Failed to delete user questions")
+        }
+    }
+
     // Helper function to convert UserQuestion domain model to DTO
     private fun UserQuestion.toDto(): UserQuestionDto {
         return UserQuestionDto(
@@ -101,7 +110,8 @@ class UserQuestionRepositoryImpl @Inject constructor(
                 difficulty = DifficultyDto(
                     difficultyId = question.difficulty.difficultyId,
                     mode = question.difficulty.mode
-                )
+                ),
+                createdAt = question.createdAt,
             ),
             score = score
         )

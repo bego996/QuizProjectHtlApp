@@ -65,6 +65,7 @@ fun GenerateQuizzesScreen(
         },
         bottomBar = {
             BottomNavigationBar(
+                currentRoute = GenerateQuizzesDestination.route,
                 onHomeClick = onHomeClick,
                 onDiscoverClick = onDiscoverClick,
                 onProfileClick = onProfileClick
@@ -115,23 +116,25 @@ fun GenerateQuizzesScreen(
                 }
             }
 
-            // Difficulty selection dialog (Image 3)
+            // Difficulty selection dialog – shown after subtopic selection
             if (uiState.showDifficultyDialog) {
                 DifficultySelectionDialog(
                     difficulties = uiState.difficulties,
+                    quizCounts = uiState.quizCountsByDifficultyId,
                     onDifficultySelected = { viewModel.selectDifficulty(it) },
                     onRandomSelected = { viewModel.selectRandomDifficulty() },
                     onDismiss = { viewModel.hideDifficultyDialog() }
                 )
             }
 
-            // Topic selection dialog (Image 4)
+            // Topic selection dialog (category → topic → subtopic)
             if (uiState.showTopicSelectionDialog) {
                 TopicSelectionDialog(
                     currentLevel = uiState.currentSelectionLevel,
                     availableCategories = uiState.availableCategories,
                     availableTopics = uiState.availableTopics,
                     availableSubtopics = uiState.availableSubtopics,
+                    quizCounts = uiState.quizCountsByTopicId,
                     onCategorySelected = { viewModel.selectCategory(it) },
                     onTopicSelected = { viewModel.selectTopic(it) },
                     onSubtopicSelected = { viewModel.selectSubtopic(it) },
@@ -156,6 +159,7 @@ fun GenerateQuizzesScreen(
 @Composable
 private fun DifficultySelectionDialog(
     difficulties: List<Difficulty>,
+    quizCounts: Map<Int, Int>,
     onDifficultySelected: (Difficulty) -> Unit,
     onRandomSelected: () -> Unit,
     onDismiss: () -> Unit
@@ -203,6 +207,7 @@ private fun DifficultySelectionDialog(
                     items(difficulties.take(3)) { difficulty ->
                         DifficultyButton(
                             difficulty = difficulty,
+                            count = quizCounts[difficulty.difficultyId] ?: 0,
                             onClick = { onDifficultySelected(difficulty) }
                         )
                     }
@@ -239,6 +244,7 @@ private fun DifficultySelectionDialog(
 @Composable
 private fun DifficultyButton(
     difficulty: Difficulty,
+    count: Int,
     onClick: () -> Unit
 ) {
     val backgroundColor = when (difficulty.mode.lowercase()) {
@@ -258,12 +264,22 @@ private fun DifficultyButton(
             containerColor = backgroundColor
         )
     ) {
-        Text(
-            text = difficulty.mode,
-            fontSize = 16.sp,
-            fontWeight = FontWeight.SemiBold,
-            color = Color.White
-        )
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Text(
+                text = difficulty.mode,
+                fontSize = 16.sp,
+                fontWeight = FontWeight.SemiBold,
+                color = Color.White
+            )
+            Text(
+                text = "($count)",
+                fontSize = 12.sp,
+                color = Color.White.copy(alpha = 0.85f)
+            )
+        }
     }
 }
 
@@ -276,6 +292,7 @@ private fun TopicSelectionDialog(
     availableCategories: List<Topic>,
     availableTopics: List<Topic>,
     availableSubtopics: List<Topic>,
+    quizCounts: Map<Int, Int>,
     onCategorySelected: (Topic) -> Unit,
     onTopicSelected: (Topic) -> Unit,
     onSubtopicSelected: (Topic) -> Unit,
@@ -351,6 +368,7 @@ private fun TopicSelectionDialog(
                     items(topicsToShow) { topic ->
                         TopicChip(
                             topic = topic,
+                            count = quizCounts[topic.topicId] ?: 0,
                             onClick = {
                                 when (currentLevel) {
                                     TopicSelectionLevel.CATEGORY -> onCategorySelected(topic)
@@ -391,27 +409,36 @@ private fun TopicSelectionDialog(
 @Composable
 private fun TopicChip(
     topic: Topic,
+    count: Int,
     onClick: () -> Unit
 ) {
     Surface(
         modifier = Modifier
             .fillMaxWidth()
-            .height(50.dp)
+            .height(64.dp)
             .clickable(onClick = onClick),
         shape = RoundedCornerShape(12.dp),
         color = Color(0xFF26A69A)
     ) {
-        Box(
-            modifier = Modifier.fillMaxSize(),
-            contentAlignment = Alignment.Center
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 4.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
         ) {
             Text(
                 text = topic.topic,
                 fontSize = 13.sp,
                 fontWeight = FontWeight.Medium,
                 color = Color.White,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.padding(horizontal = 4.dp)
+                textAlign = TextAlign.Center
+            )
+            Text(
+                text = "($count)",
+                fontSize = 11.sp,
+                color = Color.White.copy(alpha = 0.8f),
+                textAlign = TextAlign.Center
             )
         }
     }

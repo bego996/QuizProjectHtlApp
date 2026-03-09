@@ -6,6 +6,7 @@ import com.google.gson.annotations.SerializedName
  * DTO for AI-generated quiz data
  * Used in LLM endpoints for quiz generation and adding to database
  * @param correctAnswer Index of the correct answer in the answers list
+ * @param reviewedBy ID of the admin who reviewed and added the quiz (optional)
  */
 data class QuizDto(
     @SerializedName("category")
@@ -27,5 +28,8 @@ data class QuizDto(
     val answers: List<String>,
 
     @SerializedName("correct_answer")
-    val correctAnswer: Int
+    val correctAnswer: Int,
+
+    @SerializedName("reviewed_by")
+    val reviewedBy: Int? = null
 )

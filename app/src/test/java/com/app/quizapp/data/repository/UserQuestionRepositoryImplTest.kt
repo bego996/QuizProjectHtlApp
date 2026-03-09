@@ -49,8 +49,10 @@ class UserQuestionRepositoryImplTest {
                     "userQuestionId": 1,
                     "score": 100,
                     "user": {"userId": 1, "firstname": "John", "surname": "Doe", "birthdate": "2000-01-01", "nickname": "johnd", "email": "john@test.com", "password": "***", "userRole": {"userRoleId": 1, "userRole": "ROLE_USER"}},
-                    "question": {"questionId": 1, "questionText": "Test?", "reviewedBy": null, "topic": {"topicId": 1, "topic": "Test"}, "status": {"statusId": 1, "text": "Active"}, "difficulty": {"difficultyId": 1, "mode": "Easy"}},
-                    "answer": {"answerId": 1, "text": "Answer", "correct": true, "question": {"questionId": 1, "questionText": "Test?", "reviewedBy": null, "topic": {"topicId": 1, "topic": "Test"}, "status": {"statusId": 1, "text": "Active"}, "difficulty": {"difficultyId": 1, "mode": "Easy"}}}
+                    "question": {"questionId": 1, "questionText": "Test?", "reviewedBy": null,
+                        "createdAt": "2024-01-01T10:00:00", "topic": {"topicId": 1, "topic": "Test"}, "status": {"statusId": 1, "text": "Active"}, "difficulty": {"difficultyId": 1, "mode": "Easy"}},
+                    "answer": {"answerId": 1, "text": "Answer", "correct": true, "question": {"questionId": 1, "questionText": "Test?", "reviewedBy": null,
+                        "createdAt": "2024-01-01T10:00:00", "topic": {"topicId": 1, "topic": "Test"}, "status": {"statusId": 1, "text": "Active"}, "difficulty": {"difficultyId": 1, "mode": "Easy"}}}
                 }
             ]
         """.trimIndent()
@@ -81,8 +83,10 @@ class UserQuestionRepositoryImplTest {
                 "userQuestionId": 5,
                 "score": 75,
                 "user": {"userId": 2, "firstname": "Jane", "surname": "Smith", "birthdate": "1999-05-15", "nickname": "janes", "email": "jane@test.com", "password": "***", "userRole": {"userRoleId": 1, "userRole": "ROLE_USER"}},
-                "question": {"questionId": 2, "questionText": "Question?", "reviewedBy": null, "topic": {"topicId": 2, "topic": "Science"}, "status": {"statusId": 1, "text": "Active"}, "difficulty": {"difficultyId": 2, "mode": "Medium"}},
-                "answer": {"answerId": 5, "text": "Correct Answer", "correct": true, "question": {"questionId": 2, "questionText": "Question?", "reviewedBy": null, "topic": {"topicId": 2, "topic": "Science"}, "status": {"statusId": 1, "text": "Active"}, "difficulty": {"difficultyId": 2, "mode": "Medium"}}}
+                "question": {"questionId": 2, "questionText": "Question?", "reviewedBy": null,
+                        "createdAt": "2024-01-01T10:00:00", "topic": {"topicId": 2, "topic": "Science"}, "status": {"statusId": 1, "text": "Active"}, "difficulty": {"difficultyId": 2, "mode": "Medium"}},
+                "answer": {"answerId": 5, "text": "Correct Answer", "correct": true, "question": {"questionId": 2, "questionText": "Question?", "reviewedBy": null,
+                        "createdAt": "2024-01-01T10:00:00", "topic": {"topicId": 2, "topic": "Science"}, "status": {"statusId": 1, "text": "Active"}, "difficulty": {"difficultyId": 2, "mode": "Medium"}}}
             }
         """.trimIndent()
 
@@ -113,8 +117,10 @@ class UserQuestionRepositoryImplTest {
                 "userQuestionId": 10,
                 "score": 0,
                 "user": {"userId": 1, "firstname": "Test", "surname": "User", "birthdate": "2000-01-01", "nickname": "test", "email": "test@test.com", "password": "***", "userRole": {"userRoleId": 1, "userRole": "ROLE_USER"}},
-                "question": {"questionId": 1, "questionText": "Test?", "reviewedBy": null, "topic": {"topicId": 1, "topic": "Test"}, "status": {"statusId": 1, "text": "Active"}, "difficulty": {"difficultyId": 1, "mode": "Easy"}},
-                "answer": {"answerId": 1, "text": "Wrong", "correct": false, "question": {"questionId": 1, "questionText": "Test?", "reviewedBy": null, "topic": {"topicId": 1, "topic": "Test"}, "status": {"statusId": 1, "text": "Active"}, "difficulty": {"difficultyId": 1, "mode": "Easy"}}}
+                "question": {"questionId": 1, "questionText": "Test?", "reviewedBy": null,
+                        "createdAt": "2024-01-01T10:00:00", "topic": {"topicId": 1, "topic": "Test"}, "status": {"statusId": 1, "text": "Active"}, "difficulty": {"difficultyId": 1, "mode": "Easy"}},
+                "answer": {"answerId": 1, "text": "Wrong", "correct": false, "question": {"questionId": 1, "questionText": "Test?", "reviewedBy": null,
+                        "createdAt": "2024-01-01T10:00:00", "topic": {"topicId": 1, "topic": "Test"}, "status": {"statusId": 1, "text": "Active"}, "difficulty": {"difficultyId": 1, "mode": "Easy"}}}
             }
         """.trimIndent()
 
@@ -129,7 +135,9 @@ class UserQuestionRepositoryImplTest {
 
     @Test
     fun `deleteUserQuestion verifies correct endpoint is called`() = runTest {
-        val jsonResponse = """{"userQuestionId": 42, "score": 100, "user": {"userId": 1, "firstname": "Test", "surname": "User", "birthdate": "2000-01-01", "nickname": "test", "email": "test@test.com", "password": "***", "userRole": {"userRoleId": 1, "userRole": "ROLE_USER"}}, "question": {"questionId": 1, "questionText": "Test?", "reviewedBy": null, "topic": {"topicId": 1, "topic": "Test"}, "status": {"statusId": 1, "text": "Active"}, "difficulty": {"difficultyId": 1, "mode": "Easy"}}, "answer": {"answerId": 1, "text": "Test", "correct": true, "question": {"questionId": 1, "questionText": "Test?", "reviewedBy": null, "topic": {"topicId": 1, "topic": "Test"}, "status": {"statusId": 1, "text": "Active"}, "difficulty": {"difficultyId": 1, "mode": "Easy"}}}}"""
+        val jsonResponse = """{"userQuestionId": 42, "score": 100, "user": {"userId": 1, "firstname": "Test", "surname": "User", "birthdate": "2000-01-01", "nickname": "test", "email": "test@test.com", "password": "***", "userRole": {"userRoleId": 1, "userRole": "ROLE_USER"}}, "question": {"questionId": 1, "questionText": "Test?", "reviewedBy": null,
+                        "createdAt": "2024-01-01T10:00:00", "topic": {"topicId": 1, "topic": "Test"}, "status": {"statusId": 1, "text": "Active"}, "difficulty": {"difficultyId": 1, "mode": "Easy"}}, "answer": {"answerId": 1, "text": "Test", "correct": true, "question": {"questionId": 1, "questionText": "Test?", "reviewedBy": null,
+                        "createdAt": "2024-01-01T10:00:00", "topic": {"topicId": 1, "topic": "Test"}, "status": {"statusId": 1, "text": "Active"}, "difficulty": {"difficultyId": 1, "mode": "Easy"}}}}"""
 
         mockWebServer.enqueue(MockResponse().setResponseCode(200).setBody(jsonResponse))
 

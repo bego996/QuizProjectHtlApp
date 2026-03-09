@@ -13,10 +13,14 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextDecoration
@@ -44,6 +48,7 @@ fun LoginScreen(
     viewModel: LoginViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val hammerSmithOneFont = FontFamily(Font(R.font.hammersmith_one_regular, FontWeight.Normal))
 
     // Handle successful login navigation
     LaunchedEffect(uiState.isLoggedIn) {
@@ -64,7 +69,7 @@ fun LoginScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFFB0E5E0))
+            .background(Color(0xFF8FDDDD))
     ) {
         Column(
             modifier = Modifier
@@ -77,28 +82,27 @@ fun LoginScreen(
             // App logo
             Box(
                 modifier = Modifier
-                    .size(100.dp)
-                    .background(Color.White, RoundedCornerShape(16.dp)),
+                    .size(90.dp)
+                    .background(Color(0xFF8FDDDD), RoundedCornerShape(16.dp)),
                 contentAlignment = Alignment.Center
             ) {
-                // TODO: Replace with actual logo
-                Text(
-                    text = "Q",
-                    fontSize = 48.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color(0xFF00ACC1)
+                Image(
+                    painter = painterResource(R.drawable.cover_icon),
+                    contentDescription = "coverIcon",
+                    contentScale = ContentScale.Crop,
+                    alignment = Alignment.Center,
+                    modifier = Modifier.fillMaxSize()
                 )
             }
-
-            Spacer(modifier = Modifier.height(24.dp))
 
             // Login title
             Text(
                 text = "Login",
-                fontSize = 36.sp,
-                fontWeight = FontWeight.Bold,
+                fontSize = 32.sp,
+                fontFamily = hammerSmithOneFont,
                 color = Color(0xFF654321)
             )
+
 
             Spacer(modifier = Modifier.height(48.dp))
 

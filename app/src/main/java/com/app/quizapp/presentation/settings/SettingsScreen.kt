@@ -88,6 +88,7 @@ fun SettingsScreen(
         },
         bottomBar = {
             BottomNavigationBar(
+                currentRoute = SettingsDestination.route,
                 onHomeClick = onHomeClick,
                 onDiscoverClick = onDiscoverClick,
                 onProfileClick = onProfileClick

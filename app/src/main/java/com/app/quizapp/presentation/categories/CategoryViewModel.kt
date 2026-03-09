@@ -50,7 +50,6 @@ class CategoryViewModel @Inject constructor(
 
             when (val result = topicRepository.getAllHighestTopics()) {
                 is Result.Success -> {
-                    // Filter for root categories (no parent)
                     val rootCategories = result.data.filter { it.parentTopic == null }
                     _uiState.update {
                         it.copy(
@@ -62,10 +61,7 @@ class CategoryViewModel @Inject constructor(
                 }
                 is Result.Error -> {
                     _uiState.update {
-                        it.copy(
-                            isLoading = false,
-                            error = result.message
-                        )
+                        it.copy(isLoading = false, error = result.message)
                     }
                 }
             }

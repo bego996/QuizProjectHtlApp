@@ -55,7 +55,7 @@ class HomeViewModel @Inject constructor(
                 is Result.Success -> {
                     val user = result.data
                     // Use nickname if available, otherwise use email
-                    val displayName = user.nickname?.takeIf { it.isNotBlank() } ?: user.email
+                    val displayName = user.nickname?.takeIf { it.isNotBlank() } ?: "${user.firstname} ${user.surname}"
                     val isAdmin = user.userRole.userRole == "admin"
 
                     _uiState.update {

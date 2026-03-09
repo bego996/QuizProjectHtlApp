@@ -9,7 +9,9 @@ import com.app.quizapp.domain.repository.DifficultyRepository
 import com.app.quizapp.domain.repository.LlmRepository
 import com.app.quizapp.domain.repository.QuestionRepository
 import com.app.quizapp.domain.repository.TopicRepository
+import com.app.quizapp.domain.repository.UserRepository
 import com.app.quizapp.domain.util.Result
+import com.app.quizapp.domain.model.Question
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -44,6 +46,7 @@ enum class TopicSelectionLevel {
  * @param showTopicSelectionDialog Whether to show topic selection dialog
  * @param isGenerating Whether quiz is being generated
  * @param isLoading Whether initial data is loading
+ * @param currentUserId ID of the currently logged in admin
  * @param error Error message if operation fails
  */
 data class GenerateQuizzesUiState(
@@ -62,6 +65,9 @@ data class GenerateQuizzesUiState(
     val showTopicSelectionDialog: Boolean = false,
     val isGenerating: Boolean = false,
     val isLoading: Boolean = true,
+    val currentUserId: Int? = null,
+    val quizCountsByTopicId: Map<Int, Int> = emptyMap(),
+    val quizCountsByDifficultyId: Map<Int, Int> = emptyMap(),
     val error: String? = null
 )
 
@@ -74,22 +80,36 @@ class GenerateQuizzesViewModel @Inject constructor(
     private val topicRepository: TopicRepository,
     private val difficultyRepository: DifficultyRepository,
     private val llmRepository: LlmRepository,
-    private val questionRepository: QuestionRepository
+    private val questionRepository: QuestionRepository,
+    private val userRepository: UserRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(GenerateQuizzesUiState())
     val uiState: StateFlow<GenerateQuizzesUiState> = _uiState.asStateFlow()
+
+    /** Cached questions for count computation, not exposed to UI */
+    private var cachedAllQuestions: List<Question> = emptyList()
 
     init {
         loadInitialData()
     }
 
     /**
-     * Load all topics and difficulties on initialization
+     * Load all topics, difficulties and current user on initialization
      */
     private fun loadInitialData() {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, error = null) }
+
+            // Load current user (admin) ID
+            when (val userResult = userRepository.getCurrentUser()) {
+                is Result.Success -> {
+                    _uiState.update { it.copy(currentUserId = userResult.data.userId) }
+                }
+                is Result.Error -> {
+                    _uiState.update { it.copy(error = userResult.message) }
+                }
+            }
 
             // Load difficulties
             when (val diffResult = difficultyRepository.getAllDifficulties()) {
@@ -102,25 +122,34 @@ class GenerateQuizzesViewModel @Inject constructor(
             }
 
             // Load topics
+            var loadedTopics: List<Topic> = emptyList()
             when (val topicResult = topicRepository.getAllTopics()) {
                 is Result.Success -> {
-                    val allTopics = topicResult.data
-                    val categories = filterRootTopics(allTopics)
+                    loadedTopics = topicResult.data
+                    val categories = filterRootTopics(loadedTopics)
                     _uiState.update {
                         it.copy(
-                            allTopics = allTopics,
-                            availableCategories = categories,
-                            isLoading = false
+                            allTopics = loadedTopics,
+                            availableCategories = categories
                         )
                     }
                 }
                 is Result.Error -> {
-                    _uiState.update {
-                        it.copy(
-                            isLoading = false,
-                            error = topicResult.message
-                        )
-                    }
+                    _uiState.update { it.copy(isLoading = false, error = topicResult.message) }
+                    return@launch
+                }
+            }
+
+            // Load all questions to build quiz counts per topic and difficulty
+            when (val questionsResult = questionRepository.getAllQuestions()) {
+                is Result.Success -> {
+                    cachedAllQuestions = questionsResult.data
+                    val counts = buildQuizCountsByTopicId(loadedTopics, questionsResult.data)
+                    _uiState.update { it.copy(quizCountsByTopicId = counts, isLoading = false) }
+                }
+                is Result.Error -> {
+                    // Non-fatal: proceed without counts (will show 0)
+                    _uiState.update { it.copy(isLoading = false) }
                 }
             }
         }
@@ -164,7 +193,8 @@ class GenerateQuizzesViewModel @Inject constructor(
     // ========== Difficulty Selection ==========
 
     /**
-     * Select difficulty and close dialog
+     * Select difficulty, close dialog and trigger quiz generation
+     * Difficulty dialog is shown AFTER subtopic selection
      */
     fun selectDifficulty(difficulty: Difficulty) {
         _uiState.update {
@@ -173,8 +203,7 @@ class GenerateQuizzesViewModel @Inject constructor(
                 showDifficultyDialog = false
             )
         }
-        // After difficulty selection, show topic selection dialog
-        showTopicSelectionDialog()
+        generateQuizWithSelection()
     }
 
     /**
@@ -201,6 +230,53 @@ class GenerateQuizzesViewModel @Inject constructor(
      */
     private fun filterTopicsByParent(allTopics: List<Topic>, parent: Topic): List<Topic> {
         return allTopics.filter { it.parentTopic?.topicId == parent.topicId }
+    }
+
+    /**
+     * Reload all questions and rebuild count maps.
+     * Called after a quiz is applied to the database to reflect the new count immediately.
+     */
+    private fun refreshQuizCounts() {
+        viewModelScope.launch {
+            when (val result = questionRepository.getAllQuestions()) {
+                is Result.Success -> {
+                    cachedAllQuestions = result.data
+                    val counts = buildQuizCountsByTopicId(_uiState.value.allTopics, result.data)
+                    _uiState.update { it.copy(quizCountsByTopicId = counts) }
+                }
+                is Result.Error -> { /* Non-fatal, counts stay as-is */ }
+            }
+        }
+    }
+
+    /**
+     * Build a map of topicId → total quiz count (including all descendants in the hierarchy).
+     * E.g. a category's count is the sum of all subtopic counts under it.
+     */
+    private fun buildQuizCountsByTopicId(
+        allTopics: List<Topic>,
+        questions: List<Question>
+    ): Map<Int, Int> {
+        val directCounts = questions.groupingBy { it.topic.topicId }.eachCount()
+
+        fun countForTopic(topicId: Int): Int {
+            val direct = directCounts[topicId] ?: 0
+            val children = allTopics.filter { it.parentTopic?.topicId == topicId }
+            return direct + children.sumOf { countForTopic(it.topicId) }
+        }
+
+        return allTopics.associate { it.topicId to countForTopic(it.topicId) }
+    }
+
+    /**
+     * Build a map of difficultyId → quiz count for a specific subtopic.
+     * Used to show existing counts in the difficulty selection dialog.
+     */
+    private fun buildDifficultyCounts(subtopicId: Int): Map<Int, Int> {
+        return cachedAllQuestions
+            .filter { it.topic.topicId == subtopicId }
+            .groupingBy { it.difficulty.difficultyId }
+            .eachCount()
     }
 
     // ========== Hierarchical Topic Selection ==========
@@ -260,17 +336,19 @@ class GenerateQuizzesViewModel @Inject constructor(
     }
 
     /**
-     * Select subtopic (third level) and trigger quiz generation
+     * Select subtopic (third level), compute difficulty counts and show difficulty dialog
+     * Quiz generation happens after difficulty selection
      */
     fun selectSubtopic(subtopic: Topic) {
+        val difficultyCounts = buildDifficultyCounts(subtopic.topicId)
         _uiState.update {
             it.copy(
                 selectedSubtopic = subtopic,
-                showTopicSelectionDialog = false
+                showTopicSelectionDialog = false,
+                quizCountsByDifficultyId = difficultyCounts,
+                showDifficultyDialog = true
             )
         }
-        // Automatically generate quiz after full selection
-        generateQuizWithSelection()
     }
 
     /**
@@ -350,10 +428,9 @@ class GenerateQuizzesViewModel @Inject constructor(
 
     /**
      * Start new quiz generation request
-     * Opens difficulty selection dialog
+     * Opens topic selection dialog first (difficulty is selected after subtopic)
      */
     fun startNewRequest() {
-        // Reset selections
         _uiState.update {
             it.copy(
                 selectedDifficulty = null,
@@ -362,18 +439,19 @@ class GenerateQuizzesViewModel @Inject constructor(
                 selectedSubtopic = null,
                 currentSelectionLevel = TopicSelectionLevel.CATEGORY,
                 availableTopics = emptyList(),
-                availableSubtopics = emptyList()
+                availableSubtopics = emptyList(),
+                quizCountsByDifficultyId = emptyMap()
             )
         }
-        // Show difficulty dialog
-        showDifficultyDialog()
+        showTopicSelectionDialog()
     }
 
     /**
-     * Apply generated quiz to database
+     * Apply generated quiz to database with admin's user ID as reviewedBy
      */
     fun applyQuizToDatabase() {
         val quiz = _uiState.value.generatedQuizResponse?.quiz
+        val currentUserId = _uiState.value.currentUserId
 
         if (quiz == null) {
             _uiState.update { it.copy(error = "No quiz to save") }
@@ -390,7 +468,8 @@ class GenerateQuizzesViewModel @Inject constructor(
                 question = quiz.question,
                 difficulty = quiz.difficulty,
                 answers = quiz.answers,
-                correctAnswer = quiz.correctAnswer
+                correctAnswer = quiz.correctAnswer,
+                reviewedBy = currentUserId
             )
 
             when (result) {
@@ -403,6 +482,8 @@ class GenerateQuizzesViewModel @Inject constructor(
                             generatedQuizResponse = null
                         )
                     }
+                    // Rebuild counts to reflect the newly added quiz
+                    refreshQuizCounts()
                 }
                 is Result.Error -> {
                     _uiState.update {

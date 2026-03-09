@@ -11,6 +11,7 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -62,20 +63,23 @@ fun UsersScreen(
     viewModel: UsersScreenViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    var searchQuery by remember { mutableStateOf("") }
 
-
-
-    // Map domain User to UI UserItem
-//    val users = uiState.users.map { user ->
-//        UserItem(
-//            userId = user.userId,
-//            name = "${user.firstname} ${user.surname}",
-//            birthDate = user.birthdate,
-//            email = user.email,
-//            role = if (user.userRole.userRole == "admin") UserRole.ADMIN else UserRole.USER,
-//            isActive = true // TODO: Add active status to User model if needed
-//        )
-//    }
+    // Filter and sort users based on search query
+    val filteredAndSortedUsers = remember(uiState.users, searchQuery) {
+        uiState.users
+            .filter { user ->
+                if (searchQuery.isBlank()) {
+                    true
+                } else {
+                    val query = searchQuery.lowercase()
+                    val fullName = "${user.firstname} ${user.surname}".lowercase()
+                    val role = user.userRole.userRole.lowercase()
+                    fullName.contains(query) || role.contains(query)
+                }
+            }
+            .sortedBy { "${it.firstname} ${it.surname}".lowercase() }
+    }
 
     Scaffold(
         topBar = {
@@ -88,6 +92,7 @@ fun UsersScreen(
         },
         bottomBar = {
             BottomNavigationBar(
+                currentRoute = UsersDestination.route,
                 onHomeClick = onHomeClick,
                 onDiscoverClick = onDiscoverClick,
                 onProfileClick = onProfileClick
@@ -102,10 +107,42 @@ fun UsersScreen(
             contentPadding = PaddingValues(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            items(uiState.users) { user ->
+            item {
+                // Search bar
+                OutlinedTextField(
+                    value = searchQuery,
+                    onValueChange = { searchQuery = it },
+                    placeholder = {
+                        Text(
+                            text = "Search",
+                            color = Color(0xFFB0A090)
+                        )
+                    },
+                    leadingIcon = {
+                        Icon(
+                            imageVector = Icons.Filled.Search,
+                            contentDescription = "Search",
+                            tint = Color(0xFF654321)
+                        )
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    shape = RoundedCornerShape(28.dp),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        unfocusedContainerColor = Color.White,
+                        focusedContainerColor = Color.White,
+                        unfocusedBorderColor = Color.Transparent,
+                        focusedBorderColor = Color(0xFF654321)
+                    ),
+                    singleLine = true
+                )
+            }
+
+            items(filteredAndSortedUsers) { user ->
                 UserItemCard(
                     user = user,
-                    onUserDeleteClick = { viewModel.deleteUser(user.userId) }
+                    onUserDeleteClick = { viewModel.deleteUser(user.userId) },
+                    onResetQuizzesClick = { viewModel.resetUserQuizzes(user.userId) }
                 )
             }
         }
@@ -118,12 +155,44 @@ fun UsersScreen(
 @Composable
 fun UserItemCard(
     user: User,
-    onUserDeleteClick: () -> Unit
+    onUserDeleteClick: () -> Unit,
+    onResetQuizzesClick: () -> Unit
 ) {
+    var showDeleteDialog by remember { mutableStateOf(false) }
+    var showResetDialog by remember { mutableStateOf(false) }
+
     val roleColor = when (user.userRole.userRole) {
         "user" -> Color(0xFF2E7D32)
         "admin" -> Color(0xFFFF8F00)
         else -> {}
+    }
+
+    // Delete confirmation dialog
+    if (showDeleteDialog) {
+        UserDeleteConfirmationDialog(
+            userName = "${user.firstname} ${user.surname}",
+            onConfirm = {
+                showDeleteDialog = false
+                onUserDeleteClick()
+            },
+            onDismiss = {
+                showDeleteDialog = false
+            }
+        )
+    }
+
+    // Reset quizzes confirmation dialog
+    if (showResetDialog) {
+        ResetQuizzesConfirmationDialog(
+            userName = "${user.firstname} ${user.surname}",
+            onConfirm = {
+                showResetDialog = false
+                onResetQuizzesClick()
+            },
+            onDismiss = {
+                showResetDialog = false
+            }
+        )
     }
 
     Card(
@@ -200,23 +269,185 @@ fun UserItemCard(
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 Button(
-                    onClick = onUserDeleteClick
+                    onClick = { showDeleteDialog = true },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(0xFFD32F2F)
+                    ),
+                    shape = RoundedCornerShape(8.dp)
                 ) {
                     Icon(
                         imageVector = Icons.Filled.Person,
-                        contentDescription = "User status",
-                        tint = Color(0xFFD32F2F),
+                        contentDescription = "Delete user",
+                        tint = Color.White,
                         modifier = Modifier.size(24.dp),
                     )
                 }
+                Button(
+                    onClick = { showResetDialog = true },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(0xFFFF8F00)
+                    ),
+                    shape = RoundedCornerShape(8.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.Refresh,
+                        contentDescription = "Reset quizzes",
+                        tint = Color.White,
+                        modifier = Modifier.size(24.dp)
+                    )
+                }
+                Button(
+                    onClick = {"//TODO "},
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(0xFF076E72)
+                    ),
+                    shape = RoundedCornerShape(8.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.Email,
+                        contentDescription = "Message",
+                        tint = Color(0xFF2E7D32),
+                        modifier = Modifier.size(24.dp)
+                    )
+                }
 
-                Icon(
-                    imageVector = Icons.Filled.Email,
-                    contentDescription = "Message",
-                    tint = Color(0xFF2E7D32),
-                    modifier = Modifier.size(24.dp)
-                )
             }
         }
     }
+}
+
+/**
+ * Delete confirmation dialog for users with dark cyan theme
+ * @param userName Name of the user to delete
+ * @param onConfirm Callback when user confirms deletion
+ * @param onDismiss Callback when user dismisses dialog
+ */
+@Composable
+fun UserDeleteConfirmationDialog(
+    userName: String,
+    onConfirm: () -> Unit,
+    onDismiss: () -> Unit
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = {
+            Text(
+                text = "Benutzer löschen",
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color.White
+            )
+        },
+        text = {
+            Text(
+                text = "Möchtest du den Benutzer \"$userName\" wirklich löschen?",
+                fontSize = 14.sp,
+                color = Color.White.copy(alpha = 0.9f)
+            )
+        },
+        confirmButton = {
+            Button(
+                onClick = onConfirm,
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(0xFFD32F2F)
+                ),
+                shape = RoundedCornerShape(20.dp),
+                modifier = Modifier.height(45.dp)
+            ) {
+                Text(
+                    text = "Ja, löschen",
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    color = Color.White
+                )
+            }
+        },
+        dismissButton = {
+            Button(
+                onClick = onDismiss,
+                shape = RoundedCornerShape(20.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(0xFF00838F)
+                ),
+                modifier = Modifier.height(45.dp)
+            ) {
+                Text(
+                    text = "Abbrechen",
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    color = Color.White
+                )
+            }
+        },
+        containerColor = Color(0xFF006064),
+        shape = RoundedCornerShape(16.dp)
+    )
+}
+
+/**
+ * Reset quizzes confirmation dialog with dark cyan theme
+ * @param userName Name of the user whose quizzes will be reset
+ * @param onConfirm Callback when user confirms reset
+ * @param onDismiss Callback when user dismisses dialog
+ */
+@Composable
+fun ResetQuizzesConfirmationDialog(
+    userName: String,
+    onConfirm: () -> Unit,
+    onDismiss: () -> Unit
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = {
+            Text(
+                text = "Quizzes zurücksetzen",
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color.White
+            )
+        },
+        text = {
+            Text(
+                text = "Möchtest du alle gelösten Quizzes von \"$userName\" wirklich zurücksetzen? Alle UserQuestions werden aus der Datenbank gelöscht.",
+                fontSize = 14.sp,
+                color = Color.White.copy(alpha = 0.9f)
+            )
+        },
+        confirmButton = {
+            Button(
+                onClick = onConfirm,
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(0xFFFF8F00)
+                ),
+                shape = RoundedCornerShape(20.dp),
+                modifier = Modifier.height(45.dp)
+            ) {
+                Text(
+                    text = "Ja, zurücksetzen",
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    color = Color.White
+                )
+            }
+        },
+        dismissButton = {
+            Button(
+                onClick = onDismiss,
+                shape = RoundedCornerShape(20.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(0xFF00838F)
+                ),
+                modifier = Modifier.height(45.dp)
+            ) {
+                Text(
+                    text = "Abbrechen",
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    color = Color.White
+                )
+            }
+        },
+        containerColor = Color(0xFF006064),
+        shape = RoundedCornerShape(16.dp)
+    )
 }

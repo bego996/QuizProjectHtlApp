@@ -89,7 +89,7 @@ fun MettingNavHost(                                            // Hauptfunktion 
 
         composable(route = HomeDestination.route) {                        // Home-Screen with ViewModel
             HomeScreen(
-                onDailyQuizClick = { navController.navigate("${QuizDestination.route}/${0}") },
+                onDailyQuizClick = { navController.navigate("${QuizDestination.route}/0/0") },
                 onCategoryClick = { navController.navigate(CategoryDestination.route) },
                 onSeeAllCategoriesClick = { navController.navigate(CategoryDestination.route) },
                 onSeeAllStatsClick = { navController.navigate(ProfileStatisticsDestination.route) },
@@ -101,7 +101,7 @@ fun MettingNavHost(                                            // Hauptfunktion 
                 onProfileClick = { navController.navigate(ProfileOverviewDestination.route) }
             )
         }
-        composable(route = CategoryDestination.route) {                 // Categories-Screen als Start-Route
+        composable(route = CategoryDestination.route) {                 // Categories-Screen
             CategoryScreen(
                 onBackClick = { navController.popBackStack() },
                 onCategoryClick = { category ->
@@ -115,13 +115,12 @@ fun MettingNavHost(                                            // Hauptfunktion 
 
         composable(
             route = "${TopicDestination.route}/{parentTopicId}",
-            arguments = listOf(navArgument("parentTopicId") {type = NavType.IntType})
-        )
-        { // Topics-Screen
+            arguments = listOf(navArgument("parentTopicId") { type = NavType.IntType })
+        ) { // Topics-Screen: difficulty dialog shown here before navigating to subtopics
             TopicScreen(
                 onBackClick = { navController.popBackStack() },
-                onTopicClick = { topic ->
-                    navController.navigate("${SubtopicDestination.route}/${topic.id.toIntOrNull() ?: 1}")
+                onTopicClick = { topic, difficultyId ->
+                    navController.navigate("${SubtopicDestination.route}/${topic.id.toIntOrNull() ?: 1}/$difficultyId")
                 },
                 onHomeClick = { navController.navigate(HomeDestination.route) },
                 onDiscoverClick = { navController.navigate(CategoryDestination.route) },
@@ -130,13 +129,16 @@ fun MettingNavHost(                                            // Hauptfunktion 
         }
 
         composable(
-            route = "${SubtopicDestination.route}/{parentTopicId}",
-            arguments = listOf(navArgument("parentTopicId") {type = NavType.IntType})
+            route = "${SubtopicDestination.route}/{parentTopicId}/{difficultyId}",
+            arguments = listOf(
+                navArgument("parentTopicId") { type = NavType.IntType },
+                navArgument("difficultyId") { type = NavType.IntType }
+            )
         ) {                 // Subtopics-Screen
             SubtopicScreen(
                 onBackClick = { navController.popBackStack() },
-                onSubtopicClick = { subtopic ->
-                    navController.navigate("${QuizDestination.route}/${subtopic.id.toIntOrNull() ?: 1}")
+                onSubtopicClick = { subtopic, difficultyId ->
+                    navController.navigate("${QuizDestination.route}/${subtopic.id.toIntOrNull() ?: 1}/$difficultyId")
                 },
                 onHomeClick = { navController.navigate(HomeDestination.route) },
                 onDiscoverClick = { navController.navigate(CategoryDestination.route) },
@@ -196,8 +198,11 @@ fun MettingNavHost(                                            // Hauptfunktion 
         }
 
         composable(
-            route = "${QuizDestination.route}/{subTopicId}",
-            arguments = listOf(navArgument("subTopicId") {type = NavType.IntType})
+            route = "${QuizDestination.route}/{subTopicId}/{difficultyId}",
+            arguments = listOf(
+                navArgument("subTopicId") { type = NavType.IntType },
+                navArgument("difficultyId") { type = NavType.IntType }
+            )
         ) {                       // Quiz-Screen
             QuizScreen(
                 onCloseClick = { navController.navigate(HomeDestination.route) },
@@ -233,9 +238,14 @@ fun MettingNavHost(                                            // Hauptfunktion 
             )
         }
 
-        composable(route = "${QuizReviewDestination.route}/{score}/{totalQuestions}") { backStackEntry ->
+        composable(route = "${QuizReviewDestination.route}/{score}/{totalQuestions}") { _ ->
             QuizReviewScreen(
-                onBackClick = { navController.popBackStack() }
+                onBackClick = {
+                    navController.navigate(HomeDestination.route) {
+                        // Clear quiz-related screens from backstack
+                        popUpTo(HomeDestination.route) { inclusive = false }
+                    }
+                }
             )
         }
 
@@ -251,7 +261,6 @@ fun MettingNavHost(                                            // Hauptfunktion 
         composable(route = ActiveQuizDestination.route) {                     // Active Quiz (Admin)
             ActiveQuizScreen(
                 onBackClick = { navController.popBackStack() },
-                onDetailsClick = { quizId -> /* TODO: Navigate to quiz details */ },
                 onHomeClick = { navController.navigate(HomeDestination.route) },
                 onDiscoverClick = { navController.navigate(CategoryDestination.route) },
                 onProfileClick = { navController.navigate(ProfileOverviewDestination.route) }
