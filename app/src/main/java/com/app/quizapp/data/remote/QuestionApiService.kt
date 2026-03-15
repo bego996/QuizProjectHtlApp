@@ -25,7 +25,7 @@ interface QuestionApiService {
      * @param statusId Optional status filter
      * @return List of questions
      */
-    @GET("questions")
+    @GET("api/questions")
     suspend fun getAllQuestions(
         @Query("topicId") topicId: Int? = null,
         @Query("difficultyId") difficultyId: Int? = null,
@@ -38,7 +38,7 @@ interface QuestionApiService {
      * @param questionId Question ID
      * @return Question with answers
      */
-    @GET("questions/{questionId}")
+    @GET("api/questions/{questionId}")
     suspend fun getQuestionById(@Path("questionId") questionId: Int): QuestionDto
 
     /**
@@ -65,6 +65,6 @@ interface QuestionApiService {
      * @param questionId Question ID to delete
      * @return Deleted question
      */
-    @DELETE("questions/{questionId}")
+    @DELETE("api/questions/{questionId}")
     suspend fun deleteQuestion(@Path("questionId") questionId: Int): QuestionDto
 }
