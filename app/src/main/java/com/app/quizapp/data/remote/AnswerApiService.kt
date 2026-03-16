@@ -20,7 +20,7 @@ interface AnswerApiService {
      * GET answers
      * @return List of answers
      */
-    @GET("answers")
+    @GET("api/answers")
     suspend fun getAllAnswers(): List<AnswerDto>
 
     /**
@@ -29,7 +29,7 @@ interface AnswerApiService {
      * @param questionId Question ID
      * @return List of answers
      */
-    @GET("answers")
+    @GET("api/answers")
     suspend fun getAllAnswersByQuestionId(@Query("questionId") questionId: Int): List<AnswerDto>
 
     /**
@@ -38,7 +38,7 @@ interface AnswerApiService {
      * @param answerId Answer ID
      * @return Answer with HATEOAS links
      */
-    @GET("answers/{answerId}")
+    @GET("api/answers/{answerId}")
     suspend fun getAnswerById(@Path("answerId") answerId: Int): AnswerDto
 
     /**
@@ -47,7 +47,7 @@ interface AnswerApiService {
      * @param answer Answer entity
      * @return Created answer
      */
-    @POST("answers")
+    @POST("api/answers")
     suspend fun createAnswer(@Body answer: AnswerDto): AnswerDto
 
     /**
@@ -56,7 +56,7 @@ interface AnswerApiService {
      * @param answer Answer entity
      * @return Updated answer
      */
-    @PUT("answers")
+    @PUT("api/answers")
     suspend fun updateAnswer(@Body answer: AnswerDto): AnswerDto
 
     /**
@@ -65,6 +65,6 @@ interface AnswerApiService {
      * @param answerId Answer ID to delete
      * @return Deleted answer
      */
-    @DELETE("answers/{answerId}")
+    @DELETE("api/answers/{answerId}")
     suspend fun deleteAnswer(@Path("answerId") answerId: Int): AnswerDto
 }

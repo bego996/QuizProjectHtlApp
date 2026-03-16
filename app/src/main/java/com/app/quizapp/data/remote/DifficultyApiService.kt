@@ -19,7 +19,7 @@ interface DifficultyApiService {
      * GET /api/difficulties
      * @return List of difficulties
      */
-    @GET("difficulties")
+    @GET("api/difficulties")
     suspend fun getAllDifficulties(): List<DifficultyDto>
 
     /**
@@ -28,7 +28,7 @@ interface DifficultyApiService {
      * @param difficultyId Difficulty ID
      * @return Difficulty with HATEOAS links
      */
-    @GET("difficulties/{difficultyId}")
+    @GET("api/difficulties/{difficultyId}")
     suspend fun getDifficultyById(@Path("difficultyId") difficultyId: Int): DifficultyDto
 
     /**
@@ -37,7 +37,7 @@ interface DifficultyApiService {
      * @param difficulty Difficulty entity
      * @return Created difficulty
      */
-    @POST("difficulties")
+    @POST("api/difficulties")
     suspend fun createDifficulty(@Body difficulty: DifficultyDto): DifficultyDto
 
     /**
@@ -46,7 +46,7 @@ interface DifficultyApiService {
      * @param difficulty Difficulty entity
      * @return Updated difficulty
      */
-    @PUT("difficulties")
+    @PUT("api/difficulties")
     suspend fun updateDifficulty(@Body difficulty: DifficultyDto): DifficultyDto
 
     /**
@@ -55,6 +55,6 @@ interface DifficultyApiService {
      * @param difficultyId Difficulty ID to delete
      * @return Deleted difficulty
      */
-    @DELETE("difficulties/{difficultyId}")
+    @DELETE("api/difficulties/{difficultyId}")
     suspend fun deleteDifficulty(@Path("difficultyId") difficultyId: Int): DifficultyDto
 }

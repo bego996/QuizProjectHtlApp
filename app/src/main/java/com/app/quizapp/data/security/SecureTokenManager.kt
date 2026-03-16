@@ -10,6 +10,7 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import android.content.SharedPreferences
 import javax.inject.Singleton
+import androidx.core.content.edit
 
 /**
  * Secure implementation of TokenManager using EncryptedSharedPreferences
@@ -66,7 +67,7 @@ class SecureTokenManager @Inject constructor(@ApplicationContext private val con
      * Uses IO dispatcher to avoid blocking the main thread
      */
     override suspend fun saveToken(token: String) = withContext(Dispatchers.IO) {
-        encryptedPrefs.edit().putString(KEY_AUTH_TOKEN, token).apply()
+        encryptedPrefs.edit { putString(KEY_AUTH_TOKEN, token) }
     }
 
     /**
@@ -88,6 +89,6 @@ class SecureTokenManager @Inject constructor(@ApplicationContext private val con
      * Removes the saved token (used during logout)
      */
     override suspend fun clearToken() = withContext(Dispatchers.IO) {
-        encryptedPrefs.edit().remove(KEY_AUTH_TOKEN).apply()
+        encryptedPrefs.edit { remove(KEY_AUTH_TOKEN) }
     }
 }

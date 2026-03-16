@@ -13,12 +13,10 @@ package com.app.quizapp.domain.util
  * - Klare Trennung zwischen Erfolg und Fehler
  *
  * Verwendung:
- * ```
  * when (val result = repository.getQuiz()) {
  *     is Result.Success -> println(result.data)
  *     is Result.Error -> println(result.message)
  * }
- * ```
  */
 sealed class Result<out T> {
     /**

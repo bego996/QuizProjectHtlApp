@@ -113,9 +113,7 @@ fun MettingNavHost(                                            // Hauptfunktion 
             )
         }
 
-        composable(
-            route = "${TopicDestination.route}/{parentTopicId}",
-            arguments = listOf(navArgument("parentTopicId") { type = NavType.IntType })
+        composable(route = "${TopicDestination.route}/{parentTopicId}", arguments = listOf(navArgument("parentTopicId") { type = NavType.IntType })
         ) { // Topics-Screen: difficulty dialog shown here before navigating to subtopics
             TopicScreen(
                 onBackClick = { navController.popBackStack() },
@@ -198,11 +196,7 @@ fun MettingNavHost(                                            // Hauptfunktion 
         }
 
         composable(
-            route = "${QuizDestination.route}/{subTopicId}/{difficultyId}",
-            arguments = listOf(
-                navArgument("subTopicId") { type = NavType.IntType },
-                navArgument("difficultyId") { type = NavType.IntType }
-            )
+            route = "${QuizDestination.route}/{subTopicId}/{difficultyId}", arguments = listOf(navArgument("subTopicId") { type = NavType.IntType }, navArgument("difficultyId") { type = NavType.IntType })
         ) {                       // Quiz-Screen
             QuizScreen(
                 onCloseClick = { navController.navigate(HomeDestination.route) },

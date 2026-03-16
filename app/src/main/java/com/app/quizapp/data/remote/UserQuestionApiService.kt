@@ -20,7 +20,7 @@ interface UserQuestionApiService {
      * GET /api/userQuestions
      * @return List of user quiz attempts
      */
-    @GET("userQuestions")
+    @GET("api/userQuestions")
     suspend fun getAllUserQuestions(): List<UserQuestionDto>
 
     /**
@@ -29,7 +29,7 @@ interface UserQuestionApiService {
      * @param userQuestionId UserQuestion ID
      * @return Single user quiz attempt
      */
-    @GET("userQuestions/{userQuestionId}")
+    @GET("api/userQuestions/{userQuestionId}")
     suspend fun getUserQuestionById(@Path("userQuestionId") userQuestionId: Int): UserQuestionDto
 
     /**
@@ -38,7 +38,7 @@ interface UserQuestionApiService {
      * @param userQuestion UserQuestion entity
      * @return Created user question
      */
-    @POST("userQuestions")
+    @POST("api/userQuestions")
     suspend fun createUserQuestion(@Body userQuestion: UserQuestionDto): UserQuestionDto
 
     /**
@@ -47,7 +47,7 @@ interface UserQuestionApiService {
      * @param userQuestion UserQuestion entity
      * @return Updated user question
      */
-    @PUT("userQuestions")
+    @PUT("api/userQuestions")
     suspend fun updateUserQuestion(@Body userQuestion: UserQuestionDto): UserQuestionDto
 
     /**
@@ -56,7 +56,7 @@ interface UserQuestionApiService {
      * @param userQuestionId UserQuestion ID to delete
      * @return Deleted user question
      */
-    @DELETE("userQuestions/{userQuestionId}")
+    @DELETE("api/userQuestions/{userQuestionId}")
     suspend fun deleteUserQuestion(@Path("userQuestionId") userQuestionId: Int): UserQuestionDto
 
     /**
@@ -64,6 +64,6 @@ interface UserQuestionApiService {
      * DELETE /api/userQuestions/user/{userId}
      * @param userId User ID whose quiz attempts should be deleted
      */
-    @DELETE("userQuestions/user/{userId}")
+    @DELETE("api/userQuestions/user/{userId}")
     suspend fun deleteUserQuestionsByUserId(@Path("userId") userId: Int)
 }
