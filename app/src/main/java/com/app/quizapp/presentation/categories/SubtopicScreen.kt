@@ -151,7 +151,7 @@ fun SubtopicCard(
             // Play icon
             Icon(
                 imageVector = Icons.Filled.PlayArrow,
-                contentDescription = "Start quiz",
+                contentDescription = stringResource(R.string.subtopic_start_quiz_description),
                 tint = Color(0xFF4DB6AC),
                 modifier = Modifier
                     .align(Alignment.TopEnd)

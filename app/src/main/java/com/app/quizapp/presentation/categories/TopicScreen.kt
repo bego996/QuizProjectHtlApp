@@ -153,7 +153,7 @@ fun DifficultyDialog(
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
                 Text(
-                    text = "Wähle eine Schwierigkeit",
+                    text = stringResource(R.string.topic_select_difficulty),
                     fontSize = 14.sp,
                     color = Color.Gray
                 )
@@ -183,7 +183,7 @@ fun DifficultyDialog(
                     shape = RoundedCornerShape(10.dp)
                 ) {
                     Text(
-                        text = "Mixed",
+                        text = stringResource(R.string.topic_mixed),
                         color = Color.White,
                         fontWeight = FontWeight.SemiBold,
                         textAlign = TextAlign.Center
@@ -194,7 +194,7 @@ fun DifficultyDialog(
         confirmButton = {},
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text("Abbrechen")
+                Text(stringResource(R.string.topic_cancel))
             }
         }
     )

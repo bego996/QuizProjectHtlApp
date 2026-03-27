@@ -126,14 +126,14 @@ fun ActiveQuizScreen(
                     onValueChange = { searchQuery = it },
                     placeholder = {
                         Text(
-                            text = "Search",
+                            text = stringResource(R.string.active_quiz_search_placeholder),
                             color = Color(0xFFB0A090)
                         )
                     },
                     leadingIcon = {
                         Icon(
                             imageVector = Icons.Filled.Search,
-                            contentDescription = "Search",
+                            contentDescription = stringResource(R.string.active_quiz_search_description),
                             tint = Color(0xFF654321)
                         )
                     },
@@ -189,8 +189,8 @@ fun QuizItemCard(
     // Delete confirmation dialog
     if (showDeleteDialog) {
         DeleteConfirmationDialog(
-            title = "Quiz löschen",
-            message = "Möchtest du diese Frage wirklich löschen?\n\n\"${quiz.question}\"",
+            title = stringResource(R.string.active_quiz_delete_title),
+            message = stringResource(R.string.active_quiz_delete_message, quiz.question),
             onConfirm = {
                 showDeleteDialog = false
                 onDeleteClick()
@@ -256,7 +256,7 @@ fun QuizItemCard(
 
             // Question
             Text(
-                text = "Question: ${quiz.question}",
+                text = stringResource(R.string.active_quiz_question_label, quiz.question),
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Medium,
                 color = Color.White,
@@ -269,7 +269,7 @@ fun QuizItemCard(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    text = "ID: ${quiz.id}",
+                    text = stringResource(R.string.active_quiz_id_label, quiz.id),
                     fontSize = 12.sp,
                     color = Color.White.copy(alpha = 0.9f)
                 )
@@ -277,15 +277,13 @@ fun QuizItemCard(
 
             // Reviewed by
             Text(
-                text = "Reviewed by: ${
-                    if (quiz.reviewedBy != null && quiz.reviewedByName != null) {
-                        "${quiz.reviewedBy} (${quiz.reviewedByName})"
-                    } else if (quiz.reviewedBy != null) {
-                        quiz.reviewedBy
-                    } else {
-                        "None"
-                    }
-                }",
+                text = if (quiz.reviewedBy != null && quiz.reviewedByName != null) {
+                    stringResource(R.string.active_quiz_reviewed_by, "${quiz.reviewedBy} (${quiz.reviewedByName})")
+                } else if (quiz.reviewedBy != null) {
+                    stringResource(R.string.active_quiz_reviewed_by, quiz.reviewedBy)
+                } else {
+                    stringResource(R.string.active_quiz_reviewed_none)
+                },
                 fontSize = 12.sp,
                 color = Color.White.copy(alpha = 0.9f),
                 modifier = Modifier.padding(bottom = 4.dp)
@@ -293,7 +291,7 @@ fun QuizItemCard(
 
             // Created date
             Text(
-                text = "Erstellt: ${quiz.createdDate}",
+                text = stringResource(R.string.active_quiz_created_date, quiz.createdDate),
                 fontSize = 12.sp,
                 color = Color.White.copy(alpha = 0.9f)
             )
@@ -326,7 +324,7 @@ fun QuizItemCard(
                         )
                     ) {
                         Text(
-                            text = "Details ansehen",
+                            text = stringResource(R.string.active_quiz_details_button),
                             fontSize = 13.sp,
                             fontWeight = FontWeight.SemiBold,
                             color = Color.White
@@ -344,7 +342,7 @@ fun QuizItemCard(
                     )
                 ) {
                     Text(
-                        text = "Delete",
+                        text = stringResource(R.string.active_quiz_delete_button),
                         fontSize = 13.sp,
                         fontWeight = FontWeight.SemiBold,
                         color = Color.White
@@ -380,7 +378,7 @@ fun AnswersSection(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "Answers",
+                    text = stringResource(R.string.active_quiz_answers_header),
                     fontSize = 14.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color.White
@@ -428,7 +426,7 @@ fun AnswersSection(
             )
         ) {
             Text(
-                text = "Weniger anzeigen",
+                text = stringResource(R.string.active_quiz_show_less),
                 fontSize = 12.sp,
                 fontWeight = FontWeight.SemiBold,
                 color = Color.White
@@ -478,7 +476,7 @@ fun DeleteConfirmationDialog(
                 modifier = Modifier.height(45.dp)
             ) {
                 Text(
-                    text = "Ja, löschen",
+                    text = stringResource(R.string.active_quiz_delete_confirm),
                     fontSize = 14.sp,
                     fontWeight = FontWeight.SemiBold,
                     color = Color.White
@@ -495,7 +493,7 @@ fun DeleteConfirmationDialog(
                 modifier = Modifier.height(45.dp)
             ) {
                 Text(
-                    text = "Abbrechen",
+                    text = stringResource(R.string.active_quiz_delete_cancel),
                     fontSize = 14.sp,
                     fontWeight = FontWeight.SemiBold,
                     color = Color.White

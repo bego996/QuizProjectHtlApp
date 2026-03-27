@@ -98,7 +98,7 @@ object NetworkModule {
     @Singleton
     fun provideRetrofit(okHttpClient: OkHttpClient): Retrofit {
         return Retrofit.Builder()
-            .baseUrl(BASE_URL_PHYSICAL_TO_PC) // Basis-URL des Backends
+            .baseUrl(BASE_URL_EMULATOR_TO_PC) // Basis-URL des Backends
             .client(okHttpClient) // Nutzt unseren konfigurierten OkHttpClient
             .addConverterFactory(GsonConverterFactory.create()) // JSON zu Kotlin-Objekten konvertieren
             .build()

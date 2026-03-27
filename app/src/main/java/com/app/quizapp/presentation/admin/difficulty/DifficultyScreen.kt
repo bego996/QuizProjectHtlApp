@@ -8,9 +8,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.app.quizapp.R
 import com.app.quizapp.domain.model.Difficulty
 
 @Composable
@@ -36,7 +38,7 @@ fun DifficultyContent(
             .padding(16.dp)
     ) {
         Text(
-            text = "Schwierigkeitsgrade",
+            text = stringResource(R.string.admin_schwierigkeitsgrade),
             style = MaterialTheme.typography.headlineMedium,
             modifier = Modifier.padding(bottom = 16.dp)
         )
@@ -58,12 +60,12 @@ fun DifficultyContent(
                     verticalArrangement = Arrangement.Center
                 ) {
                     Text(
-                        text = "Fehler: ${uiState.error}",
+                        text = stringResource(R.string.admin_error_prefix, uiState.error!!),
                         color = MaterialTheme.colorScheme.error,
                         modifier = Modifier.padding(bottom = 16.dp)
                     )
                     Button(onClick = onRetry) {
-                        Text("Erneut versuchen")
+                        Text(stringResource(R.string.admin_retry_button))
                     }
                 }
             }
@@ -73,7 +75,7 @@ fun DifficultyContent(
                     modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text("Keine Schwierigkeitsgrade gefunden")
+                    Text(stringResource(R.string.admin_no_difficulties))
                 }
             }
 
@@ -100,12 +102,12 @@ fun DifficultyCard(difficulty: Difficulty) {
             modifier = Modifier.padding(12.dp)
         ) {
             Text(
-                text = "Modus: ${difficulty.mode}",
+                text = stringResource(R.string.admin_difficulty_mode_label, difficulty.mode),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
             Text(
-                text = "ID: ${difficulty.difficultyId}",
+                text = stringResource(R.string.admin_difficulty_id_label, difficulty.difficultyId),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )

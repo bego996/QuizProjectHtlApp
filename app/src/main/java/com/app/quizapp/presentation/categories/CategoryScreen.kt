@@ -217,7 +217,7 @@ fun CategoryCard(
                 // Grünes Bookmark-Icon oben rechts (immer sichtbar als Dekoration)
                 Icon(
                     imageVector = Icons.Filled.Star,
-                    contentDescription = "Bookmark",
+                    contentDescription = stringResource(R.string.category_bookmark_description),
                     tint = Color(0xFF4CAF50),
                     modifier = Modifier
                         .align(Alignment.TopEnd)

@@ -67,7 +67,7 @@ fun ProfileStatisticsScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "Profile",
+                    text = stringResource(R.string.profile_title),
                     fontSize = 24.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color(0xFF654321)
@@ -75,7 +75,7 @@ fun ProfileStatisticsScreen(
                 IconButton(onClick = onSettingsClick) {
                     Icon(
                         imageVector = Icons.Filled.Settings,
-                        contentDescription = "Settings",
+                        contentDescription = stringResource(R.string.profile_settings_description),
                         tint = Color(0xFF654321),
                         modifier = Modifier.size(28.dp)
                     )
@@ -116,7 +116,7 @@ fun ProfileStatisticsScreen(
                     ) {
                         Icon(
                             imageVector = Icons.Filled.Person,
-                            contentDescription = "Profile avatar",
+                            contentDescription = stringResource(R.string.profile_avatar_description),
                             modifier = Modifier.size(60.dp),
                             tint = Color.White
                         )
@@ -125,7 +125,7 @@ fun ProfileStatisticsScreen(
                     Spacer(modifier = Modifier.height(12.dp))
 
                     Text(
-                        text = "$userName${if (isAdmin) "(Admin)" else ""}",
+                        text = "$userName${if (isAdmin) stringResource(R.string.profile_admin_suffix) else ""}",
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
                         color = Color(0xFF654321)
@@ -143,7 +143,7 @@ fun ProfileStatisticsScreen(
                         modifier = Modifier.padding(horizontal = 32.dp)
                     ) {
                         Text(
-                            text = "Edit Profile",
+                            text = stringResource(R.string.profile_edit_button),
                             color = Color.White,
                             fontWeight = FontWeight.Medium
                         )
@@ -169,7 +169,7 @@ fun ProfileStatisticsScreen(
                         shape = RoundedCornerShape(8.dp)
                     ) {
                         Text(
-                            text = "Overview",
+                            text = stringResource(R.string.profile_tab_overview),
                             color = Color(0xFF654321),
                             fontWeight = FontWeight.Medium
                         )
@@ -185,7 +185,7 @@ fun ProfileStatisticsScreen(
                         shape = RoundedCornerShape(8.dp)
                     ) {
                         Text(
-                            text = "My Statistics",
+                            text = stringResource(R.string.profile_tab_statistics),
                             color = Color.White,
                             fontWeight = FontWeight.SemiBold
                         )
@@ -225,13 +225,13 @@ fun ProfileStatisticsScreen(
                             )
                             Column {
                                 Text(
-                                    text = "19 Days",
+                                    text = stringResource(R.string.stats_streak_days),
                                     fontSize = 24.sp,
                                     fontWeight = FontWeight.Bold,
                                     color = Color(0xFF00695C)
                                 )
                                 Text(
-                                    text = "Streak",
+                                    text = stringResource(R.string.stats_streak_label),
                                     fontSize = 16.sp,
                                     color = Color(0xFF654321)
                                 )
@@ -259,7 +259,7 @@ fun ProfileStatisticsScreen(
                             )
                             Icon(
                                 imageVector = Icons.Filled.ArrowDropDown,
-                                contentDescription = "Select period",
+                                contentDescription = stringResource(R.string.stats_select_period_description),
                                 tint = Color(0xFF654321)
                             )
                         }
@@ -267,7 +267,7 @@ fun ProfileStatisticsScreen(
 
                     // Quiz count text
                     Text(
-                        text = "You have played a total",
+                        text = stringResource(R.string.stats_played_total),
                         fontSize = 16.sp,
                         color = Color(0xFF654321),
                         modifier = Modifier.padding(bottom = 4.dp)
@@ -276,13 +276,13 @@ fun ProfileStatisticsScreen(
                         modifier = Modifier.padding(bottom = 24.dp)
                     ) {
                         Text(
-                            text = "26 quizzes",
+                            text = stringResource(R.string.stats_quizzes_count),
                             fontSize = 16.sp,
                             fontWeight = FontWeight.Bold,
                             color = Color(0xFFFF6F00)
                         )
                         Text(
-                            text = " this month! 🎉",
+                            text = stringResource(R.string.stats_this_month),
                             fontSize = 16.sp,
                             color = Color(0xFF654321)
                         )
@@ -310,7 +310,7 @@ fun ProfileStatisticsScreen(
                                 color = Color(0xFF2E7D32)
                             )
                             Text(
-                                text = "quizzes taken",
+                                text = stringResource(R.string.stats_quizzes_taken),
                                 fontSize = 14.sp,
                                 color = Color(0xFF654321)
                             )
@@ -355,7 +355,7 @@ fun ProfileStatisticsScreen(
                                     )
                                 }
                                 Text(
-                                    text = "Perfect Scores",
+                                    text = stringResource(R.string.stats_perfect_scores),
                                     fontSize = 14.sp,
                                     color = Color(0xFF654321)
                                 )
@@ -384,7 +384,7 @@ fun ProfileStatisticsScreen(
                                 ) {
                                     Icon(
                                         imageVector = Icons.Filled.Notifications,
-                                        contentDescription = "Timer",
+                                        contentDescription = stringResource(R.string.stats_timer_description),
                                         tint = Color.White,
                                         modifier = Modifier
                                             .size(24.dp)
@@ -398,7 +398,7 @@ fun ProfileStatisticsScreen(
                                     )
                                 }
                                 Text(
-                                    text = "Fastest Record",
+                                    text = stringResource(R.string.stats_fastest_record),
                                     fontSize = 14.sp,
                                     color = Color.White.copy(alpha = 0.9f)
                                 )

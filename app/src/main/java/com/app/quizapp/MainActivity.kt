@@ -1,5 +1,7 @@
 package com.app.quizapp
 
+import android.content.Context
+import android.content.res.Configuration
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -34,6 +36,7 @@ import com.app.quizapp.presentation.admin.userrole.UserRoleScreen
 import com.app.quizapp.presentation.categories.CategoryScreen
 import com.app.quizapp.ui.theme.QuizToGoTheme
 import dagger.hilt.android.AndroidEntryPoint
+import java.util.Locale
 
 /**
  * MainActivity - Einstiegspunkt der App
@@ -43,6 +46,20 @@ import dagger.hilt.android.AndroidEntryPoint
  */
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+
+    /**
+     * Erzwingt die App-Sprache basierend auf der Gerätesprache.
+     * Deutsch → Deutsch, alle anderen Sprachen → Englisch.
+     * Wird bei jedem Activity-Start und Hintergrund-Rückkehr aufgerufen.
+     */
+    override fun attachBaseContext(newBase: Context) {
+        val deviceLanguage = newBase.resources.configuration.locales[0].language
+        val appLocale = if (deviceLanguage == "de") Locale("de") else Locale("en")
+        val config = Configuration(newBase.resources.configuration)
+        config.setLocale(appLocale)
+        super.attachBaseContext(newBase.createConfigurationContext(config))
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {

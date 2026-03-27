@@ -67,14 +67,22 @@ fun SettingsScreen(
     }
 
     val isAdmin = uiState.isAdmin
+    val strPersonalInfo = stringResource(R.string.settings_personal_info)
+    val strNotification = stringResource(R.string.settings_notification)
+    val strSound = stringResource(R.string.settings_sound)
+    val strApplyAdmin = stringResource(R.string.settings_apply_for_admin)
+    val strApplyAdminRemoval = stringResource(R.string.settings_apply_for_admin_removal)
+    val strHelpCenter = stringResource(R.string.settings_help_center)
+    val strAbout = stringResource(R.string.settings_about)
+    val strLogout = stringResource(R.string.settings_logout)
     val settingsOptions = listOf(
-        SettingsOption("Personal Info", Icons.Filled.Person),
-        SettingsOption("Notification", Icons.Filled.Notifications),
-        SettingsOption("Sound", Icons.Filled.Notifications),
-        SettingsOption(if (isAdmin) "Apply for Admin Removal" else "Apply for Admin", Icons.Filled.Add),
-        SettingsOption("Help Center", Icons.Filled.Person),
-        SettingsOption("About QuizToGo", Icons.Filled.Info),
-        SettingsOption("Logout", Icons.AutoMirrored.Filled.ExitToApp)
+        SettingsOption(strPersonalInfo, Icons.Filled.Person),
+        SettingsOption(strNotification, Icons.Filled.Notifications),
+        SettingsOption(strSound, Icons.Filled.Notifications),
+        SettingsOption(if (isAdmin) strApplyAdminRemoval else strApplyAdmin, Icons.Filled.Add),
+        SettingsOption(strHelpCenter, Icons.Filled.Person),
+        SettingsOption(strAbout, Icons.Filled.Info),
+        SettingsOption(strLogout, Icons.AutoMirrored.Filled.ExitToApp)
     )
 
     Scaffold(
@@ -109,14 +117,14 @@ fun SettingsScreen(
                         .fillMaxWidth()
                         .clickable {
                             when (option.title) {
-                                "Personal Info" -> onPersonalInfoClick()
-                                "Notification" -> onNotificationClick()
-                                "Sound" -> onSoundClick()
-                                "Apply for Admin" -> onApplyForAdminClick()
-                                "Apply for Admin Removal" -> onApplyForAdminRemovalClick()
-                                "Help Center" -> onHelpCenterClick()
-                                "About QuizToGo" -> onAboutClick()
-                                "Logout" -> viewModel.logoutUser()
+                                strPersonalInfo -> onPersonalInfoClick()
+                                strNotification -> onNotificationClick()
+                                strSound -> onSoundClick()
+                                strApplyAdmin -> onApplyForAdminClick()
+                                strApplyAdminRemoval -> onApplyForAdminRemovalClick()
+                                strHelpCenter -> onHelpCenterClick()
+                                strAbout -> onAboutClick()
+                                strLogout -> viewModel.logoutUser()
                             }
                         },
                     shape = RoundedCornerShape(12.dp),
@@ -150,7 +158,7 @@ fun SettingsScreen(
                         }
                         Icon(
                             imageVector = Icons.Filled.AccountBox,
-                            contentDescription = "Navigate",
+                            contentDescription = stringResource(R.string.settings_navigate_description),
                             tint = Color(0xFF654321),
                             modifier = Modifier.size(24.dp)
                         )

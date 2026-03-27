@@ -114,14 +114,14 @@ fun UsersScreen(
                     onValueChange = { searchQuery = it },
                     placeholder = {
                         Text(
-                            text = "Search",
+                            text = stringResource(R.string.users_search_placeholder),
                             color = Color(0xFFB0A090)
                         )
                     },
                     leadingIcon = {
                         Icon(
                             imageVector = Icons.Filled.Search,
-                            contentDescription = "Search",
+                            contentDescription = stringResource(R.string.users_search_icon_description),
                             tint = Color(0xFF654321)
                         )
                     },
@@ -218,7 +218,7 @@ fun UserItemCard(
             ) {
                 Icon(
                     imageVector = Icons.Filled.Person,
-                    contentDescription = "User avatar",
+                    contentDescription = stringResource(R.string.users_avatar_description),
                     tint = Color.White,
                     modifier = Modifier.size(32.dp)
                 )
@@ -277,7 +277,7 @@ fun UserItemCard(
                 ) {
                     Icon(
                         imageVector = Icons.Filled.Person,
-                        contentDescription = "Delete user",
+                        contentDescription = stringResource(R.string.users_delete_description),
                         tint = Color.White,
                         modifier = Modifier.size(24.dp),
                     )
@@ -291,7 +291,7 @@ fun UserItemCard(
                 ) {
                     Icon(
                         imageVector = Icons.Filled.Refresh,
-                        contentDescription = "Reset quizzes",
+                        contentDescription = stringResource(R.string.users_reset_description),
                         tint = Color.White,
                         modifier = Modifier.size(24.dp)
                     )
@@ -305,7 +305,7 @@ fun UserItemCard(
                 ) {
                     Icon(
                         imageVector = Icons.Filled.Email,
-                        contentDescription = "Message",
+                        contentDescription = stringResource(R.string.users_message_description),
                         tint = Color(0xFF2E7D32),
                         modifier = Modifier.size(24.dp)
                     )
@@ -332,7 +332,7 @@ fun UserDeleteConfirmationDialog(
         onDismissRequest = onDismiss,
         title = {
             Text(
-                text = "Benutzer löschen",
+                text = stringResource(R.string.users_delete_title),
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold,
                 color = Color.White
@@ -340,7 +340,7 @@ fun UserDeleteConfirmationDialog(
         },
         text = {
             Text(
-                text = "Möchtest du den Benutzer \"$userName\" wirklich löschen?",
+                text = stringResource(R.string.users_delete_message, userName),
                 fontSize = 14.sp,
                 color = Color.White.copy(alpha = 0.9f)
             )
@@ -355,7 +355,7 @@ fun UserDeleteConfirmationDialog(
                 modifier = Modifier.height(45.dp)
             ) {
                 Text(
-                    text = "Ja, löschen",
+                    text = stringResource(R.string.users_delete_confirm),
                     fontSize = 14.sp,
                     fontWeight = FontWeight.SemiBold,
                     color = Color.White
@@ -372,7 +372,7 @@ fun UserDeleteConfirmationDialog(
                 modifier = Modifier.height(45.dp)
             ) {
                 Text(
-                    text = "Abbrechen",
+                    text = stringResource(R.string.users_delete_cancel),
                     fontSize = 14.sp,
                     fontWeight = FontWeight.SemiBold,
                     color = Color.White
@@ -400,7 +400,7 @@ fun ResetQuizzesConfirmationDialog(
         onDismissRequest = onDismiss,
         title = {
             Text(
-                text = "Quizzes zurücksetzen",
+                text = stringResource(R.string.users_reset_title),
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold,
                 color = Color.White
@@ -408,7 +408,7 @@ fun ResetQuizzesConfirmationDialog(
         },
         text = {
             Text(
-                text = "Möchtest du alle gelösten Quizzes von \"$userName\" wirklich zurücksetzen? Alle UserQuestions werden aus der Datenbank gelöscht.",
+                text = stringResource(R.string.users_reset_message, userName),
                 fontSize = 14.sp,
                 color = Color.White.copy(alpha = 0.9f)
             )
@@ -423,7 +423,7 @@ fun ResetQuizzesConfirmationDialog(
                 modifier = Modifier.height(45.dp)
             ) {
                 Text(
-                    text = "Ja, zurücksetzen",
+                    text = stringResource(R.string.users_reset_confirm),
                     fontSize = 14.sp,
                     fontWeight = FontWeight.SemiBold,
                     color = Color.White
@@ -440,7 +440,7 @@ fun ResetQuizzesConfirmationDialog(
                 modifier = Modifier.height(45.dp)
             ) {
                 Text(
-                    text = "Abbrechen",
+                    text = stringResource(R.string.users_reset_cancel),
                     fontSize = 14.sp,
                     fontWeight = FontWeight.SemiBold,
                     color = Color.White

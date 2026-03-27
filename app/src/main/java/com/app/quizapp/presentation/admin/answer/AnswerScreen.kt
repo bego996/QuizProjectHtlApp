@@ -7,9 +7,11 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.app.quizapp.R
 import com.app.quizapp.domain.model.Answer
 
 /**
@@ -63,7 +65,7 @@ fun AnswerContent(
                 ) {
                     item {
                         Text(
-                            text = "Answerse (${uiState.answers.size})",
+                            text = stringResource(R.string.admin_answer_header, uiState.answers.size),
                             style = MaterialTheme.typography.headlineMedium,
                             modifier = Modifier.padding(bottom = 8.dp)
                         )
@@ -78,7 +80,7 @@ fun AnswerContent(
             // Keine Daten
             else -> {
                 Text(
-                    text = "Keine Answers verfügbar",
+                    text = stringResource(R.string.admin_no_answers),
                     style = MaterialTheme.typography.bodyLarge
                 )
             }
@@ -107,7 +109,7 @@ fun AnswerCard(answer: Answer) {
 
             // Correct/Incorrect Badge
             Text(
-                text = if (answer.correct) "✓ Korrekt" else "✗ Falsche",
+                text = if (answer.correct) stringResource(R.string.admin_answer_correct_label) else stringResource(R.string.admin_answer_incorrect_label),
                 style = MaterialTheme.typography.labelMedium,
                 color = if (answer.correct)
                     MaterialTheme.colorScheme.primary
@@ -120,7 +122,7 @@ fun AnswerCard(answer: Answer) {
 
             // Frage
             Text(
-                text = "Frage: ${answer.question.questionText}",
+                text = stringResource(R.string.admin_answer_question_label, answer.question.questionText),
                 style = MaterialTheme.typography.bodyMedium,
                 modifier = Modifier.padding(bottom = 4.dp)
             )
@@ -131,19 +133,19 @@ fun AnswerCard(answer: Answer) {
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    text = "Topic: ${answer.question.topic.topic}",
+                    text = stringResource(R.string.admin_answer_topic_label, answer.question.topic.topic),
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.secondary
                 )
                 Text(
-                    text = "Level: ${answer.question.difficulty.mode}",
+                    text = stringResource(R.string.admin_answer_level_label, answer.question.difficulty.mode),
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.secondary
                 )
             }
 
             Text(
-                text = "Status: ${answer.question.status.text}",
+                text = stringResource(R.string.admin_answer_status_label, answer.question.status.text),
                 style = MaterialTheme.typography.labelSmall,
                 color = MaterialTheme.colorScheme.secondary,
                 modifier = Modifier.padding(top = 4.dp)
@@ -165,7 +167,7 @@ fun ErrorScreen(
         modifier = Modifier.padding(16.dp)
     ) {
         Text(
-            text = "Fehler",
+            text = stringResource(R.string.admin_error_title),
             style = MaterialTheme.typography.headlineLarge,
             color = MaterialTheme.colorScheme.error,
             modifier = Modifier.padding(bottom = 16.dp)
@@ -178,7 +180,7 @@ fun ErrorScreen(
         )
 
         Button(onClick = onRetry) {
-            Text(text = "Erneut versuchen")
+            Text(text = stringResource(R.string.admin_retry_button))
         }
     }
 }
