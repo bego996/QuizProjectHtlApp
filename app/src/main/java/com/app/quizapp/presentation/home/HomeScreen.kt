@@ -83,13 +83,13 @@ fun HomeScreen(
                 ) {
                     Column {
                         Text(
-                            text = "Hello $userName${if (isAdmin) "(Admin)" else ""}",
+                            text = if (isAdmin) stringResource(R.string.home_greeting_admin, userName) else stringResource(R.string.home_greeting, userName),
                             fontSize = 24.sp,
                             fontWeight = FontWeight.Bold,
                             color = Color(0xFF654321)
                         )
                         Text(
-                            text = if (isAdmin) "Let's start your quiz now or do administration" else "Let's start your quiz now",
+                            text = if (isAdmin) stringResource(R.string.home_subtitle_admin) else stringResource(R.string.home_subtitle_user),
                             fontSize = 14.sp,
                             color = Color(0xFF654321)
                         )
@@ -104,7 +104,7 @@ fun HomeScreen(
                     ) {
                         Icon(
                             imageVector = Icons.Filled.Person,
-                            contentDescription = "Profile avatar",
+                            contentDescription = stringResource(R.string.home_profile_avatar_description),
                             modifier = Modifier.size(32.dp),
                             tint = Color.White
                         )
@@ -161,13 +161,13 @@ fun HomeScreen(
                                 .padding(24.dp)
                         ) {
                             Text(
-                                text = "Daily Quiz",
+                                text = stringResource(R.string.home_daily_quiz),
                                 fontSize = 28.sp,
                                 fontWeight = FontWeight.Bold,
                                 color = Color.White
                             )
                             Text(
-                                text = "5 Questions",
+                                text = stringResource(R.string.home_daily_quiz_questions),
                                 fontSize = 16.sp,
                                 color = Color.White.copy(alpha = 0.9f)
                             )
@@ -222,7 +222,7 @@ fun HomeScreen(
                             )
 
                             Text(
-                                text = "Active Users",
+                                text = stringResource(R.string.home_active_users),
                                 fontSize = 28.sp,
                                 fontWeight = FontWeight.Bold,
                                 color = Color.White,
@@ -283,13 +283,13 @@ fun HomeScreen(
                                     .padding(24.dp)
                             ) {
                                 Text(
-                                    text = "Active/Unreviewed",
+                                    text = stringResource(R.string.home_active_unreviewed),
                                     fontSize = 24.sp,
                                     fontWeight = FontWeight.Bold,
                                     color = Color.White
                                 )
                                 Text(
-                                    text = "Quizzes",
+                                    text = stringResource(R.string.home_quizzes),
                                     fontSize = 24.sp,
                                     fontWeight = FontWeight.Bold,
                                     color = Color.White
@@ -343,7 +343,7 @@ fun HomeScreen(
                             )
 
                             Text(
-                                text = "Generate Quizzes",
+                                text = stringResource(R.string.home_generate_quizzes),
                                 fontSize = 28.sp,
                                 fontWeight = FontWeight.Bold,
                                 color = Color.White,
@@ -366,13 +366,13 @@ fun HomeScreen(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = "Popular Categories",
+                        text = stringResource(R.string.home_popular_categories),
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
                         color = Color(0xFF654321)
                     )
                     Text(
-                        text = "See All >",
+                        text = stringResource(R.string.home_see_all),
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Medium,
                         color = Color(0xFF654321),
@@ -425,13 +425,13 @@ fun HomeScreen(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = "Stats",
+                        text = stringResource(R.string.home_stats),
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
                         color = Color(0xFF654321)
                     )
                     Text(
-                        text = "See All >",
+                        text = stringResource(R.string.home_see_all),
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Medium,
                         color = Color(0xFF654321),
@@ -471,13 +471,13 @@ fun HomeScreen(
                             )
                             Spacer(modifier = Modifier.height(8.dp))
                             Text(
-                                text = "19 Days",
+                                text = stringResource(R.string.home_streak_days),
                                 fontSize = 20.sp,
                                 fontWeight = FontWeight.Bold,
                                 color = Color.White
                             )
                             Text(
-                                text = "Streak",
+                                text = stringResource(R.string.home_streak_label),
                                 fontSize = 14.sp,
                                 color = Color.White.copy(alpha = 0.9f)
                             )
@@ -507,13 +507,13 @@ fun HomeScreen(
                             )
                             Spacer(modifier = Modifier.height(8.dp))
                             Text(
-                                text = "7 Badges",
+                                text = stringResource(R.string.home_badges_count),
                                 fontSize = 20.sp,
                                 fontWeight = FontWeight.Bold,
                                 color = Color(0xFF654321)
                             )
                             Text(
-                                text = "Achievements",
+                                text = stringResource(R.string.home_achievements),
                                 fontSize = 14.sp,
                                 color = Color(0xFF654321).copy(alpha = 0.9f)
                             )

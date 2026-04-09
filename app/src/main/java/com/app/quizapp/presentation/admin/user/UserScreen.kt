@@ -8,9 +8,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.app.quizapp.R
 import com.app.quizapp.domain.model.User
 
 @Composable
@@ -36,7 +38,7 @@ fun UserContent(
             .padding(16.dp)
     ) {
         Text(
-            text = "Benutzer",
+            text = stringResource(R.string.admin_benutzer),
             style = MaterialTheme.typography.headlineMedium,
             modifier = Modifier.padding(bottom = 16.dp)
         )
@@ -58,12 +60,12 @@ fun UserContent(
                     verticalArrangement = Arrangement.Center
                 ) {
                     Text(
-                        text = "Fehler: ${uiState.error}",
+                        text = stringResource(R.string.admin_error_prefix, uiState.error!!),
                         color = MaterialTheme.colorScheme.error,
                         modifier = Modifier.padding(bottom = 16.dp)
                     )
                     Button(onClick = onRetry) {
-                        Text("Erneut versuchen")
+                        Text(stringResource(R.string.admin_retry_button))
                     }
                 }
             }
@@ -73,7 +75,7 @@ fun UserContent(
                     modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text("Keine Benutzer gefunden")
+                    Text(stringResource(R.string.admin_no_users))
                 }
             }
 
@@ -100,29 +102,29 @@ fun UserCard(user: User) {
             modifier = Modifier.padding(12.dp)
         ) {
             Text(
-                text = "${user.firstname} ${user.surname} (${user.nickname ?: "Kein Nickname"})",
+                text = "${user.firstname} ${user.surname} (${user.nickname ?: stringResource(R.string.admin_user_nickname_none)})",
                 style = MaterialTheme.typography.bodyLarge
             )
 
             HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
 
             Text(
-                text = "Email: ${user.email}",
+                text = stringResource(R.string.admin_user_email_label, user.email),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
             Text(
-                text = "Geburtsdatum: ${user.birthdate}",
+                text = stringResource(R.string.admin_user_birthdate_label, user.birthdate),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
             Text(
-                text = "Rolle: ${user.userRole.userRole}",
+                text = stringResource(R.string.admin_user_role_label, user.userRole.userRole),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
             Text(
-                text = "ID: ${user.userId}",
+                text = stringResource(R.string.admin_user_id_label, user.userId),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )

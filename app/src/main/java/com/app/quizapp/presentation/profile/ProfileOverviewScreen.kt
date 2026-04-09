@@ -72,7 +72,7 @@ fun ProfileOverviewScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "Profile",
+                    text = stringResource(R.string.profile_title),
                     fontSize = 24.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color(0xFF654321)
@@ -80,7 +80,7 @@ fun ProfileOverviewScreen(
                 IconButton(onClick = onSettingsClick) {
                     Icon(
                         imageVector = Icons.Filled.Settings,
-                        contentDescription = "Settings",
+                        contentDescription = stringResource(R.string.profile_settings_description),
                         tint = Color(0xFF654321),
                         modifier = Modifier.size(28.dp)
                     )
@@ -121,7 +121,7 @@ fun ProfileOverviewScreen(
                     ) {
                         Icon(
                             imageVector = Icons.Filled.Person,
-                            contentDescription = "Profile avatar",
+                            contentDescription = stringResource(R.string.profile_avatar_description),
                             modifier = Modifier.size(60.dp),
                             tint = Color.White
                         )
@@ -130,7 +130,7 @@ fun ProfileOverviewScreen(
                     Spacer(modifier = Modifier.height(12.dp))
 
                     Text(
-                        text = "${uiState.user?.firstname} ${uiState.user?.surname}${if (isAdmin) "(Admin)" else ""}",
+                        text = "${uiState.user?.firstname} ${uiState.user?.surname}${if (isAdmin) stringResource(R.string.profile_admin_suffix) else ""}",
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
                         color = Color(0xFF654321)
@@ -148,7 +148,7 @@ fun ProfileOverviewScreen(
                         modifier = Modifier.padding(horizontal = 32.dp)
                     ) {
                         Text(
-                            text = "Edit Profile",
+                            text = stringResource(R.string.profile_edit_button),
                             color = Color.White,
                             fontWeight = FontWeight.Medium
                         )
@@ -174,7 +174,7 @@ fun ProfileOverviewScreen(
                         shape = RoundedCornerShape(8.dp)
                     ) {
                         Text(
-                            text = "Overview",
+                            text = stringResource(R.string.profile_tab_overview),
                             color = Color.White,
                             fontWeight = FontWeight.SemiBold
                         )
@@ -190,7 +190,7 @@ fun ProfileOverviewScreen(
                         shape = RoundedCornerShape(8.dp)
                     ) {
                         Text(
-                            text = "My Statistics",
+                            text = stringResource(R.string.profile_tab_statistics),
                             color = Color(0xFF654321),
                             fontWeight = FontWeight.Medium
                         )
@@ -208,7 +208,7 @@ fun ProfileOverviewScreen(
                         .padding(16.dp)
                 ) {
                     Text(
-                        text = "Favourite Category",
+                        text = stringResource(R.string.profile_favourite_category),
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold,
                         color = Color(0xFF654321),
@@ -275,7 +275,7 @@ fun ProfileOverviewScreen(
             item {
                 // Achievements section header
                 Text(
-                    text = "Achievements (7)",
+                    text = stringResource(R.string.profile_achievements_count),
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color(0xFF654321),

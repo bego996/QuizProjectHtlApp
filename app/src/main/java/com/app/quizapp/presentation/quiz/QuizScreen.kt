@@ -82,13 +82,13 @@ fun QuizScreen(
         ) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Text(
-                    text = uiState.error ?: "Unknown error",
+                    text = uiState.error ?: stringResource(R.string.quiz_unknown_error),
                     color = Color.Red,
                     fontSize = 16.sp,
                     modifier = Modifier.padding(bottom = 16.dp)
                 )
                 Button(onClick = onCloseClick) {
-                    Text("Close")
+                    Text(stringResource(R.string.quiz_close_button))
                 }
             }
         }
@@ -137,7 +137,7 @@ fun QuizScreen(
                 ) {
                     Icon(
                         imageVector = Icons.Filled.Close,
-                        contentDescription = "Close quiz",
+                        contentDescription = stringResource(R.string.quiz_close_description),
                         tint = Color(0xFF654321),
                         modifier = Modifier.size(28.dp)
                     )
@@ -198,7 +198,7 @@ fun QuizScreen(
                         .padding(20.dp)
                 ) {
                     Text(
-                        text = "Question ${uiState.currentQuestionIndex + 1}/$totalQuestions",
+                        text = stringResource(R.string.quiz_question_count, uiState.currentQuestionIndex + 1, totalQuestions),
                         fontSize = 14.sp,
                         color = Color(0xFF654321),
                         modifier = Modifier.padding(bottom = 16.dp)
@@ -211,7 +211,7 @@ fun QuizScreen(
                         modifier = Modifier.padding(bottom = 16.dp)
                     )
                     Text(
-                        text = "Topic: ${currentQuestion.topic.topic}",
+                        text = stringResource(R.string.quiz_topic_label, currentQuestion.topic.topic),
                         fontSize = 12.sp,
                         color = Color(0xFF654321)
                     )
@@ -262,7 +262,7 @@ fun QuizScreen(
                 enabled = uiState.selectedAnswerId != null
             ) {
                 Text(
-                    text = "Continue",
+                    text = stringResource(R.string.quiz_continue_button),
                     fontSize = 18.sp,
                     fontWeight = FontWeight.SemiBold,
                     color = Color.White
@@ -349,7 +349,7 @@ fun AnswerOption(
                     AnswerState.CORRECT -> {
                         Icon(
                             imageVector = Icons.Filled.CheckCircle,
-                            contentDescription = "Correct",
+                            contentDescription = stringResource(R.string.quiz_answer_correct_description),
                             tint = Color.White,
                             modifier = Modifier.size(24.dp)
                         )
@@ -357,7 +357,7 @@ fun AnswerOption(
                     AnswerState.INCORRECT -> {
                         Icon(
                             imageVector = Icons.Filled.Clear,
-                            contentDescription = "Incorrect",
+                            contentDescription = stringResource(R.string.quiz_answer_incorrect_description),
                             tint = Color.White,
                             modifier = Modifier.size(24.dp)
                         )

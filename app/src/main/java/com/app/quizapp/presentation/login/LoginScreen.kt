@@ -88,7 +88,7 @@ fun LoginScreen(
             ) {
                 Image(
                     painter = painterResource(R.drawable.cover_icon),
-                    contentDescription = "coverIcon",
+                    contentDescription = stringResource(R.string.login_cover_icon_description),
                     contentScale = ContentScale.Crop,
                     alignment = Alignment.Center,
                     modifier = Modifier.fillMaxSize()
@@ -97,7 +97,7 @@ fun LoginScreen(
 
             // Login title
             Text(
-                text = "Login",
+                text = stringResource(R.string.login_title),
                 fontSize = 32.sp,
                 fontFamily = hammerSmithOneFont,
                 color = Color(0xFF654321)
@@ -108,7 +108,7 @@ fun LoginScreen(
 
             // Email field
             Text(
-                text = "Email",
+                text = stringResource(R.string.login_email_label),
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Medium,
                 color = Color(0xFF1A1A1A),
@@ -122,14 +122,14 @@ fun LoginScreen(
                 onValueChange = viewModel::onEmailChange,
                 placeholder = {
                     Text(
-                        text = "Enter your email",
+                        text = stringResource(R.string.login_email_placeholder),
                         color = Color(0xFFB0A090)
                     )
                 },
                 leadingIcon = {
                     Icon(
                         imageVector = Icons.Filled.Person,
-                        contentDescription = "Email",
+                        contentDescription = stringResource(R.string.login_email_icon_description),
                         tint = Color(0xFF654321)
                     )
                 },
@@ -149,7 +149,7 @@ fun LoginScreen(
 
             // Password field
             Text(
-                text = "Password",
+                text = stringResource(R.string.login_password_label),
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Medium,
                 color = Color(0xFF1A1A1A),
@@ -163,14 +163,14 @@ fun LoginScreen(
                 onValueChange = viewModel::onPasswordChange,
                 placeholder = {
                     Text(
-                        text = "at least 8 characters",
+                        text = stringResource(R.string.login_password_placeholder),
                         color = Color(0xFFB0A090)
                     )
                 },
                 leadingIcon = {
                     Icon(
                         imageVector = Icons.Filled.Lock,
-                        contentDescription = "Password",
+                        contentDescription = stringResource(R.string.login_password_icon_description),
                         tint = Color(0xFF654321)
                     )
                 },
@@ -191,7 +191,7 @@ fun LoginScreen(
 
             // Forgot Password
             Text(
-                text = "Forgot Password",
+                text = stringResource(R.string.login_forgot_password),
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Bold,
                 color = Color(0xFF654321),
@@ -233,7 +233,7 @@ fun LoginScreen(
                     )
                 } else {
                     Text(
-                        text = "Login",
+                        text = stringResource(R.string.login_button),
                         fontSize = 18.sp,
                         fontWeight = FontWeight.SemiBold,
                         color = Color.White
@@ -246,7 +246,7 @@ fun LoginScreen(
             // Create account text
             val annotatedString = buildAnnotatedString {
                 withStyle(style = SpanStyle(color = Color(0xFF1A1A1A))) {
-                    append("Don't have an account? ")
+                    append(stringResource(R.string.login_no_account))
                 }
                 withStyle(
                     style = SpanStyle(
@@ -255,7 +255,7 @@ fun LoginScreen(
                         textDecoration = TextDecoration.Underline
                     )
                 ) {
-                    append("Create Account")
+                    append(stringResource(R.string.login_create_account))
                 }
             }
 

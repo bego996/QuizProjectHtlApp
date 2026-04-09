@@ -18,14 +18,14 @@ interface TopicApiService {
      * GET /api/topics
      * @return List of topics
      */
-    @GET("topics")
+    @GET("api/topics")
     suspend fun getAllTopics(): List<TopicDto>
 
     /**
      * GET /api/topics?justHighestTopics=1
      * @return List of topics with just highest Topics
      */
-    @GET("topics?justHighestTopics=1")
+    @GET("api/topics?justHighestTopics=1")
     suspend fun getAllHighestTopics(): List<TopicDto>
 
     /**
@@ -34,7 +34,7 @@ interface TopicApiService {
      * @param topicId Topic ID
      * @return Topic with HATEOAS links
      */
-    @GET("topics/{topicId}")
+    @GET("api/topics/{topicId}")
     suspend fun getTopicById(@Path("topicId") topicId: Int): TopicDto
 
     /**
@@ -43,7 +43,7 @@ interface TopicApiService {
      * @param topic Topic entity
      * @return Created topic
      */
-    @POST("topics")
+    @POST("api/topics")
     suspend fun createTopic(@Body topic: TopicDto): TopicDto
 
     /**
@@ -52,7 +52,7 @@ interface TopicApiService {
      * @param topic Topic entity
      * @return Updated topic
      */
-    @PUT("topics")
+    @PUT("api/topics")
     suspend fun updateTopic(@Body topic: TopicDto): TopicDto
 
     /**
@@ -61,6 +61,6 @@ interface TopicApiService {
      * @param topicId Topic ID to delete
      * @return Deleted topic
      */
-    @DELETE("topics/{topicId}")
+    @DELETE("api/topics/{topicId}")
     suspend fun deleteTopic(@Path("topicId") topicId: Int): TopicDto
 }

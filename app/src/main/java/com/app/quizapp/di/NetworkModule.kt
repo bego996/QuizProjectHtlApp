@@ -45,12 +45,16 @@ object NetworkModule {
      * WICHTIG für Entwicklung:
      * - Android Emulator: Nutze "http://10.0.2.2:PORT" statt "localhost"
      *   (10.0.2.2 ist die spezielle IP-Adresse, die vom Emulator auf den Host-Computer zeigt)
-     * - Physisches Gerät: Nutze die lokale IP-Adresse deines Computers (z.B. "http://192.168.1.100:PORT")
+     * - Physisches Gerät: Nutze die lokale IP-Adresse deines Computers (z.B. "http://192.168.0.87:8080")
+     * - Physisches Gerät per USB: Nutze die lokale IP-Adresse deines Computers (z.B. "http://localhost:8080")
+     * - adb reverse --remove-all  || adb reverse tcp:8080 tcp:8080 -> nutzen wenn man die BASE_URL_PHYSICAL_TO_PC_USB nutzt damit handy port auf pc(backend) port weitergeleitet wird.
      *
      * TODO: Passe den Port an dein Spring Boot Backend an
      */
     private const val BASE_URL_EMULATOR_TO_PC = "http://10.0.2.2:8080/"
-    private const val BASE_URL_PHYSICAL_TO_PC = "http://192.168.0.242:8080/"
+    private const val BASE_URL_PHYSICAL_TO_PC = "http://192.168.0.213:8080/"
+    private const val BASE_URL_PHYSICAL_TO_PC_HTL = "http://10.68.12.99:8080/"
+    private const val BASE_URL_PHYSICAL_TO_PC_USB = "http://localhost:8080/"
 
     /**
      * Stellt den OkHttpClient bereit
@@ -98,7 +102,7 @@ object NetworkModule {
     @Singleton
     fun provideRetrofit(okHttpClient: OkHttpClient): Retrofit {
         return Retrofit.Builder()
-            .baseUrl(BASE_URL_PHYSICAL_TO_PC) // Basis-URL des Backends
+            .baseUrl(BASE_URL_EMULATOR_TO_PC) // Basis-URL des Backends
             .client(okHttpClient) // Nutzt unseren konfigurierten OkHttpClient
             .addConverterFactory(GsonConverterFactory.create()) // JSON zu Kotlin-Objekten konvertieren
             .build()

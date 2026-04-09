@@ -54,7 +54,7 @@ fun WelcomeScreen(
 
             // Greeting title
             Text(
-                text = "Greetings!",
+                text = stringResource(R.string.welcome_greeting),
                 fontSize = 48.sp,
                 fontWeight = FontWeight.Bold,
                 color = Color(0xFF654321)
@@ -64,7 +64,7 @@ fun WelcomeScreen(
 
             // Subtitle
             Text(
-                text = "Test your knowledge on all things!",
+                text = stringResource(R.string.welcome_subtitle),
                 fontSize = 18.sp,
                 color = Color(0xFF654321),
                 modifier = Modifier.padding(horizontal = 16.dp)
@@ -75,7 +75,7 @@ fun WelcomeScreen(
             // Cityscape illustration
             Image(
                 painter = painterResource(id = R.drawable.silhouette_skyline_panorama_of_city_accraghana),
-                contentDescription = "Cityscape illustration",
+                contentDescription = stringResource(R.string.welcome_cityscape_description),
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(180.dp)
@@ -88,7 +88,7 @@ fun WelcomeScreen(
 
             // Bottom text
             Text(
-                text = "Dive in and quiz your way\nthrough time!",
+                text = stringResource(R.string.welcome_dive_in),
                 fontSize = 16.sp,
                 color = Color(0xFF654321),
                 modifier = Modifier.padding(horizontal = 16.dp)
@@ -108,7 +108,7 @@ fun WelcomeScreen(
                 )
             ) {
                 Text(
-                    text = "Get Started",
+                    text = stringResource(R.string.welcome_get_started),
                     fontSize = 18.sp,
                     fontWeight = FontWeight.SemiBold,
                     color = Color.White
@@ -120,7 +120,7 @@ fun WelcomeScreen(
             // Log in text
             val annotatedString = buildAnnotatedString {
                 withStyle(style = SpanStyle(color = Color(0xFF654321))) {
-                    append("Already have an account? ")
+                    append(stringResource(R.string.welcome_already_have_account))
                 }
                 withStyle(
                     style = SpanStyle(
@@ -129,7 +129,7 @@ fun WelcomeScreen(
                         textDecoration = TextDecoration.Underline
                     )
                 ) {
-                    append("Log in")
+                    append(stringResource(R.string.welcome_log_in))
                 }
             }
 

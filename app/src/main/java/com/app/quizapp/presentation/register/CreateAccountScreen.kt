@@ -76,7 +76,7 @@ fun CreateAccountScreen(
 
             // Create account title
             Text(
-                text = "Create an account",
+                text = stringResource(R.string.register_title),
                 fontSize = 32.sp,
                 fontWeight = FontWeight.Bold,
                 color = Color(0xFF654321)
@@ -99,7 +99,7 @@ fun CreateAccountScreen(
                 ) {
                     Icon(
                         imageVector = Icons.Filled.Person,
-                        contentDescription = "Avatar",
+                        contentDescription = stringResource(R.string.register_avatar_description),
                         modifier = Modifier.size(50.dp),
                         tint = Color(0xFF00ACC1)
                     )
@@ -118,7 +118,7 @@ fun CreateAccountScreen(
                 ) {
                     Icon(
                         imageVector = Icons.Filled.Edit,
-                        contentDescription = "Edit avatar",
+                        contentDescription = stringResource(R.string.register_edit_avatar_description),
                         modifier = Modifier.size(18.dp),
                         tint = Color(0xFF654321)
                     )
@@ -129,7 +129,7 @@ fun CreateAccountScreen(
 
             // First Name field
             Text(
-                text = "First Name",
+                text = stringResource(R.string.register_firstname_label),
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Medium,
                 color = Color(0xFF1A1A1A),
@@ -143,14 +143,14 @@ fun CreateAccountScreen(
                 onValueChange = viewModel::onFirstnameChange,
                 placeholder = {
                     Text(
-                        text = "Enter first name",
+                        text = stringResource(R.string.register_firstname_placeholder),
                         color = Color(0xFFB0A090)
                     )
                 },
                 leadingIcon = {
                     Icon(
                         imageVector = Icons.Filled.Person,
-                        contentDescription = "First Name",
+                        contentDescription = stringResource(R.string.register_firstname_icon_description),
                         tint = Color(0xFF654321)
                     )
                 },
@@ -170,7 +170,7 @@ fun CreateAccountScreen(
 
             // Surname field
             Text(
-                text = "Surname",
+                text = stringResource(R.string.register_surname_label),
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Medium,
                 color = Color(0xFF1A1A1A),
@@ -184,14 +184,14 @@ fun CreateAccountScreen(
                 onValueChange = viewModel::onSurnameChange,
                 placeholder = {
                     Text(
-                        text = "Enter surname",
+                        text = stringResource(R.string.register_surname_placeholder),
                         color = Color(0xFFB0A090)
                     )
                 },
                 leadingIcon = {
                     Icon(
                         imageVector = Icons.Filled.Person,
-                        contentDescription = "Surname",
+                        contentDescription = stringResource(R.string.register_surname_icon_description),
                         tint = Color(0xFF654321)
                     )
                 },
@@ -211,7 +211,7 @@ fun CreateAccountScreen(
 
             // Nickname field (optional)
             Text(
-                text = "Nickname (optional)",
+                text = stringResource(R.string.register_nickname_label),
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Medium,
                 color = Color(0xFF1A1A1A),
@@ -225,14 +225,14 @@ fun CreateAccountScreen(
                 onValueChange = viewModel::onNicknameChange,
                 placeholder = {
                     Text(
-                        text = "Enter preferred nickname",
+                        text = stringResource(R.string.register_nickname_placeholder),
                         color = Color(0xFFB0A090)
                     )
                 },
                 leadingIcon = {
                     Icon(
                         imageVector = Icons.Filled.Person,
-                        contentDescription = "Nickname",
+                        contentDescription = stringResource(R.string.register_nickname_icon_description),
                         tint = Color(0xFF654321)
                     )
                 },
@@ -252,7 +252,7 @@ fun CreateAccountScreen(
 
             // Email field
             Text(
-                text = "Email",
+                text = stringResource(R.string.register_email_label),
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Medium,
                 color = Color(0xFF1A1A1A),
@@ -266,14 +266,14 @@ fun CreateAccountScreen(
                 onValueChange = viewModel::onEmailChange,
                 placeholder = {
                     Text(
-                        text = "example@email.com",
+                        text = stringResource(R.string.register_email_placeholder),
                         color = Color(0xFFB0A090)
                     )
                 },
                 leadingIcon = {
                     Icon(
                         imageVector = Icons.Filled.Email,
-                        contentDescription = "Email",
+                        contentDescription = stringResource(R.string.register_email_icon_description),
                         tint = Color(0xFF654321)
                     )
                 },
@@ -293,7 +293,7 @@ fun CreateAccountScreen(
 
             // Birthdate field
             Text(
-                text = "Birthdate (dd.MM.yyyy)",
+                text = stringResource(R.string.register_birthdate_label),
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Medium,
                 color = Color(0xFF1A1A1A),
@@ -307,14 +307,14 @@ fun CreateAccountScreen(
                 onValueChange = viewModel::onBirthdateChange,
                 placeholder = {
                     Text(
-                        text = "01.01.2000",
+                        text = stringResource(R.string.register_birthdate_placeholder),
                         color = Color(0xFFB0A090)
                     )
                 },
                 leadingIcon = {
                     Icon(
                         imageVector = Icons.Filled.DateRange,
-                        contentDescription = "Birthdate",
+                        contentDescription = stringResource(R.string.register_birthdate_icon_description),
                         tint = Color(0xFF654321)
                     )
                 },
@@ -334,7 +334,7 @@ fun CreateAccountScreen(
 
             // Password field
             Text(
-                text = "Password",
+                text = stringResource(R.string.register_password_label),
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Medium,
                 color = Color(0xFF1A1A1A),
@@ -348,14 +348,14 @@ fun CreateAccountScreen(
                 onValueChange = viewModel::onPasswordChange,
                 placeholder = {
                     Text(
-                        text = "at least 8 characters",
+                        text = stringResource(R.string.register_password_placeholder),
                         color = Color(0xFFB0A090)
                     )
                 },
                 leadingIcon = {
                     Icon(
                         imageVector = Icons.Filled.Lock,
-                        contentDescription = "Password",
+                        contentDescription = stringResource(R.string.register_password_icon_description),
                         tint = Color(0xFF654321)
                     )
                 },
@@ -405,7 +405,7 @@ fun CreateAccountScreen(
                     )
                 } else {
                     Text(
-                        text = "Create Account",
+                        text = stringResource(R.string.register_button),
                         fontSize = 18.sp,
                         fontWeight = FontWeight.SemiBold,
                         color = Color.White
@@ -418,7 +418,7 @@ fun CreateAccountScreen(
             // Login text
             val annotatedString = buildAnnotatedString {
                 withStyle(style = SpanStyle(color = Color(0xFF1A1A1A))) {
-                    append("Already have an account? ")
+                    append(stringResource(R.string.register_already_have_account))
                 }
                 withStyle(
                     style = SpanStyle(
@@ -427,7 +427,7 @@ fun CreateAccountScreen(
                         textDecoration = TextDecoration.Underline
                     )
                 ) {
-                    append("Log in")
+                    append(stringResource(R.string.register_log_in))
                 }
             }
 

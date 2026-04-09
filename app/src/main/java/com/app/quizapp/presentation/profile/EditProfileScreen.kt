@@ -82,7 +82,7 @@ fun EditProfileScreen(
 
             // First Name field
             Text(
-                text = "First Name",
+                text = stringResource(R.string.edit_profile_firstname_label),
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Medium,
                 color = Color(0xFF1A1A1A),
@@ -96,14 +96,14 @@ fun EditProfileScreen(
                 onValueChange = viewModel::onFirstnameChange,
                 placeholder = {
                     Text(
-                        text = "Enter first name",
+                        text = stringResource(R.string.edit_profile_firstname_placeholder),
                         color = Color(0xFFB0A090)
                     )
                 },
                 leadingIcon = {
                     Icon(
                         imageVector = Icons.Filled.Person,
-                        contentDescription = "First Name",
+                        contentDescription = stringResource(R.string.edit_profile_firstname_icon_description),
                         tint = Color(0xFF654321)
                     )
                 },
@@ -123,7 +123,7 @@ fun EditProfileScreen(
 
             // Surname field
             Text(
-                text = "Surname",
+                text = stringResource(R.string.edit_profile_surname_label),
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Medium,
                 color = Color(0xFF1A1A1A),
@@ -137,14 +137,14 @@ fun EditProfileScreen(
                 onValueChange = viewModel::onSurnameChange,
                 placeholder = {
                     Text(
-                        text = "Enter surname",
+                        text = stringResource(R.string.edit_profile_surname_placeholder),
                         color = Color(0xFFB0A090)
                     )
                 },
                 leadingIcon = {
                     Icon(
                         imageVector = Icons.Filled.Person,
-                        contentDescription = "Surname",
+                        contentDescription = stringResource(R.string.edit_profile_surname_icon_description),
                         tint = Color(0xFF654321)
                     )
                 },
@@ -164,7 +164,7 @@ fun EditProfileScreen(
 
             // Nickname field (optional)
             Text(
-                text = "Nickname (optional)",
+                text = stringResource(R.string.edit_profile_nickname_label),
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Medium,
                 color = Color(0xFF1A1A1A),
@@ -178,14 +178,14 @@ fun EditProfileScreen(
                 onValueChange = viewModel::onNicknameChange,
                 placeholder = {
                     Text(
-                        text = "Enter preferred nickname",
+                        text = stringResource(R.string.edit_profile_nickname_placeholder),
                         color = Color(0xFFB0A090)
                     )
                 },
                 leadingIcon = {
                     Icon(
                         imageVector = Icons.Filled.Person,
-                        contentDescription = "Nickname",
+                        contentDescription = stringResource(R.string.edit_profile_nickname_icon_description),
                         tint = Color(0xFF654321)
                     )
                 },
@@ -205,7 +205,7 @@ fun EditProfileScreen(
 
             // Birthdate field
             Text(
-                text = "Birthdate (dd.MM.yyyy)",
+                text = stringResource(R.string.edit_profile_birthdate_label),
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Medium,
                 color = Color(0xFF1A1A1A),
@@ -219,14 +219,14 @@ fun EditProfileScreen(
                 onValueChange = viewModel::onBirthdateChange,
                 placeholder = {
                     Text(
-                        text = "01.01.2000",
+                        text = stringResource(R.string.edit_profile_birthdate_placeholder),
                         color = Color(0xFFB0A090)
                     )
                 },
                 leadingIcon = {
                     Icon(
                         imageVector = Icons.Filled.Person,
-                        contentDescription = "Birthdate",
+                        contentDescription = stringResource(R.string.edit_profile_birthdate_icon_description),
                         tint = Color(0xFF654321)
                     )
                 },
@@ -275,7 +275,7 @@ fun EditProfileScreen(
                     )
                 } else {
                     Text(
-                        text = "Save Changes",
+                        text = stringResource(R.string.edit_profile_save_button),
                         fontSize = 18.sp,
                         fontWeight = FontWeight.SemiBold,
                         color = Color.White

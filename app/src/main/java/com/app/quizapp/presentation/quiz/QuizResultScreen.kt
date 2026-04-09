@@ -35,10 +35,10 @@ fun QuizResultScreen(
 ) {
     // Determine result message and color based on score
     val (resultTitle, resultColor) = when {
-        score == 0 -> "Had a bad day?" to Color(0xFFD32F2F)
-        score == totalQuestions -> "Congratulations" to Color(0xFF2E7D32)
-        score >= totalQuestions * 0.6 -> "Well Done!" to Color(0xFFFF8F00)
-        else -> "Nice Try!" to Color(0xFFFF8F00)
+        score == 0 -> stringResource(R.string.result_bad_day) to Color(0xFFD32F2F)
+        score == totalQuestions -> stringResource(R.string.result_congratulations) to Color(0xFF2E7D32)
+        score >= totalQuestions * 0.6 -> stringResource(R.string.result_well_done) to Color(0xFFFF8F00)
+        else -> stringResource(R.string.result_nice_try) to Color(0xFFFF8F00)
     }
 
     Box(
@@ -82,7 +82,7 @@ fun QuizResultScreen(
                                 .padding(horizontal = 12.dp, vertical = 4.dp)
                         ) {
                             Text(
-                                text = "COMPLETED",
+                                text = stringResource(R.string.result_completed_badge),
                                 fontSize = 12.sp,
                                 fontWeight = FontWeight.Bold,
                                 color = Color.White
@@ -121,7 +121,7 @@ fun QuizResultScreen(
 
             // Score subtitle
             Text(
-                text = "QUESTIONS YOU GOT RIGHT",
+                text = stringResource(R.string.result_questions_right),
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Medium,
                 color = Color(0xFF654321),
@@ -132,7 +132,7 @@ fun QuizResultScreen(
 
             // Score
             Text(
-                text = "$score of $totalQuestions",
+                text = stringResource(R.string.result_score_of, score, totalQuestions),
                 fontSize = 48.sp,
                 fontWeight = FontWeight.Bold,
                 color = Color(0xFF654321)
@@ -154,7 +154,7 @@ fun QuizResultScreen(
                 border = androidx.compose.foundation.BorderStroke(2.dp, Color(0xFF654321))
             ) {
                 Text(
-                    text = "Replay",
+                    text = stringResource(R.string.result_replay_button),
                     fontSize = 18.sp,
                     fontWeight = FontWeight.SemiBold
                 )
@@ -176,7 +176,7 @@ fun QuizResultScreen(
                 border = androidx.compose.foundation.BorderStroke(2.dp, Color(0xFF654321))
             ) {
                 Text(
-                    text = "Review",
+                    text = stringResource(R.string.result_review_button),
                     fontSize = 18.sp,
                     fontWeight = FontWeight.SemiBold
                 )
@@ -196,7 +196,7 @@ fun QuizResultScreen(
                 )
             ) {
                 Text(
-                    text = "Continue",
+                    text = stringResource(R.string.result_continue_button),
                     fontSize = 18.sp,
                     fontWeight = FontWeight.SemiBold,
                     color = Color.White

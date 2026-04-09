@@ -89,7 +89,7 @@ fun ReviewQuestionCard(
     ) {
         // Question number header
         Text(
-            text = "Question ${question.questionNumber}",
+            text = stringResource(R.string.review_question_label, question.questionNumber),
             fontSize = 14.sp,
             fontWeight = FontWeight.Bold,
             color = Color(0xFF654321),
@@ -115,7 +115,7 @@ fun ReviewQuestionCard(
             ) {
                 Icon(
                     imageVector = Icons.Filled.Clear,
-                    contentDescription = "Incorrect",
+                    contentDescription = stringResource(R.string.review_incorrect_description),
                     tint = Color(0xFFD32F2F),
                     modifier = Modifier.size(20.dp)
                 )
@@ -138,7 +138,7 @@ fun ReviewQuestionCard(
         ) {
             Icon(
                 imageVector = Icons.Filled.CheckCircle,
-                contentDescription = "Correct",
+                contentDescription = stringResource(R.string.review_correct_description),
                 tint = Color(0xFF2E7D32),
                 modifier = Modifier.size(20.dp)
             )
@@ -153,7 +153,7 @@ fun ReviewQuestionCard(
 
         // Topic
         Text(
-            text = "Topic ${question.topic}",
+            text = stringResource(R.string.review_topic_label, question.topic),
             fontSize = 12.sp,
             color = Color(0xFFFF8F00),
             fontWeight = FontWeight.Medium

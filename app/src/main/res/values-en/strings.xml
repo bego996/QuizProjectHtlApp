@@ -1,0 +1,272 @@
+<resources>
+    <string name="app_name">QuizToGo</string>
+    <string name="categories">Categories</string>
+    <string name="topics">Topics</string>
+    <string name="subtopics">Subtopics</string>
+    <string name="welcome">Welcome</string>
+    <string name="cover">Cover</string>
+    <string name="create_account">Create Account</string>
+    <string name="login">Login</string>
+    <string name="home">Home</string>
+    <string name="profile">Profile</string>
+    <string name="settings">Settings</string>
+    <string name="quiz">Quiz</string>
+    <string name="quiz_result">Quiz Result</string>
+    <string name="quiz_review">Quiz Review</string>
+    <string name="generate_quizzes">Generate Quizzes</string>
+    <string name="active_quiz">Active Quiz</string>
+    <string name="users">Users</string>
+    <string name="edit_profile">Edit Profile</string>
+
+    <!-- WelcomeScreen -->
+    <string name="welcome_greeting">Greetings!</string>
+    <string name="welcome_subtitle">Test your knowledge on all things!</string>
+    <string name="welcome_cityscape_description">Cityscape illustration</string>
+    <string name="welcome_dive_in">Dive in and quiz your way\nthrough time!</string>
+    <string name="welcome_get_started">Get Started</string>
+    <string name="welcome_already_have_account">Already have an account? </string>
+    <string name="welcome_log_in">Log in</string>
+
+    <!-- LoginScreen -->
+    <string name="login_cover_icon_description">App Logo</string>
+    <string name="login_title">Login</string>
+    <string name="login_email_label">Email</string>
+    <string name="login_email_placeholder">Enter your email</string>
+    <string name="login_email_icon_description">Email</string>
+    <string name="login_password_label">Password</string>
+    <string name="login_password_placeholder">at least 8 characters</string>
+    <string name="login_password_icon_description">Password</string>
+    <string name="login_forgot_password">Forgot Password</string>
+    <string name="login_button">Login</string>
+    <string name="login_no_account">Don\'t have an account? </string>
+    <string name="login_create_account">Create Account</string>
+
+    <!-- CreateAccountScreen -->
+    <string name="register_title">Create an account</string>
+    <string name="register_avatar_description">Avatar</string>
+    <string name="register_edit_avatar_description">Edit avatar</string>
+    <string name="register_firstname_label">First Name</string>
+    <string name="register_firstname_placeholder">Enter first name</string>
+    <string name="register_firstname_icon_description">First Name</string>
+    <string name="register_surname_label">Surname</string>
+    <string name="register_surname_placeholder">Enter surname</string>
+    <string name="register_surname_icon_description">Surname</string>
+    <string name="register_nickname_label">Nickname (optional)</string>
+    <string name="register_nickname_placeholder">Enter preferred nickname</string>
+    <string name="register_nickname_icon_description">Nickname</string>
+    <string name="register_email_label">Email</string>
+    <string name="register_email_placeholder">example@email.com</string>
+    <string name="register_email_icon_description">Email</string>
+    <string name="register_birthdate_label">Birthdate (dd.MM.yyyy)</string>
+    <string name="register_birthdate_placeholder">01.01.2000</string>
+    <string name="register_birthdate_icon_description">Birthdate</string>
+    <string name="register_password_label">Password</string>
+    <string name="register_password_placeholder">at least 8 characters</string>
+    <string name="register_password_icon_description">Password</string>
+    <string name="register_button">Create Account</string>
+    <string name="register_already_have_account">Already have an account? </string>
+    <string name="register_log_in">Log in</string>
+
+    <!-- HomeScreen -->
+    <string name="home_greeting">Hello %1$s</string>
+    <string name="home_greeting_admin">Hello %1$s (Admin)</string>
+    <string name="home_subtitle_user">Let\'s start your quiz now</string>
+    <string name="home_subtitle_admin">Let\'s start your quiz now or do administration</string>
+    <string name="home_profile_avatar_description">Profile avatar</string>
+    <string name="home_daily_quiz">Daily Quiz</string>
+    <string name="home_daily_quiz_questions">5 Questions</string>
+    <string name="home_active_users">Active Users</string>
+    <string name="home_active_unreviewed">Active/Unreviewed</string>
+    <string name="home_quizzes">Quizzes</string>
+    <string name="home_generate_quizzes">Generate Quizzes</string>
+    <string name="home_popular_categories">Popular Categories</string>
+    <string name="home_see_all">See All &gt;</string>
+    <string name="home_stats">Stats</string>
+    <string name="home_streak_days">19 Days</string>
+    <string name="home_streak_label">Streak</string>
+    <string name="home_badges_count">7 Badges</string>
+    <string name="home_achievements">Achievements</string>
+
+    <!-- CategoryScreen -->
+    <string name="category_bookmark_description">Bookmark</string>
+
+    <!-- TopicScreen -->
+    <string name="topic_select_difficulty">Choose a difficulty</string>
+    <string name="topic_mixed">Mixed</string>
+    <string name="topic_cancel">Cancel</string>
+
+    <!-- SubtopicScreen -->
+    <string name="subtopic_start_quiz_description">Start quiz</string>
+
+    <!-- ProfileOverviewScreen -->
+    <string name="profile_title">Profile</string>
+    <string name="profile_settings_description">Settings</string>
+    <string name="profile_avatar_description">Profile avatar</string>
+    <string name="profile_admin_suffix"> (Admin)</string>
+    <string name="profile_edit_button">Edit Profile</string>
+    <string name="profile_tab_overview">Overview</string>
+    <string name="profile_tab_statistics">My Statistics</string>
+    <string name="profile_favourite_category">Favourite Category</string>
+    <string name="profile_achievements_count">Achievements (7)</string>
+
+    <!-- EditProfileScreen -->
+    <string name="edit_profile_firstname_label">First Name</string>
+    <string name="edit_profile_firstname_placeholder">Enter first name</string>
+    <string name="edit_profile_firstname_icon_description">First Name</string>
+    <string name="edit_profile_surname_label">Surname</string>
+    <string name="edit_profile_surname_placeholder">Enter surname</string>
+    <string name="edit_profile_surname_icon_description">Surname</string>
+    <string name="edit_profile_nickname_label">Nickname (optional)</string>
+    <string name="edit_profile_nickname_placeholder">Enter preferred nickname</string>
+    <string name="edit_profile_nickname_icon_description">Nickname</string>
+    <string name="edit_profile_birthdate_label">Birthdate (dd.MM.yyyy)</string>
+    <string name="edit_profile_birthdate_placeholder">01.01.2000</string>
+    <string name="edit_profile_birthdate_icon_description">Birthdate</string>
+    <string name="edit_profile_save_button">Save Changes</string>
+
+    <!-- ProfileStatisticsScreen -->
+    <string name="stats_streak_days">19 Days</string>
+    <string name="stats_streak_label">Streak</string>
+    <string name="stats_select_period_description">Select period</string>
+    <string name="stats_played_total">You have played a total</string>
+    <string name="stats_quizzes_count">26 quizzes</string>
+    <string name="stats_this_month"> this month! 🎉</string>
+    <string name="stats_quizzes_taken">quizzes taken</string>
+    <string name="stats_perfect_scores">Perfect Scores</string>
+    <string name="stats_fastest_record">Fastest Record</string>
+    <string name="stats_timer_description">Timer</string>
+
+    <!-- SettingsScreen -->
+    <string name="settings_personal_info">Personal Info</string>
+    <string name="settings_notification">Notification</string>
+    <string name="settings_sound">Sound</string>
+    <string name="settings_apply_for_admin">Apply for Admin</string>
+    <string name="settings_apply_for_admin_removal">Apply for Admin Removal</string>
+    <string name="settings_help_center">Help Center</string>
+    <string name="settings_about">About QuizToGo</string>
+    <string name="settings_logout">Logout</string>
+    <string name="settings_navigate_description">Navigate</string>
+
+    <!-- QuizScreen -->
+    <string name="quiz_close_description">Close quiz</string>
+    <string name="quiz_question_count">Question %1$d/%2$d</string>
+    <string name="quiz_topic_label">Topic: %1$s</string>
+    <string name="quiz_unknown_error">Unknown error</string>
+    <string name="quiz_close_button">Close</string>
+    <string name="quiz_continue_button">Continue</string>
+    <string name="quiz_answer_correct_description">Correct</string>
+    <string name="quiz_answer_incorrect_description">Incorrect</string>
+
+    <!-- QuizResultScreen -->
+    <string name="result_bad_day">Had a bad day?</string>
+    <string name="result_congratulations">Congratulations</string>
+    <string name="result_well_done">Well Done!</string>
+    <string name="result_nice_try">Nice Try!</string>
+    <string name="result_completed_badge">COMPLETED</string>
+    <string name="result_questions_right">QUESTIONS YOU GOT RIGHT</string>
+    <string name="result_replay_button">Replay</string>
+    <string name="result_review_button">Review</string>
+    <string name="result_continue_button">Continue</string>
+    <string name="result_score_of">%1$d of %2$d</string>
+
+    <!-- QuizReviewScreen -->
+    <string name="review_question_label">Question %1$d</string>
+    <string name="review_topic_label">Topic %1$s</string>
+    <string name="review_incorrect_description">Incorrect</string>
+    <string name="review_correct_description">Correct</string>
+
+    <!-- UsersScreen (Admin) -->
+    <string name="users_search_placeholder">Search</string>
+    <string name="users_search_icon_description">Search</string>
+    <string name="users_avatar_description">User avatar</string>
+    <string name="users_delete_description">Delete user</string>
+    <string name="users_reset_description">Reset quizzes</string>
+    <string name="users_message_description">Message</string>
+    <string name="users_delete_title">Delete User</string>
+    <string name="users_delete_message">Do you really want to delete the user \"%1$s\"?</string>
+    <string name="users_delete_confirm">Yes, delete</string>
+    <string name="users_delete_cancel">Cancel</string>
+    <string name="users_reset_title">Reset Quizzes</string>
+    <string name="users_reset_message">Do you really want to reset all solved quizzes of \"%1$s\"? All UserQuestions will be deleted from the database.</string>
+    <string name="users_reset_confirm">Yes, reset</string>
+    <string name="users_reset_cancel">Cancel</string>
+
+    <!-- ActiveQuizScreen (Admin) -->
+    <string name="active_quiz_search_placeholder">Search</string>
+    <string name="active_quiz_search_description">Search</string>
+    <string name="active_quiz_question_label">Question: %1$s</string>
+    <string name="active_quiz_id_label">ID: %1$s</string>
+    <string name="active_quiz_reviewed_by">Reviewed by: %1$s</string>
+    <string name="active_quiz_reviewed_none">Reviewed by: None</string>
+    <string name="active_quiz_created_date">Created: %1$s</string>
+    <string name="active_quiz_details_button">View Details</string>
+    <string name="active_quiz_delete_button">Delete</string>
+    <string name="active_quiz_answers_header">Answers</string>
+    <string name="active_quiz_show_less">Show less</string>
+    <string name="active_quiz_delete_title">Delete Quiz</string>
+    <string name="active_quiz_delete_message">Do you really want to delete this question?\n\n\"%1$s\"</string>
+    <string name="active_quiz_delete_confirm">Yes, delete</string>
+    <string name="active_quiz_delete_cancel">Cancel</string>
+
+    <!-- GenerateQuizzesScreen (Admin) -->
+    <string name="generate_select_difficulty">Choose difficulty:</string>
+    <string name="generate_close_description">Close</string>
+    <string name="generate_random_button">Random</string>
+    <string name="generate_back_description">Back</string>
+    <string name="generate_select_category">Choose a category:</string>
+    <string name="generate_select_topic">Choose a topic:</string>
+    <string name="generate_select_subtopic">Choose a subtopic:</string>
+    <string name="generate_apply_to_db">Apply to DB</string>
+    <string name="generate_new_request">🔄 New Request</string>
+    <string name="generate_correct_answer_description">Correct answer</string>
+    <string name="generate_wrong_answer_description">Wrong answer</string>
+    <string name="generate_no_quiz_yet">No quiz generated yet</string>
+    <string name="generate_quiz_button">Generate Quiz</string>
+    <string name="generate_generating">Generating quiz...</string>
+    <string name="generate_dismiss_description">Dismiss</string>
+
+    <!-- Admin CRUD Screens (user, topic, question, difficulty, status, userrole, userquestion, answer) -->
+    <string name="admin_benutzer">Users</string>
+    <string name="admin_benutzer_fragen">User Questions</string>
+    <string name="admin_themen">Topics</string>
+    <string name="admin_fragen">Questions</string>
+    <string name="admin_schwierigkeitsgrade">Difficulty Levels</string>
+    <string name="admin_status">Status</string>
+    <string name="admin_benutzerrollen">User Roles</string>
+    <string name="admin_error_prefix">Error: %1$s</string>
+    <string name="admin_retry_button">Retry</string>
+    <string name="admin_no_users">No users found</string>
+    <string name="admin_no_user_questions">No user questions found</string>
+    <string name="admin_no_topics">No topics found</string>
+    <string name="admin_no_questions">No questions found</string>
+    <string name="admin_no_difficulties">No difficulty levels found</string>
+    <string name="admin_no_statuses">No statuses found</string>
+    <string name="admin_no_user_roles">No user roles found</string>
+    <string name="admin_user_nickname_none">No Nickname</string>
+    <string name="admin_user_email_label">Email: %1$s</string>
+    <string name="admin_user_birthdate_label">Birthdate: %1$s</string>
+    <string name="admin_user_role_label">Role: %1$s</string>
+    <string name="admin_user_id_label">ID: %1$s</string>
+    <string name="admin_user_question_user_label">User: %1$s %2$s</string>
+    <string name="admin_user_question_question_label">Question: %1$s</string>
+    <string name="admin_user_question_score_label">Score: %1$s</string>
+    <string name="admin_user_question_id_label">ID: %1$s</string>
+    <string name="admin_topic_id_label">ID: %1$s</string>
+    <string name="admin_question_topic_label">Topic: %1$s</string>
+    <string name="admin_question_difficulty_label">Difficulty: %1$s</string>
+    <string name="admin_question_status_label">Status: %1$s</string>
+    <string name="admin_question_id_label">ID: %1$s</string>
+    <string name="admin_difficulty_mode_label">Mode: %1$s</string>
+    <string name="admin_difficulty_id_label">ID: %1$s</string>
+    <string name="admin_status_id_label">ID: %1$s</string>
+    <string name="admin_user_role_id_label">ID: %1$s</string>
+    <string name="admin_answer_header">Answers (%1$d)</string>
+    <string name="admin_answer_correct_label">✓ Correct</string>
+    <string name="admin_answer_incorrect_label">✗ Incorrect</string>
+    <string name="admin_answer_question_label">Question: %1$s</string>
+    <string name="admin_answer_topic_label">Topic: %1$s</string>
+    <string name="admin_answer_level_label">Level: %1$s</string>
+    <string name="admin_answer_status_label">Status: %1$s</string>
+    <string name="admin_no_answers">No answers available</string>
+    <string name="admin_error_title">Error</string>
+</resources>

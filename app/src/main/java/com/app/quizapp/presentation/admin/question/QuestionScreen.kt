@@ -8,9 +8,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.app.quizapp.R
 import com.app.quizapp.domain.model.Question
 
 @Composable
@@ -36,7 +38,7 @@ fun QuestionContent(
             .padding(16.dp)
     ) {
         Text(
-            text = "Fragen",
+            text = stringResource(R.string.admin_fragen),
             style = MaterialTheme.typography.headlineMedium,
             modifier = Modifier.padding(bottom = 16.dp)
         )
@@ -58,12 +60,12 @@ fun QuestionContent(
                     verticalArrangement = Arrangement.Center
                 ) {
                     Text(
-                        text = "Fehler: ${uiState.error}",
+                        text = stringResource(R.string.admin_error_prefix, uiState.error!!),
                         color = MaterialTheme.colorScheme.error,
                         modifier = Modifier.padding(bottom = 16.dp)
                     )
                     Button(onClick = onRetry) {
-                        Text("Erneut versuchen")
+                        Text(stringResource(R.string.admin_retry_button))
                     }
                 }
             }
@@ -73,7 +75,7 @@ fun QuestionContent(
                     modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text("Keine Fragen gefunden")
+                    Text(stringResource(R.string.admin_no_questions))
                 }
             }
 
@@ -107,22 +109,22 @@ fun QuestionCard(question: Question) {
             HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
 
             Text(
-                text = "Thema: ${question.topic.topic}",
+                text = stringResource(R.string.admin_question_topic_label, question.topic.topic),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
             Text(
-                text = "Schwierigkeit: ${question.difficulty.mode}",
+                text = stringResource(R.string.admin_question_difficulty_label, question.difficulty.mode),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
             Text(
-                text = "Status: ${question.status.text}",
+                text = stringResource(R.string.admin_question_status_label, question.status.text),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
             Text(
-                text = "ID: ${question.questionId}",
+                text = stringResource(R.string.admin_question_id_label, question.questionId),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )

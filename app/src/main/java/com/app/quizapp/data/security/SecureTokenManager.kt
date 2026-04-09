@@ -8,7 +8,9 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
+import android.content.SharedPreferences
 import javax.inject.Singleton
+import androidx.core.content.edit
 
 /**
  * Secure implementation of TokenManager using EncryptedSharedPreferences
@@ -24,25 +26,48 @@ class SecureTokenManager @Inject constructor(@ApplicationContext private val con
 
     // Lazy initialization of EncryptedSharedPreferences
     private val encryptedPrefs by lazy {
-        val masterKey = MasterKey.Builder(context)
-            .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
-            .build()
-
-        EncryptedSharedPreferences.create(
-            context,
-            PREFS_FILE_NAME,
-            masterKey,
-            EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
-            EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
-        )
+        createEncryptedPrefs()
     }
 
+    private fun createEncryptedPrefs(): SharedPreferences {
+        return try {
+
+            val masterKey = MasterKey.Builder(context)
+                .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
+                .build()
+
+            EncryptedSharedPreferences.create(
+                context,
+                PREFS_FILE_NAME,
+                masterKey,
+                EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+                EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
+            )
+
+        } catch (e: Exception) {
+
+            // alte kaputte prefs löschen
+            context.deleteSharedPreferences(PREFS_FILE_NAME)
+
+            val masterKey = MasterKey.Builder(context)
+                .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
+                .build()
+
+            EncryptedSharedPreferences.create(
+                context,
+                PREFS_FILE_NAME,
+                masterKey,
+                EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+                EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
+            )
+        }
+    }
     /**
      * Saves the JWT token securely with encryption
      * Uses IO dispatcher to avoid blocking the main thread
      */
     override suspend fun saveToken(token: String) = withContext(Dispatchers.IO) {
-        encryptedPrefs.edit().putString(KEY_AUTH_TOKEN, token).apply()
+        encryptedPrefs.edit { putString(KEY_AUTH_TOKEN, token) }
     }
 
     /**
@@ -64,6 +89,6 @@ class SecureTokenManager @Inject constructor(@ApplicationContext private val con
      * Removes the saved token (used during logout)
      */
     override suspend fun clearToken() = withContext(Dispatchers.IO) {
-        encryptedPrefs.edit().remove(KEY_AUTH_TOKEN).apply()
+        encryptedPrefs.edit { remove(KEY_AUTH_TOKEN) }
     }
 }

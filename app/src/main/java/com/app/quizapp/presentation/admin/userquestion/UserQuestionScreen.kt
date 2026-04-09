@@ -8,9 +8,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.app.quizapp.R
 import com.app.quizapp.domain.model.UserQuestion
 
 @Composable
@@ -36,7 +38,7 @@ fun UserQuestionContent(
             .padding(16.dp)
     ) {
         Text(
-            text = "Benutzer-Fragen",
+            text = stringResource(R.string.admin_benutzer_fragen),
             style = MaterialTheme.typography.headlineMedium,
             modifier = Modifier.padding(bottom = 16.dp)
         )
@@ -58,12 +60,12 @@ fun UserQuestionContent(
                     verticalArrangement = Arrangement.Center
                 ) {
                     Text(
-                        text = "Fehler: ${uiState.error}",
+                        text = stringResource(R.string.admin_error_prefix, uiState.error!!),
                         color = MaterialTheme.colorScheme.error,
                         modifier = Modifier.padding(bottom = 16.dp)
                     )
                     Button(onClick = onRetry) {
-                        Text("Erneut versuchen")
+                        Text(stringResource(R.string.admin_retry_button))
                     }
                 }
             }
@@ -73,7 +75,7 @@ fun UserQuestionContent(
                     modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text("Keine Benutzer-Fragen gefunden")
+                    Text(stringResource(R.string.admin_no_user_questions))
                 }
             }
 
@@ -100,23 +102,23 @@ fun UserQuestionCard(userQuestion: UserQuestion) {
             modifier = Modifier.padding(12.dp)
         ) {
             Text(
-                text = "Benutzer: ${userQuestion.user.firstname} ${userQuestion.user.surname}",
+                text = stringResource(R.string.admin_user_question_user_label, userQuestion.user.firstname, userQuestion.user.surname),
                 style = MaterialTheme.typography.bodyLarge
             )
 
             HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
 
             Text(
-                text = "Frage: ${userQuestion.question.questionText}",
+                text = stringResource(R.string.admin_user_question_question_label, userQuestion.question.questionText),
                 style = MaterialTheme.typography.bodyMedium
             )
             Text(
-                text = "Punktzahl: ${userQuestion.score}",
+                text = stringResource(R.string.admin_user_question_score_label, userQuestion.score),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.primary
             )
             Text(
-                text = "ID: ${userQuestion.userQuestionId}",
+                text = stringResource(R.string.admin_user_question_id_label, userQuestion.userQuestionId),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )

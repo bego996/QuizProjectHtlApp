@@ -8,9 +8,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.app.quizapp.R
 import com.app.quizapp.domain.model.Topic
 
 @Composable
@@ -36,7 +38,7 @@ fun TopicContent(
             .padding(16.dp)
     ) {
         Text(
-            text = "Themen",
+            text = stringResource(R.string.admin_themen),
             style = MaterialTheme.typography.headlineMedium,
             modifier = Modifier.padding(bottom = 16.dp)
         )
@@ -58,12 +60,12 @@ fun TopicContent(
                     verticalArrangement = Arrangement.Center
                 ) {
                     Text(
-                        text = "Fehler: ${uiState.error}",
+                        text = stringResource(R.string.admin_error_prefix, uiState.error!!),
                         color = MaterialTheme.colorScheme.error,
                         modifier = Modifier.padding(bottom = 16.dp)
                     )
                     Button(onClick = onRetry) {
-                        Text("Erneut versuchen")
+                        Text(stringResource(R.string.admin_retry_button))
                     }
                 }
             }
@@ -73,7 +75,7 @@ fun TopicContent(
                     modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text("Keine Themen gefunden")
+                    Text(stringResource(R.string.admin_no_topics))
                 }
             }
 
@@ -104,7 +106,7 @@ fun TopicCard(topic: Topic) {
                 style = MaterialTheme.typography.bodyLarge
             )
             Text(
-                text = "ID: ${topic.topicId}",
+                text = stringResource(R.string.admin_topic_id_label, topic.topicId),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )

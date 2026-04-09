@@ -27,7 +27,8 @@ render.experimental.xml
 CLAUDE.md
 .claudeignore
 .claude
-
+.github
+API_ENDPOINTS.md
 # Keystore files
 *.jks
 *.keystore

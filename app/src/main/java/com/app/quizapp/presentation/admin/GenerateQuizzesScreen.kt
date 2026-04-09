@@ -183,7 +183,7 @@ private fun DifficultySelectionDialog(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = "Wähle die Schwierigkeit:",
+                        text = stringResource(R.string.generate_select_difficulty),
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold,
                         color = Color.White
@@ -191,7 +191,7 @@ private fun DifficultySelectionDialog(
                     IconButton(onClick = onDismiss) {
                         Icon(
                             imageVector = Icons.Filled.Close,
-                            contentDescription = "Close",
+                            contentDescription = stringResource(R.string.generate_close_description),
                             tint = Color.White
                         )
                     }
@@ -225,7 +225,7 @@ private fun DifficultySelectionDialog(
                             )
                         ) {
                             Text(
-                                text = "Random",
+                                text = stringResource(R.string.generate_random_button),
                                 fontSize = 16.sp,
                                 fontWeight = FontWeight.SemiBold,
                                 color = Color.White
@@ -322,7 +322,7 @@ private fun TopicSelectionDialog(
                         IconButton(onClick = onBackClick) {
                             Icon(
                                 imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                                contentDescription = "Back",
+                                contentDescription = stringResource(R.string.generate_back_description),
                                 tint = Color.White
                             )
                         }
@@ -332,9 +332,9 @@ private fun TopicSelectionDialog(
 
                     Text(
                         text = when (currentLevel) {
-                            TopicSelectionLevel.CATEGORY -> "Wähle ein Thema:"
-                            TopicSelectionLevel.TOPIC -> "Wähle ein Topic:"
-                            TopicSelectionLevel.SUBTOPIC -> "Wähle ein Subtopic:"
+                            TopicSelectionLevel.CATEGORY -> stringResource(R.string.generate_select_category)
+                            TopicSelectionLevel.TOPIC -> stringResource(R.string.generate_select_topic)
+                            TopicSelectionLevel.SUBTOPIC -> stringResource(R.string.generate_select_subtopic)
                         },
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold,
@@ -346,7 +346,7 @@ private fun TopicSelectionDialog(
                     IconButton(onClick = onDismiss) {
                         Icon(
                             imageVector = Icons.Filled.Close,
-                            contentDescription = "Close",
+                            contentDescription = stringResource(R.string.generate_close_description),
                             tint = Color.White
                         )
                     }
@@ -392,7 +392,7 @@ private fun TopicSelectionDialog(
                     )
                 ) {
                     Text(
-                        text = "Random",
+                        text = stringResource(R.string.generate_random_button),
                         fontSize = 16.sp,
                         fontWeight = FontWeight.SemiBold,
                         color = Color.White
@@ -570,7 +570,7 @@ private fun GeneratedQuizCard(
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        text = "Apply to DB",
+                        text = stringResource(R.string.generate_apply_to_db),
                         fontSize = 14.sp,
                         fontWeight = FontWeight.SemiBold,
                         color = Color.White
@@ -589,7 +589,7 @@ private fun GeneratedQuizCard(
                     )
                 ) {
                     Text(
-                        text = "🔄 New Request",
+                        text = stringResource(R.string.generate_new_request),
                         fontSize = 14.sp,
                         fontWeight = FontWeight.SemiBold,
                         color = Color.White
@@ -629,14 +629,14 @@ private fun AnswerItem(
         if (isCorrect) {
             Icon(
                 imageVector = Icons.Filled.Check,
-                contentDescription = "Correct answer",
+                contentDescription = stringResource(R.string.generate_correct_answer_description),
                 tint = Color(0xFF4CAF50),
                 modifier = Modifier.size(20.dp)
             )
         } else {
             Icon(
                 imageVector = Icons.Filled.Close,
-                contentDescription = "Wrong answer",
+                contentDescription = stringResource(R.string.generate_wrong_answer_description),
                 tint = Color(0xFFF44336),
                 modifier = Modifier.size(20.dp)
             )
@@ -659,7 +659,7 @@ private fun EmptyStateCard(
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         Text(
-            text = "No quiz generated yet",
+            text = stringResource(R.string.generate_no_quiz_yet),
             fontSize = 18.sp,
             fontWeight = FontWeight.Medium,
             color = Color(0xFF1A5C5C)
@@ -676,7 +676,7 @@ private fun EmptyStateCard(
             )
         ) {
             Text(
-                text = "Generate Quiz",
+                text = stringResource(R.string.generate_quiz_button),
                 fontSize = 16.sp,
                 fontWeight = FontWeight.SemiBold,
                 color = Color.White
@@ -704,7 +704,7 @@ private fun LoadingIndicator() {
                 color = Color(0xFF00ACC1)
             )
             Text(
-                text = "Generating quiz...",
+                text = stringResource(R.string.generate_generating),
                 fontSize = 14.sp,
                 color = Color(0xFF1A5C5C)
             )
@@ -739,7 +739,7 @@ private fun ErrorMessage(
             IconButton(onClick = onDismiss) {
                 Icon(
                     imageVector = Icons.Filled.Close,
-                    contentDescription = "Dismiss",
+                    contentDescription = stringResource(R.string.generate_dismiss_description),
                     tint = Color(0xFFD32F2F)
                 )
             }
